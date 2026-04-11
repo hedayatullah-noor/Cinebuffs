@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand: #c90000;
+  --color-brand-hover: #990000;
+  --color-bg-dark: #ffffff;
+  --color-bg-card: #f9fafb;
+  --color-text-main: #333333;
+  --color-text-light: #000000;
+
+  --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-playfair), 'Playfair Display', Georgia, serif;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-black font-sans antialiased transition-colors duration-300 dark:bg-zinc-950 dark:text-white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+
+  * {
+    @apply border-gray-200 dark:border-gray-800;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/90 backdrop-blur-md border border-gray-200 shadow-sm;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

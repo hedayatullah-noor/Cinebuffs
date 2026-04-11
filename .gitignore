@@ -1,0 +1,54 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Next.js
+.next
+out
+build
+
+# Testing
+coverage
+
+# Production
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+
+# Database (SQLite local)
+dev.db
+dev.db-journal
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Temporary migration scripts
+fix_images.js
+fix_profiles.js
+optimize_db.js
+seed_mysql.js
+check_db.js
+data_backup.json
+export_data.js
+import_data.js
+migrate.js
+test_prisma.js
+test-api.js
+dump.js

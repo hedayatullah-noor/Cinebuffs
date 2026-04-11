@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Using string instead of enums for SQLite compatibility
+// Role: "ADMIN" | "MODERATOR" | "USER"
+
+// ReviewStatus: "PENDING" | "APPROVED" | "REJECTED"
+
+// MediaType: "MOVIE" | "SERIES"
+
+
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  image     String?  @db.LongText
+  role      String   @default("USER")
+  bio       String?
+  createdAt DateTime @default(now())
+
+  reviews   Review[]
+  comments  Comment[]
+}
+
+model Review {
+  id               String       @id @default(cuid())
+  title            String
+  slug             String       @unique
+  posterImage      String       @db.LongText
+  rating           Float
+  genre            String
+  type             String
+  authorId         String
+  author           User         @relation(fields: [authorId], references: [id])
+  content          String       @db.LongText
+  director         String?
+  cast             String?
+  availableOn      String?
+  gallery          String?      @db.Text
+  status           String       @default("PENDING")
+  createdAt        DateTime     @default(now())
+  approvedAt       DateTime?
+
+  comments         Comment[]
+
+  @@index([status])
+  @@index([type])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  text      String   @db.Text
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewId  String
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Subscriber {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  subscribedAt DateTime @default(now())
+}

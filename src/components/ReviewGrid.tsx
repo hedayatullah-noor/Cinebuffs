@@ -24,7 +24,8 @@ export function ReviewGridInner({ defaultType = "All", hideHeader = false }: { d
     const [reviews, setReviews] = useState<Review[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
+    const [visibleCount, setVisibleCount] = useState(10);
+    const loadMoreRef = useRef<HTMLDivElement>(null);
     const searchParams = useSearchParams();
     const activeGenre = searchParams.get('genre');
     const searchQuery = searchParams.get('search');
@@ -57,19 +58,51 @@ export function ReviewGridInner({ defaultType = "All", hideHeader = false }: { d
                     publishDate: new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                 }));
                 setReviews(mappedReviews);
+                
+                // Calculate initial count to exactly 2 rows based on screen width
+                const width = window.innerWidth;
+                let initialCount = 10;
+                if (width >= 1280) initialCount = 10; // xl: 5 cols (10)
+                else if (width >= 1024) initialCount = 6; // lg: 3 cols (6)
+                else if (width >= 640) initialCount = 4; // sm: 2 cols (4)
+                else initialCount = 2; // base: 1 col (2)
+                setVisibleCount(initialCount);
             }
         } catch (error) {
             console.error("Failed to fetch reviews:", error);
         } finally {
             setIsLoading(false);
             setIsFiltering(false);
-            setHasMore(false);
         }
     };
 
     useEffect(() => {
         fetchReviews(activeGenre, searchQuery);
     }, [activeGenre, searchQuery, defaultType]);
+
+    // Infinite scroll observer
+    useEffect(() => {
+        if (isLoading || isFiltering || visibleCount >= reviews.length) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                // Calculate how many to load (load 2 more rows at a time)
+                let cols = 5;
+                const width = window.innerWidth;
+                if (width < 640) cols = 1;
+                else if (width < 1024) cols = 2;
+                else if (width < 1280) cols = 3;
+
+                setVisibleCount(prev => Math.min(prev + (cols * 2), reviews.length));
+            }
+        }, { rootMargin: "150px" });
+
+        if (loadMoreRef.current) {
+            observer.observe(loadMoreRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, [visibleCount, reviews.length, isLoading, isFiltering]);
 
     const getHeadingText = () => {
         if (searchQuery) return `Search Results: "${searchQuery}"`;
@@ -109,9 +142,23 @@ export function ReviewGridInner({ defaultType = "All", hideHeader = false }: { d
             ) : (
                 <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 xl:gap-8 items-start transition-opacity duration-300 ${isFiltering ? 'opacity-40 animate-pulse' : 'opacity-100'}`}>
                     {reviews.length > 0 ? (
-                        reviews.map((review) => (
-                            <ReviewCard key={review.id} {...review} isBlog={defaultType === "Blog" || review.category === "Blog"} />
-                        ))
+                        <>
+                            {reviews.slice(0, visibleCount).map((review) => (
+                                <ReviewCard key={review.id} {...review} isBlog={defaultType === "Blog" || review.category === "Blog"} />
+                            ))}
+                            
+                            {/* Sentinel for infinite scroll */}
+                            {visibleCount < reviews.length && (
+                                <div ref={loadMoreRef} className="col-span-full flex justify-center py-10 my-4 border-t-2 border-transparent">
+                                    <div className="flex gap-2 items-center">
+                                        <div className="w-2.5 h-2.5 bg-[var(--color-brand)] rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                                        <div className="w-2.5 h-2.5 bg-[var(--color-brand)] rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></div>
+                                        <div className="w-2.5 h-2.5 bg-[var(--color-brand)] rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
+                                        <span className="ml-2 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Loading</span>
+                                    </div>
+                                </div>
+                            )}
+                        </>
                     ) : (
                         <div className="col-span-full flex flex-col items-center justify-center py-32 px-4 text-center bg-gray-50 dark:bg-zinc-900 border-2 border-dashed border-gray-300 dark:border-zinc-800 transition-colors">
                             <h3 className="text-2xl font-black text-gray-400 dark:text-gray-600 font-serif uppercase tracking-[0.2em]">Zero Records Found</h3>

@@ -40,15 +40,12 @@ Thumbs.db
 *.swo
 
 # Temporary migration scripts
-fix_images.js
-fix_profiles.js
-optimize_db.js
-seed_mysql.js
-check_db.js
+*.js
+!next.config.js
+!postcss.config.js
+!tailwind.config.js
+
+# Data backups
+*.sql
 data_backup.json
-export_data.js
-import_data.js
-migrate.js
-test_prisma.js
-test-api.js
-dump.js
+php_version/

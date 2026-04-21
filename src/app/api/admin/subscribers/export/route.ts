@@ -11,7 +11,7 @@ export async function GET() {
 
         // Create CSV string
         let csvContent = "Id,Email,Subscribed At\n";
-        subscribers.forEach(sub => {
+        subscribers.forEach((sub: any) => {
             csvContent += `${sub.id},${sub.email},${sub.subscribedAt.toISOString()}\n`;
         });
 

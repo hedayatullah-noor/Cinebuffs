@@ -47,7 +47,7 @@ export default function Navbar() {
                     animate={{ y: 0 }}
                     exit={{ y: -100 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="fixed top-20 left-0 right-0 h-10 bg-white dark:bg-zinc-950 border-b-2 border-black dark:border-gray-800 z-40 px-6 flex items-center justify-between transition-colors duration-300 shadow-sm"
+                    className="fixed top-20 left-0 right-0 h-10 glass z-40 px-6 flex items-center justify-between transition-all duration-300 border-t-0"
                 >
                     <ul className="flex items-center gap-8 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden w-full md:w-auto h-full px-2">
                         {navLinks.map((link) => {

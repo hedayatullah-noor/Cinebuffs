@@ -1,0 +1,337 @@
+npm warn deprecated next@15.1.6: This version has a security vulnerability. Please upgrade to a patched version. See https://nextjs.org/blog/CVE-2025-66478 for more details.
+
+2
+
+
+3
+
+added 416 packages, and audited 417 packages in 11s
+
+4
+
+
+5
+
+149 packages are looking for funding
+
+6
+
+run `npm fund` for details
+
+7
+
+
+8
+
+1 critical severity vulnerability
+
+9
+
+
+10
+
+To address all issues, run:
+
+11
+
+npm audit fix --force
+
+12
+
+
+13
+
+Run `npm audit` for details.
+
+14
+
+npm notice
+
+15
+
+npm notice New major version of npm available! 10.9.4 -> 11.12.1
+
+16
+
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.12.1
+
+17
+
+npm notice To update run: npm install -g npm@11.12.1
+
+18
+
+npm notice
+
+19
+
+
+20
+
+> cinebuffs@0.1.0 build
+
+21
+
+> next build
+
+22
+
+
+23
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+
+24
+
+This information is used to shape Next.js' roadmap and prioritize features.
+
+25
+
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+
+26
+
+https://nextjs.org/telemetry
+
+27
+
+
+28
+
+▲ Next.js 15.1.6
+
+29
+
+
+30
+
+Creating an optimized production build ...
+
+31
+
+✓ Compiled successfully
+
+32
+
+Linting and checking validity of types ...
+
+33
+
+⨯ ESLint: Cannot find module '/home/u935183846/domains/cinebuffs.org/public_html/.builds/source/repository/node_modules/eslint-config-next/core-web-vitals' imported from /home/u935183846/domains/cinebuffs.org/public_html/.builds/source/repository/eslint.config.mjs Did you mean to import "eslint-config-next/core-web-vitals.js"?
+
+34
+
+Collecting page data ...
+
+35
+
+Generating static pages (0/36) ...
+
+36
+
+Generating static pages (9/36)
+
+37
+
+Generating static pages (18/36)
+
+38
+
+Generating static pages (27/36)
+
+39
+
+✓ Generating static pages (36/36)
+
+40
+
+Finalizing page optimization ...
+
+41
+
+Collecting build traces ...
+
+42
+
+
+43
+
+Route (app) Size First Load JS
+
+44
+
+┌ ○ / 4.26 kB 163 kB
+
+45
+
+├ ○ /_not-found 986 B 106 kB
+
+46
+
+├ ○ /about 201 B 106 kB
+
+47
+
+├ ○ /admin 4.8 kB 161 kB
+
+48
+
+├ ƒ /admin/reviews/[slug]/edit 3.61 kB 160 kB
+
+49
+
+├ ƒ /api/admin/reviews 201 B 106 kB
+
+50
+
+├ ƒ /api/admin/reviews/[slug] 201 B 106 kB
+
+51
+
+├ ƒ /api/admin/stats 201 B 106 kB
+
+52
+
+├ ƒ /api/admin/subscribers 201 B 106 kB
+
+53
+
+├ ƒ /api/admin/subscribers/export 201 B 106 kB
+
+54
+
+├ ƒ /api/admin/users 201 B 106 kB
+
+55
+
+├ ƒ /api/admin/users/role 201 B 106 kB
+
+56
+
+├ ƒ /api/auth/login 201 B 106 kB
+
+57
+
+├ ƒ /api/auth/logout 201 B 106 kB
+
+58
+
+├ ƒ /api/auth/me 201 B 106 kB
+
+59
+
+├ ƒ /api/auth/profile 201 B 106 kB
+
+60
+
+├ ƒ /api/auth/signup 201 B 106 kB
+
+61
+
+├ ƒ /api/comments 201 B 106 kB
+
+62
+
+├ ƒ /api/contributors 201 B 106 kB
+
+63
+
+├ ƒ /api/dump 201 B 106 kB
+
+64
+
+├ ƒ /api/generate 201 B 106 kB
+
+65
+
+├ ƒ /api/migrate 201 B 106 kB
+
+66
+
+├ ƒ /api/reviews 201 B 106 kB
+
+67
+
+├ ƒ /api/reviews/[slug] 201 B 106 kB
+
+68
+
+├ ƒ /api/subscribe 201 B 106 kB
+
+69
+
+├ ƒ /api/users 201 B 106 kB
+
+70
+
+├ ○ /blog 2.37 kB 161 kB
+
+71
+
+├ ○ /contact 3.41 kB 114 kB
+
+72
+
+├ ○ /contributors 1.93 kB 147 kB
+
+73
+
+├ ○ /login 2.35 kB 151 kB
+
+74
+
+├ ○ /moderator 3.03 kB 155 kB
+
+75
+
+├ ○ /movies 2.37 kB 161 kB
+
+76
+
+├ ○ /profile 2.82 kB 148 kB
+
+77
+
+├ ƒ /reviews/[slug] 7.42 kB 162 kB
+
+78
+
+├ ○ /series 2.37 kB 161 kB
+
+79
+
+├ ○ /signup 2.46 kB 151 kB
+
+80
+
+└ ○ /subscribe 1.96 kB 147 kB
+
+81
+
++ First Load JS shared by all 105 kB
+
+82
+
+├ chunks/1517-6ac8d44d17b08e04.js 50.4 kB
+
+83
+
+├ chunks/4bd1b696-07e64e043581aec8.js 53 kB
+
+84
+
+└ other shared chunks (total) 1.91 kB
+
+85
+
+
+86
+
+
+87
+
+○ (Static) prerendered as static content
+
+88
+
+ƒ (Dynamic) server-rendered on demand

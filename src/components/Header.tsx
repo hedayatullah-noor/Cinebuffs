@@ -87,7 +87,7 @@ export default function Header() {
     ];
 
     return (
-        <header className="fixed top-0 left-0 right-0 h-20 bg-white dark:bg-zinc-950 z-50 flex items-center justify-between px-6 border-b-2 border-black/90 dark:border-gray-800 shadow-sm transition-colors duration-300">
+        <header className="fixed top-0 left-0 right-0 h-20 glass z-50 flex items-center justify-between px-6 transition-all duration-300">
             <div className="flex items-center gap-4">
                 {user && (user.role === 'ADMIN' || user.role === 'MODERATOR') && (
                     <Link

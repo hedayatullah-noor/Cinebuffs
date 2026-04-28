@@ -233,9 +233,8 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ slug: s
                     {/* Review Text */}
                     <div
                         className="prose prose-lg dark:prose-invert max-w-none prose-p:text-gray-800 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-headings:text-black dark:prose-headings:text-white prose-headings:font-black prose-headings:font-serif prose-headings:uppercase prose-a:text-black dark:prose-a:text-white prose-a:underline prose-a:decoration-2 prose-a:underline-offset-4 prose-a:font-bold whitespace-pre-wrap font-serif text-lg md:text-xl md:leading-relaxed"
-                    >
-                        {content}
-                    </div>
+                        dangerouslySetInnerHTML={{ __html: content }}
+                    />
 
                     {/* Image Gallery */}
                     {parsedGallery.length > 0 ? (

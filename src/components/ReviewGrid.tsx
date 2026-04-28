@@ -24,6 +24,7 @@ export function ReviewGridInner({ defaultType = "All", hideHeader = false }: { d
     const [reviews, setReviews] = useState<Review[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [visibleCount, setVisibleCount] = useState(10);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const searchParams = useSearchParams();
@@ -82,27 +83,31 @@ export function ReviewGridInner({ defaultType = "All", hideHeader = false }: { d
 
     // Infinite scroll observer
     useEffect(() => {
-        if (isLoading || isFiltering || visibleCount >= reviews.length) return;
+        if (isLoading || isFiltering || isFetchingMore || visibleCount >= reviews.length) return;
 
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-                // Calculate how many to load (load 2 more rows at a time)
-                let cols = 5;
-                const width = window.innerWidth;
-                if (width < 640) cols = 1;
-                else if (width < 1024) cols = 2;
-                else if (width < 1280) cols = 3;
+                setIsFetchingMore(true);
+                setTimeout(() => {
+                    // Calculate how many to load (load 2 more rows at a time)
+                    let cols = 5;
+                    const width = window.innerWidth;
+                    if (width < 640) cols = 1;
+                    else if (width < 1024) cols = 2;
+                    else if (width < 1280) cols = 3;
 
-                setVisibleCount(prev => Math.min(prev + (cols * 2), reviews.length));
+                    setVisibleCount(prev => Math.min(prev + (cols * 2), reviews.length));
+                    setIsFetchingMore(false);
+                }, 1000); // 1 second ka loading effect
             }
-        }, { rootMargin: "150px" });
+        }, { rootMargin: "10px" });
 
         if (loadMoreRef.current) {
             observer.observe(loadMoreRef.current);
         }
 
         return () => observer.disconnect();
-    }, [visibleCount, reviews.length, isLoading, isFiltering]);
+    }, [visibleCount, reviews.length, isLoading, isFiltering, isFetchingMore]);
 
     const getHeadingText = () => {
         if (searchQuery) return `Search Results: "${searchQuery}"`;

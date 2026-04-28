@@ -22,10 +22,15 @@ export async function GET() {
         cleanContent = cleanContent.replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, '');
         cleanContent = cleanContent.replace(/<img[^>]*>/gi, '');
         
-        // 3. Remove weird empty paragraphs
-        cleanContent = cleanContent.replace(/<p>&nbsp;<\/p>/gi, '');
+        // Convert paragraph ends to double newlines for spacing
+        cleanContent = cleanContent.replace(/<\/p>\s*<p[^>]*>/gi, '\n\n');
         
-        // 4. Remove extra line breaks
+        // Strip all remaining HTML tags
+        cleanContent = cleanContent.replace(/<[^>]+>/g, '');
+        
+        // Fix weird HTML entities
+        cleanContent = cleanContent.replace(/&nbsp;/g, ' ');
+        cleanContent = cleanContent.replace(/&amp;/g, '&');
         cleanContent = cleanContent.trim();
         
         await prisma.review.update({

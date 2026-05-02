@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, UploadCloud, Film, Tv, CheckCircle2, Star, FileText, User, Search } from "lucide-react";
+import RichTextEditor from "./RichTextEditor";
 
 interface AddReviewModalProps {
     isOpen: boolean;
@@ -17,6 +18,7 @@ export default function AddReviewModal({ isOpen, onClose, initialMediaType = "Mo
     const [posterFile, setPosterFile] = useState<File | null>(null);
     const [extraImages, setExtraImages] = useState<FileList | null>(null);
     const [rating, setRating] = useState(0);
+    const [editorContent, setEditorContent] = useState("");
     
     // Admin "On Behalf Of" Searchable Feature
     const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -33,6 +35,7 @@ export default function AddReviewModal({ isOpen, onClose, initialMediaType = "Mo
             setRating(0);
             setSelectedAuthor(null);
             setSearchTerm("");
+            setEditorContent("");
             
             fetch('/api/auth/me')
                 .then(res => res.json())
@@ -367,11 +370,16 @@ export default function AddReviewModal({ isOpen, onClose, initialMediaType = "Mo
                                                 )}
                                             </div>
 
-                                            <div className="flex flex-col gap-2 h-full">
+                                         <div className="flex flex-col gap-2 h-full min-h-[450px]">
                                                 <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">
                                                     {mediaType === "Blog" ? "Editorial Content" : "Critical Analysis"}
                                                 </label>
-                                                <textarea name="content" required placeholder={`Write your full ${mediaType === "Blog" ? "blog post" : "review"} here...`} className="w-full h-full min-h-[300px] bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none resize-none font-serif text-lg leading-relaxed placeholder:text-gray-300 dark:placeholder:text-gray-700"></textarea>
+                                                <RichTextEditor 
+                                                    value={editorContent}
+                                                    onChange={setEditorContent}
+                                                    placeholder={`Write your full ${mediaType === "Blog" ? "blog post" : "review"} here...`}
+                                                />
+                                                <input type="hidden" name="content" value={editorContent} required />
                                             </div>
                                         </div>
 

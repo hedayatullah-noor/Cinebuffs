@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import RichTextEditor from "@/components/RichTextEditor";
 
 export default function EditReviewPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);

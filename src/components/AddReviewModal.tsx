@@ -19,6 +19,7 @@ export default function AddReviewModal({ isOpen, onClose, initialMediaType = "Mo
     const [extraImages, setExtraImages] = useState<FileList | null>(null);
     const [rating, setRating] = useState(0);
     const [editorContent, setEditorContent] = useState("");
+    const [isFullScreenEditor, setIsFullScreenEditor] = useState(false);
     
     // Admin "On Behalf Of" Searchable Feature
     const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -36,6 +37,7 @@ export default function AddReviewModal({ isOpen, onClose, initialMediaType = "Mo
             setSelectedAuthor(null);
             setSearchTerm("");
             setEditorContent("");
+            setIsFullScreenEditor(false);
             
             fetch('/api/auth/me')
                 .then(res => res.json())
@@ -309,121 +311,149 @@ export default function AddReviewModal({ isOpen, onClose, initialMediaType = "Mo
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                            <div className="flex flex-col gap-8">
-                                                <div className="flex flex-col gap-2">
-                                                    <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Title</label>
-                                                    <input name="title" required type="text" placeholder={`Enter ${mediaType} Title`} className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none font-serif text-lg placeholder:text-gray-300 dark:placeholder:text-gray-700" />
+                                        {!isFullScreenEditor ? (
+                                            <>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                                    <div className="flex flex-col gap-8">
+                                                        <div className="flex flex-col gap-2">
+                                                            <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Title</label>
+                                                            <input name="title" required type="text" placeholder={`Enter ${mediaType} Title`} className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none font-serif text-lg placeholder:text-gray-300 dark:placeholder:text-gray-700" />
+                                                        </div>
+
+                                                        {mediaType !== "Blog" && (
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                                                <div className="flex flex-col gap-2">
+                                                                    <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Cast Ensemble</label>
+                                                                    <input name="cast" required type="text" placeholder="e.g. Cillian Murphy" className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none font-serif text-sm" />
+                                                                </div>
+
+                                                                <div className="flex flex-col gap-2">
+                                                                    <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">
+                                                                        {mediaType === "Movie" ? "Director" : "Creator"}
+                                                                    </label>
+                                                                    <input name="director" required type="text" placeholder={`Enter ${mediaType === "Movie" ? "Director" : "Creator"}`} className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none font-serif text-sm" />
+                                                                </div>
+
+                                                                <div className="flex flex-col gap-2 relative">
+                                                                    <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Editorial Genre</label>
+                                                                    <select name="genre" required defaultValue="" className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none appearance-none cursor-pointer font-black uppercase tracking-widest text-[10px]">
+                                                                        {["Action", "Adventure", "Comedy", "Drama", "Horror", "Sci-Fi", "Thriller", "Romance", "Documentary", "Animation"].map(g => (
+                                                                            <option key={g} value={g} className="bg-white dark:bg-zinc-950 text-black dark:text-white">{g}</option>
+                                                                        ))}
+                                                                    </select>
+                                                                    <div className="absolute right-4 top-[42px] pointer-events-none text-black dark:text-white"> ▼ </div>
+                                                                </div>
+
+                                                                <div className="flex flex-col gap-2">
+                                                                    <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Available At</label>
+                                                                    <input name="availableOn" required type="text" placeholder="e.g. Netflix" className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none font-serif text-sm" />
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {mediaType !== "Blog" && (
+                                                            <div className="flex flex-col gap-2">
+                                                                <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Critical Rating (Decimal Allowed)</label>
+                                                                <div className="flex flex-col gap-4 bg-gray-50 dark:bg-zinc-900 border-2 border-black dark:border-white p-6">
+                                                                    <div className="flex items-center gap-4">
+                                                                        <input 
+                                                                            type="number" 
+                                                                            min="0" max="5" step="0.1"
+                                                                            value={rating}
+                                                                            onChange={(e) => setRating(Number(e.target.value))}
+                                                                            className="w-24 bg-white dark:bg-black border-2 border-black dark:border-white px-3 py-2 text-xl font-black font-serif italic text-black dark:text-white outline-none"
+                                                                        />
+                                                                        <span className="text-xl font-black font-serif italic text-gray-400">/ 5.0 STARS</span>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        {renderStars()}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex flex-col gap-4 justify-center items-center bg-gray-50 dark:bg-zinc-900 border-2 border-dashed border-black/20 dark:border-white/20 p-12 text-center group hover:border-black dark:hover:border-white transition-all cursor-pointer" onClick={() => setIsFullScreenEditor(true)}>
+                                                        <FileText className="w-12 h-12 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors" />
+                                                        <div>
+                                                            <p className="text-black dark:text-white font-black uppercase tracking-widest text-sm mb-1">
+                                                                {editorContent ? "Review Written" : "Empty Canvas"}
+                                                            </p>
+                                                            <p className="text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                                                                {editorContent ? "Click to edit your content" : "Click to start writing your review"}
+                                                            </p>
+                                                        </div>
+                                                        <button type="button" className="mt-6 px-6 py-3 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-[10px] border-2 border-black dark:border-white group-hover:bg-[var(--color-brand)] dark:group-hover:bg-[var(--color-brand)] dark:group-hover:text-white transition-all">
+                                                            {editorContent ? "Open Editor" : "Write Review"}
+                                                        </button>
+                                                    </div>
                                                 </div>
 
-                                                {mediaType !== "Blog" && (
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                                        <div className="flex flex-col gap-2">
-                                                            <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Cast Ensemble</label>
-                                                            <input name="cast" required type="text" placeholder="e.g. Cillian Murphy" className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none font-serif text-sm" />
-                                                        </div>
-
-                                                        <div className="flex flex-col gap-2">
-                                                            <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">
-                                                                {mediaType === "Movie" ? "Director" : "Creator"}
-                                                            </label>
-                                                            <input name="director" required type="text" placeholder={`Enter ${mediaType === "Movie" ? "Director" : "Creator"}`} className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none font-serif text-sm" />
-                                                        </div>
-
-                                                        <div className="flex flex-col gap-2 relative">
-                                                            <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Editorial Genre</label>
-                                                            <select name="genre" required defaultValue="" className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none appearance-none cursor-pointer font-black uppercase tracking-widest text-[10px]">
-                                                                {["Action", "Adventure", "Comedy", "Drama", "Horror", "Sci-Fi", "Thriller", "Romance", "Documentary", "Animation"].map(g => (
-                                                                    <option key={g} value={g} className="bg-white dark:bg-zinc-950 text-black dark:text-white">{g}</option>
-                                                                ))}
-                                                            </select>
-                                                            <div className="absolute right-4 top-[42px] pointer-events-none text-black dark:text-white"> ▼ </div>
-                                                        </div>
-
-                                                        <div className="flex flex-col gap-2">
-                                                            <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Available At</label>
-                                                            <input name="availableOn" required type="text" placeholder="e.g. Netflix" className="w-full bg-white dark:bg-zinc-950 border-2 border-black dark:border-white px-4 py-3 text-black dark:text-white outline-none font-serif text-sm" />
-                                                        </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t-2 border-black dark:border-white">
+                                                    <div className="flex flex-col gap-3">
+                                                        <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest flex justify-between">
+                                                            Cover Artwork <span className="text-[var(--color-brand)]">*Required</span>
+                                                        </label>
+                                                        <label className="border-2 border-dashed border-black dark:border-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-white dark:bg-zinc-950 h-32 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all group relative overflow-hidden">
+                                                            <input type="file" accept="image/*" required className="hidden" onChange={(e) => e.target.files && setPosterFile(e.target.files[0])} />
+                                                            {posterFile ? (
+                                                                <div className="flex flex-col items-center justify-center text-center p-4">
+                                                                    <CheckCircle2 className="w-6 h-6 mb-2 text-green-500" />
+                                                                    <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[200px]">{posterFile.name}</span>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <UploadCloud className="w-6 h-6" />
+                                                                    <span className="text-[10px] font-black uppercase tracking-widest text-center px-4">Upload Portrait Poster</span>
+                                                                </>
+                                                            )}
+                                                        </label>
                                                     </div>
-                                                )}
 
-                                                {mediaType !== "Blog" && (
-                                                    <div className="flex flex-col gap-2">
-                                                        <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">Critical Rating (Decimal Allowed)</label>
-                                                        <div className="flex flex-col gap-4 bg-gray-50 dark:bg-zinc-900 border-2 border-black dark:border-white p-6">
-                                                            <div className="flex items-center gap-4">
-                                                                <input 
-                                                                    type="number" 
-                                                                    min="0" max="5" step="0.1"
-                                                                    value={rating}
-                                                                    onChange={(e) => setRating(Number(e.target.value))}
-                                                                    className="w-24 bg-white dark:bg-black border-2 border-black dark:border-white px-3 py-2 text-xl font-black font-serif italic text-black dark:text-white outline-none"
-                                                                />
-                                                                <span className="text-xl font-black font-serif italic text-gray-400">/ 5.0 STARS</span>
-                                                            </div>
-                                                            <div className="flex items-center gap-2">
-                                                                {renderStars()}
-                                                            </div>
-                                                            <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Tip: Click on stars to set full points or type precise decimal.</p>
-                                                        </div>
+                                                    <div className="flex flex-col gap-3">
+                                                        <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest flex justify-between">
+                                                            Media Gallery <span className="text-gray-400 font-bold lowercase">Optional</span>
+                                                        </label>
+                                                        <label className="border-2 border-dashed border-black dark:border-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-white dark:bg-zinc-950 h-32 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all group relative overflow-hidden">
+                                                            <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && setExtraImages(e.target.files)} />
+                                                            {extraImages && extraImages.length > 0 ? (
+                                                                <div className="flex flex-col items-center justify-center text-center p-4">
+                                                                    <CheckCircle2 className="w-6 h-6 mb-2 text-green-500" />
+                                                                    <span className="text-[10px] font-black uppercase tracking-widest">{extraImages.length} files selected</span>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <UploadCloud className="w-6 h-6" />
+                                                                    <span className="text-[10px] font-black uppercase tracking-widest text-center px-4">Upload Landscape Stills</span>
+                                                                </>
+                                                            )}
+                                                        </label>
                                                     </div>
-                                                )}
-                                            </div>
-
-                                         <div className="flex flex-col gap-2 h-full min-h-[450px]">
-                                                <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest">
-                                                    {mediaType === "Blog" ? "Editorial Content" : "Critical Analysis"}
-                                                </label>
-                                                <RichTextEditor 
-                                                    value={editorContent}
-                                                    onChange={setEditorContent}
-                                                    placeholder={`Write your full ${mediaType === "Blog" ? "blog post" : "review"} here...`}
-                                                />
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col gap-6 min-h-[500px]">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex flex-col">
+                                                        <h3 className="text-xl font-black uppercase tracking-widest text-black dark:text-white">Full Screen Editor</h3>
+                                                        <p className="text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase tracking-widest">Drafting your masterpiece...</p>
+                                                    </div>
+                                                    <button 
+                                                        type="button" 
+                                                        onClick={() => setIsFullScreenEditor(false)}
+                                                        className="px-6 py-2 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-[10px] border-2 border-black dark:border-white hover:bg-[var(--color-brand)] dark:hover:bg-[var(--color-brand)] dark:hover:text-white transition-all"
+                                                    > Done Writing </button>
+                                                </div>
+                                                <div className="flex-1 min-h-[60vh]">
+                                                    <RichTextEditor 
+                                                        value={editorContent}
+                                                        onChange={setEditorContent}
+                                                        placeholder={`Start writing your ${mediaType.toLowerCase()} analysis... Use the toolbar for formatting.`}
+                                                    />
+                                                </div>
                                                 <input type="hidden" name="content" value={editorContent} required />
                                             </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t-2 border-black dark:border-white">
-                                            <div className="flex flex-col gap-3">
-                                                <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest flex justify-between">
-                                                    Cover Artwork <span className="text-[var(--color-brand)]">*Required</span>
-                                                </label>
-                                                <label className="border-2 border-dashed border-black dark:border-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-white dark:bg-zinc-950 h-32 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all group relative overflow-hidden">
-                                                    <input type="file" accept="image/*" required className="hidden" onChange={(e) => e.target.files && setPosterFile(e.target.files[0])} />
-                                                    {posterFile ? (
-                                                        <div className="flex flex-col items-center justify-center text-center p-4">
-                                                            <CheckCircle2 className="w-6 h-6 mb-2 text-green-500" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[200px]">{posterFile.name}</span>
-                                                        </div>
-                                                    ) : (
-                                                        <>
-                                                            <UploadCloud className="w-6 h-6" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-center px-4">Upload Portrait Poster</span>
-                                                        </>
-                                                    )}
-                                                </label>
-                                            </div>
-
-                                            <div className="flex flex-col gap-3">
-                                                <label className="text-black dark:text-white text-[10px] font-black uppercase tracking-widest flex justify-between">
-                                                    Media Gallery <span className="text-gray-400 font-bold lowercase">Optional</span>
-                                                </label>
-                                                <label className="border-2 border-dashed border-black dark:border-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-white dark:bg-zinc-950 h-32 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all group relative overflow-hidden">
-                                                    <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && setExtraImages(e.target.files)} />
-                                                    {extraImages && extraImages.length > 0 ? (
-                                                        <div className="flex flex-col items-center justify-center text-center p-4">
-                                                            <CheckCircle2 className="w-6 h-6 mb-2 text-green-500" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest">{extraImages.length} files selected</span>
-                                                        </div>
-                                                    ) : (
-                                                        <>
-                                                            <UploadCloud className="w-6 h-6" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-center px-4">Upload Landscape Stills</span>
-                                                        </>
-                                                    )}
-                                                </label>
-                                            </div>
-                                        </div>
+                                        )}
                                     </form>
                                 </div>
 

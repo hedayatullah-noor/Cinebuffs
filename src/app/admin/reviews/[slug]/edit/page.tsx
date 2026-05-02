@@ -221,9 +221,9 @@ export default function EditReviewPage({ params }: { params: Promise<{ slug: str
 
             <div className="w-full max-w-[1500px] mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12">
                 <div className="lg:col-span-2 space-y-12">
-                    <div className="flex flex-col gap-3 min-h-[600px]">
+                    <div className="flex flex-col gap-3">
                         <label className="text-sm font-black uppercase tracking-widest text-black">Editorial Content</label>
-                        <RichTextEditor value={content} onChange={setContent} placeholder="Edit your review content..." />
+                        <textarea value={content} onChange={(e) => setContent(e.target.value)} className="w-full min-h-[500px] bg-white border-2 border-black p-6 text-black leading-relaxed outline-none focus:border-[var(--color-brand)] font-serif text-lg" />
                     </div>
                 </div>
 

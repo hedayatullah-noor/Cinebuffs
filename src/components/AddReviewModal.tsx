@@ -445,13 +445,16 @@ export default function AddReviewModal({ isOpen, onClose, initialMediaType = "Mo
                                                     > Done Writing </button>
                                                 </div>
                                                 <div className="flex-1 min-h-[60vh]">
-                                                    <RichTextEditor 
+                                                    <textarea 
+                                                        name="content"
                                                         value={editorContent}
-                                                        onChange={setEditorContent}
-                                                        placeholder={`Start writing your ${mediaType.toLowerCase()} analysis... Use the toolbar for formatting.`}
+                                                        onChange={(e) => setEditorContent(e.target.value)}
+                                                        required
+                                                        className="w-full h-full min-h-[400px] bg-white dark:bg-zinc-950 border-2 border-black dark:border-white p-6 outline-none font-serif text-lg"
+                                                        placeholder={`Start writing your ${mediaType.toLowerCase()} analysis...`}
                                                     />
                                                 </div>
-                                                <input type="hidden" name="content" value={editorContent} required />
+                                                <input type="hidden" name="content" value={editorContent} />
                                             </div>
                                         )}
                                     </form>

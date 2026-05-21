@@ -2,24 +2,57 @@ import ReviewGrid from "@/components/ReviewGrid";
 
 export const metadata = {
     title: "Blog | CineBuffs",
-    description: "Read the latest news, articles, and insights on movies and series by the CineBuffs community.",
+    description: "Articles, editorials and special features from the CineBuffs team.",
 };
 
 export default function BlogPage() {
     return (
-        <div className="min-h-screen bg-white dark:bg-zinc-950 py-10 transition-colors duration-300">
-            {/* Header Section */}
-            <div className="max-w-[1500px] mx-auto px-6 mb-12 mt-10 border-b-2 border-black dark:border-white pb-8 transition-colors">
-                <h1 className="text-4xl md:text-5xl font-black font-serif text-black dark:text-white tracking-tight mb-4 uppercase">
-                    Our <span className="text-[var(--color-brand)]">Blog</span>
-                </h1>
-                <p className="text-gray-600 dark:text-gray-400 font-bold uppercase tracking-widest text-sm max-w-2xl leading-relaxed">
-                    Dive into our articles, editorials, and special features. Stay updated with the latest in the cinematic universe.
-                </p>
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+
+            {/* ── Editorial page header ── */}
+            <div className="w-full px-5 pt-10 pb-8" style={{ borderBottom: '2px solid var(--color-text-main)' }}>
+                <div className="max-w-[1600px] mx-auto">
+
+                    <p style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 10,
+                        fontWeight: 700,
+                        letterSpacing: '0.15em',
+                        textTransform: 'uppercase',
+                        color: 'var(--color-brand)',
+                        marginBottom: 12,
+                    }}>
+                        CineBuffs / Blog
+                    </p>
+
+                    <h1 style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                        fontWeight: 700,
+                        color: 'var(--color-text-main)',
+                        lineHeight: 1.1,
+                        letterSpacing: '-0.02em',
+                        marginBottom: 16,
+                    }}>
+                        The Blog
+                    </h1>
+
+                    <p style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 13,
+                        color: 'var(--color-text-muted)',
+                        maxWidth: 560,
+                        lineHeight: 1.6,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        fontWeight: 600,
+                    }}>
+                        Editorials, essays, and special features on the art of cinema.
+                    </p>
+                </div>
             </div>
 
-            {/* Reuse the ReviewGrid but parse it as 'Blog' exclusively */}
-            <ReviewGrid defaultType="Blog" hideHeader={true} />
+            <ReviewGrid defaultType="Blog" hideHeader={false} />
         </div>
     );
 }

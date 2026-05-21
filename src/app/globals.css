@@ -3,42 +3,299 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-brand: #c90000;
-  --color-brand-hover: #990000;
-  --color-bg-dark: #ffffff;
-  --color-bg-card: #f9fafb;
-  --color-text-main: #333333;
-  --color-text-light: #000000;
+  --color-brand: #8B0000;
+  --color-brand-hover: #6B0000;
+  --color-gold: #D4A843;
+  --color-gold-hover: #B8902E;
 
-  --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-serif: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --color-bg-primary: #F7F4EF;
+  --color-bg-card: #FFFFFF;
+  --color-bg-dark: #0D0D0D;
+  --color-bg-card-dark: #1A1A1A;
+
+  --color-text-main: #1A1A1A;
+  --color-text-muted: #6B6B6B;
+  --color-text-light: #F7F4EF;
+
+  --color-border: #E0DDD6;
+  --color-border-dark: #2A2A2A;
+
+  --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-playfair), 'Playfair Display', Georgia,
+    'Times New Roman', serif;
 }
 
 @layer base {
+  html { scroll-behavior: smooth; }
+
   body {
-    @apply bg-white text-black font-sans antialiased transition-colors duration-300 dark:bg-zinc-950 dark:text-white;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* KEY: no default margin/padding on body */
+    margin: 0;
+    padding: 0;
+  }
+  .dark body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-light);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--color-text-main);
+    margin: 0;
+  }
+  .dark h1, .dark h2, .dark h3,
+  .dark h4, .dark h5, .dark h6 {
+    color: var(--color-text-light);
   }
 
   * {
-    @apply border-gray-200 dark:border-gray-800;
+    box-sizing: border-box;
+    border-color: var(--color-border);
+  }
+  .dark * { border-color: var(--color-border-dark); }
+
+  a { color: inherit; text-decoration: none; }
+
+  ::selection {
+    background-color: var(--color-brand);
+    color: #fff;
   }
 }
 
 @layer utilities {
+
+  /* ── Glass navbar ── */
   .glass {
-    @apply bg-white/75 dark:bg-zinc-950/75 backdrop-blur-2xl border border-gray-200/50 dark:border-gray-800/50 shadow-[0_4px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)];
+    background-color: rgba(247, 244, 239, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .dark .glass {
+    background-color: rgba(13, 13, 13, 0.94);
   }
 
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  /* ── Scrollbar hide ── */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Red rule ── */
+  .rule-red {
+    display: block;
+    width: 40px;
+    height: 3px;
+    background-color: var(--color-brand);
+    flex-shrink: 0;
   }
 
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  /* ── Tag label ── */
+  .tag-label {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    background-color: var(--color-brand);
+    color: #fff;
+    line-height: 1;
+  }
+
+  /* ── Section heading ── */
+  .section-heading {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--color-text-main);
+    display: inline-block;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .dark .section-heading {
+    color: var(--color-text-light);
+    border-bottom-color: var(--color-text-light);
+  }
+
+  /* ─────────────────────────────────────────────
+     PAGE CONTAINER
+     Symmetric padding on both sides.
+     All sections (ReviewGrid, GenreDropdown etc.)
+     must use this class — no extra left/right padding.
+  ───────────────────────────────────────────── */
+  .page-container {
+    width: 100%;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.25rem;   /* 20px - tight but breathable */
+    padding-right: 1.25rem;
+  }
+
+  /* ── Card base ── */
+  .card-base {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .dark .card-base {
+    background-color: var(--color-bg-card-dark);
+    border-color: var(--color-border-dark);
+  }
+
+  /* ── Hero arrow buttons ── */
+  .hero-arrow {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    color: var(--color-text-main);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .hero-arrow:hover {
+    background-color: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+  }
+
+  /* ── Hero CTA button ── */
+  .hero-cta {
+    display: inline-block;
+    padding: 9px 22px;
+    border: 1px solid var(--color-text-main);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: var(--font-sans);
+    color: var(--color-text-main);
+    transition: all 0.2s ease;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .hero-cta:hover {
+    background-color: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+  }
+  .dark .hero-cta {
+    border-color: var(--color-text-light);
+    color: var(--color-text-light);
+  }
+  .dark .hero-cta:hover {
+    background-color: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+  }
+
+  /* ── Infinite scroll spinner ── */
+  .load-more-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-brand);
+    border-radius: 50%;
+    animation: cb-spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes cb-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── Review card hover ── */
+  .card-poster-img {
+    transition: transform 0.5s ease;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    position: absolute;
+    inset: 0;
+  }
+  .review-card-wrap:hover .card-poster-img {
+    transform: scale(1.04);
+  }
+  .review-card-wrap:hover .card-hover-overlay {
+    background-color: rgba(0, 0, 0, 0.10) !important;
+  }
+  .review-card-wrap:hover .card-title-el {
+    color: var(--color-brand) !important;
+  }
+
+  /* Dark mode cards */
+  .dark .review-card-wrap {
+    background-color: var(--color-bg-card-dark);
+    border-color: var(--color-border-dark);
+  }
+  .dark .card-title-el {
+    color: var(--color-text-light);
+  }
+  .dark .card-author-date {
+    border-top-color: var(--color-border-dark);
+    color: var(--color-text-muted);
+  }
+
+  /* ── Animation utilities ── */
+
+  /* Shimmer loading skeleton */
+  @keyframes cb-shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-bg-card) 25%,
+      var(--color-border) 50%,
+      var(--color-bg-card) 75%
+    );
+    background-size: 800px 100%;
+    animation: cb-shimmer 1.4s ease-in-out infinite;
+  }
+
+  /* Pulse animation (for loading states) */
+  @keyframes cb-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
+  }
+  .cb-pulse {
+    animation: cb-pulse 1.8s ease-in-out infinite;
+  }
+
+  /* Stagger children: add to parent, children get delay via nth-child */
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 60ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 120ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 180ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 240ms; }
+
+  /* Smooth image loading fade-in */
+  img {
+    transition: opacity 0.3s ease;
+  }
+  img[loading="lazy"] {
+    opacity: 0;
+  }
+  img[loading="lazy"].loaded {
+    opacity: 1;
   }
 }

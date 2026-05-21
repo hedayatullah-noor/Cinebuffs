@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import Link from 'next/link';
+import { useEffect, useState, useRef, useCallback } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
@@ -22,123 +22,202 @@ export default function HeroSlider() {
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-        const fetchLatestReviews = async () => {
-            try {
-                const res = await fetch("/api/reviews?limit=5&status=APPROVED");
-                const data = await res.json();
-                if (Array.isArray(data)) {
-                    setReviews(data);
-                }
-            } catch (err) {
-                console.error("Failed to fetch reviews for hero slider:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchLatestReviews();
+        fetch("/api/reviews?limit=5&status=APPROVED")
+            .then(res => res.json())
+            .then(data => { if (Array.isArray(data)) setReviews(data); })
+            .catch(() => {})
+            .finally(() => setLoading(false));
     }, []);
 
-    const nextSlide = () => {
-        setActiveIndex((prev) => (prev + 1) % reviews.length);
-    };
+    const nextSlide = useCallback(() => {
+        setActiveIndex(prev => (prev + 1) % reviews.length);
+    }, [reviews.length]);
 
-    const prevSlide = () => {
-        setActiveIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
-    };
+    const prevSlide = useCallback(() => {
+        setActiveIndex(prev => (prev - 1 + reviews.length) % reviews.length);
+    }, [reviews.length]);
 
-    const resetInterval = () => {
+    const resetInterval = useCallback(() => {
         if (intervalRef.current) clearInterval(intervalRef.current);
         intervalRef.current = setInterval(nextSlide, 6000);
-    };
+    }, [nextSlide]);
 
     useEffect(() => {
+        if (reviews.length === 0) return;
         resetInterval();
-        return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-        };
-    }, [reviews.length]);
+        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    }, [reviews.length, resetInterval]);
 
     if (loading) {
         return (
-            <div className="w-full h-[50vh] flex items-center justify-center bg-white dark:bg-zinc-950 pt-16">
-                <div className="w-12 h-12 border-4 border-black dark:border-white border-t-transparent dark:border-t-transparent rounded-full animate-spin"></div>
-            </div>
+            <div className="w-full bg-[var(--color-bg-card)] animate-pulse border-b border-[var(--color-border)]"
+                style={{ height: 440, marginBottom: '2.5rem' }} />
         );
     }
 
     if (reviews.length === 0) return null;
 
     const review = reviews[activeIndex];
+    const ratingDisplay = Number(review.rating).toFixed(1);
 
     return (
-        <section className="relative w-full overflow-hidden bg-white dark:bg-zinc-950 mb-6 border-b-2 border-black dark:border-white transition-colors">
-            <div className="w-full max-w-[1500px] mx-auto flex flex-col lg:flex-row min-h-[60vh]">
-                
-                {/* Image Side */}
-                <div className="w-full lg:w-2/3 relative h-[50vh] lg:h-auto bg-black overflow-hidden group border-r-2 border-black dark:border-white">
-                    <AnimatePresence mode="popLayout">
-                        <motion.div
-                            key={activeIndex}
-                            initial={{ opacity: 0, scale: 1.05 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="absolute inset-0"
-                        >
-                            <img
-                                src={review.posterImage}
-                                alt={review.title}
-                                className="w-full h-full object-cover opacity-90"
-                            />
-                        </motion.div>
-                    </AnimatePresence>
-                    
-                    {/* Badge */}
-                    <div className="absolute top-6 left-6 bg-[var(--color-brand)] px-4 py-2 font-black text-white uppercase tracking-widest text-xs z-10 shadow-lg">
-                        {review.type}
+        <>
+            {/*
+              * Full bleed: break out of any parent padding using
+              * negative margin trick. Works regardless of what
+              * page.tsx wraps this in.
+            */}
+            <style>{`
+                .cb-hero-outer {
+                    width: 100%;
+                    border-bottom: 1px solid var(--color-border);
+                    margin-bottom: 1rem;
+                    overflow: hidden;
+                    padding-left: 1.25rem;
+                    padding-right: 0;
+                }
+                .cb-hero-inner {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .cb-hero-img {
+                    position: relative;
+                    width: 100%;
+                    height: 300px;
+                    flex-shrink: 0;
+                    overflow: hidden;
+                    background: #111;
+                }
+                .cb-hero-img img {
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: 50% 30%;
+                    display: block;
+                }
+                .cb-hero-panel {
+                    background-color: var(--color-bg-primary);
+                    border-top: 1px solid var(--color-border);
+                    padding: 1.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    gap: 1rem;
+                }
+                @media (min-width: 1024px) {
+                    .cb-hero-inner {
+                        flex-direction: row;
+                        height: 440px;
+                    }
+                    .cb-hero-img {
+                        width: 62%;
+                        height: 100%;
+                    }
+                    .cb-hero-panel {
+                        flex: 1;
+                        border-top: none;
+                        border-left: 1px solid var(--color-border);
+                        padding: 0 2.5rem;
+                        height: 100%;
+                        gap: 1.25rem;
+                    }
+                }
+                .dark .cb-hero-panel {
+                    background-color: var(--color-bg-dark);
+                    border-color: var(--color-border-dark);
+                }
+            `}</style>
+
+            <section className="cb-hero-outer">
+                <div className="cb-hero-inner">
+
+                    {/* ── Image ── */}
+                    <div className="cb-hero-img">
+                        <AnimatePresence mode="sync">
+                            <motion.div
+                                key={activeIndex}
+                                initial={{ opacity: 0, scale: 1.03 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                                style={{ position: 'absolute', inset: 0 }}
+                            >
+                                <img src={review.posterImage} alt={review.title} />
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Badge */}
+                        <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 10 }}>
+                            <span className="tag-label">{review.type}</span>
+                        </div>
+
+                        {/* Dots */}
+                        <div style={{ position: 'absolute', bottom: 14, left: 14, zIndex: 10, display: 'flex', gap: 6 }}>
+                            {reviews.map((_, i) => (
+                                <button key={i} onClick={() => { setActiveIndex(i); resetInterval(); }}
+                                    aria-label={`Slide ${i + 1}`}
+                                    style={{
+                                        height: 3, width: i === activeIndex ? 24 : 8, padding: 0, border: 'none', cursor: 'pointer',
+                                        backgroundColor: i === activeIndex ? 'var(--color-brand)' : 'rgba(255,255,255,0.5)',
+                                        transition: 'all 0.3s ease', flexShrink: 0,
+                                    }}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Arrows */}
+                        <div style={{ position: 'absolute', bottom: 14, right: 14, zIndex: 10, display: 'flex', gap: 6 }}>
+                            <button onClick={() => { prevSlide(); resetInterval(); }} aria-label="Previous" className="hero-arrow">
+                                <ChevronLeft style={{ width: 16, height: 16 }} />
+                            </button>
+                            <button onClick={() => { nextSlide(); resetInterval(); }} aria-label="Next" className="hero-arrow">
+                                <ChevronRight style={{ width: 16, height: 16 }} />
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="absolute bottom-6 right-6 flex gap-3 z-10">
-                        <button onClick={() => { prevSlide(); resetInterval(); }} className="w-10 h-10 bg-white dark:bg-zinc-950 border-2 border-black dark:border-white text-black dark:text-white flex items-center justify-center hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all">
-                            <ChevronLeft className="w-6 h-6" />
-                        </button>
-                        <button onClick={() => { nextSlide(); resetInterval(); }} className="w-10 h-10 bg-white dark:bg-zinc-950 border-2 border-black dark:border-white text-black dark:text-white flex items-center justify-center hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all">
-                            <ChevronRight className="w-6 h-6" />
-                        </button>
+                    {/* ── Content ── */}
+                    <div className="cb-hero-panel">
+                        <AnimatePresence mode="wait">
+                            <motion.div key={activeIndex}
+                                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: 'easeOut' }}
+                                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                            >
+                                {/* Rating */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                    <Star style={{ width: 15, height: 15, fill: 'var(--color-brand)', color: 'var(--color-brand)', flexShrink: 0 }} />
+                                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-main)' }}>
+                                        {ratingDisplay} / 10
+                                    </span>
+                                </div>
+
+                                {/* Title */}
+                                <h2 style={{
+                                    fontFamily: 'var(--font-serif)', fontWeight: 700, lineHeight: 1.2, margin: 0,
+                                    fontSize: 'clamp(1.35rem, 2vw, 2rem)', color: 'var(--color-text-main)',
+                                    display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                                }}>
+                                    {review.title}
+                                </h2>
+
+                                {/* Genre */}
+                                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontFamily: 'var(--font-sans)', margin: 0 }}>
+                                    Featured in: <span style={{ color: 'var(--color-text-main)' }}>{review.genre}</span>
+                                </p>
+
+                                <span className="rule-red" />
+
+                                <Link href={`/reviews/${review.slug}`} className="hero-cta" style={{ alignSelf: 'flex-start' }}>
+                                    Read Full Article
+                                </Link>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 </div>
-
-                {/* Content Side */}
-                <div className="w-full lg:w-1/3 flex flex-col justify-center px-8 py-12 lg:px-12 bg-white dark:bg-zinc-900 relative z-10">
-                    <AnimatePresence mode="popLayout">
-                        <motion.div
-                            key={activeIndex}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.5 }}
-                            className="flex flex-col h-full justify-center"
-                        >
-                            <div className="flex items-center gap-2 mb-4">
-                                <Star className="w-4 h-4 text-[var(--color-brand)] fill-[var(--color-brand)]" />
-                                <span className="font-black text-lg font-serif italic text-black dark:text-white">{review.rating} / 10</span>
-                            </div>
-                            
-                            <h2 className="text-4xl sm:text-5xl lg:text-5xl font-black font-serif text-black dark:text-white leading-tight mb-6 hover:text-[var(--color-brand)] transition-colors line-clamp-4 uppercase">
-                                <Link href={`/reviews/${review.slug}`}>{review.title}</Link>
-                            </h2>
-                            
-                            <p className="text-gray-500 dark:text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px] mb-8">
-                                Featured In: {review.genre}
-                            </p>
-
-                            <Link href={`/reviews/${review.slug}`} className="inline-block border-2 border-black dark:border-white px-8 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all w-fit">
-                                Read Full Article
-                            </Link>
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
-            </div>
-        </section>
+            </section>
+        </>
     );
 }

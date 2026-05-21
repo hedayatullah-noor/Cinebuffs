@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,11 +15,7 @@ export default function Navbar() {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
             if (currentScrollY > 80) {
-                if (currentScrollY > lastScrollY) {
-                    setIsVisible(false); // Scrolling down
-                } else {
-                    setIsVisible(true); // Scrolling up
-                }
+                setIsVisible(currentScrollY < lastScrollY);
             } else {
                 setIsVisible(true);
             }
@@ -43,38 +39,67 @@ export default function Navbar() {
         <AnimatePresence>
             {isVisible && (
                 <motion.nav
-                    initial={{ y: -100 }}
+                    initial={{ y: -44 }}
                     animate={{ y: 0 }}
-                    exit={{ y: -100 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="fixed top-20 left-0 right-0 h-10 glass z-40 px-6 flex items-center justify-between transition-all duration-300 border-t-0"
+                    exit={{ y: -44 }}
+                    transition={{ duration: 0.28, ease: "easeInOut" }}
+                    className="fixed left-0 right-0 h-11 z-40 border-b border-[var(--color-border)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-primary)] dark:bg-[var(--color-bg-dark)]"
+                    style={{ top: '80px' }} /* h-20 = 80px — exact header height */
                 >
-                    <ul className="flex items-center gap-8 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden w-full md:w-auto h-full px-2">
-                        {navLinks.map((link) => {
-                            const isActive = pathname === link.href;
-                            return (
-                                <li key={link.name} className="h-full flex items-center">
-                                    <Link
-                                        href={link.href}
-                                        className={`text-[10px] font-black uppercase tracking-widest transition-colors hover:text-[var(--color-brand)] h-full flex items-center relative whitespace-nowrap ${isActive ? "text-[var(--color-brand)]" : "text-black dark:text-gray-300"}`}
-                                    >
-                                        {link.name}
-                                        {isActive && (
-                                            <motion.div
-                                                layoutId="navbar-indicator"
-                                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--color-brand)]"
-                                            />
-                                        )}
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                    <div className="page-container h-full flex items-center justify-between">
 
-                    <Link href="/subscribe" className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-black dark:bg-white text-white dark:text-black hover:bg-[var(--color-brand)] dark:hover:bg-[var(--color-brand)] dark:hover:text-white text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border border-black dark:border-white">
-                        <Mail className="w-3 h-3" />
-                        Subscribe
-                    </Link>
+                        {/* Nav links */}
+                        <ul className="hidden md:flex items-center gap-0 h-full overflow-x-auto no-scrollbar">
+                            {navLinks.map((link) => {
+                                const isActive = pathname === link.href;
+                                return (
+                                    <li key={link.name} className="h-full flex items-center">
+                                        <Link
+                                            href={link.href}
+                                            className={`
+                                                relative h-full flex items-center px-4
+                                                text-[10px] font-bold uppercase tracking-widest
+                                                font-[var(--font-sans)]
+                                                whitespace-nowrap
+                                                transition-colors duration-200
+                                                ${isActive
+                                                    ? 'text-[var(--color-brand)]'
+                                                    : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] dark:hover:text-[var(--color-text-light)]'
+                                                }
+                                            `}
+                                        >
+                                            {link.name}
+                                            {isActive && (
+                                                <motion.div
+                                                    layoutId="navbar-active-pill"
+                                                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--color-brand)]"
+                                                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                                />
+                                            )}
+                                        </Link>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+
+                        {/* Subscribe CTA */}
+                        <Link
+                            href="/subscribe"
+                            className="
+                                hidden sm:flex items-center gap-1.5
+                                px-4 py-1.5
+                                bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)]
+                                text-white
+                                text-[10px] font-bold uppercase tracking-widest
+                                font-[var(--font-sans)]
+                                transition-colors duration-200
+                                whitespace-nowrap
+                            "
+                        >
+                            <Mail className="w-3 h-3" />
+                            Subscribe
+                        </Link>
+                    </div>
                 </motion.nav>
             )}
         </AnimatePresence>

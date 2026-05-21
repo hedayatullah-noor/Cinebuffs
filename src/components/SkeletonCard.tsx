@@ -1,20 +1,55 @@
-
 export default function SkeletonCard() {
     return (
-        <div
-            className="flex flex-col w-full bg-gray-50 dark:bg-zinc-900 rounded-none overflow-hidden shadow-md border-2 border-black dark:border-white animate-pulse"
-            style={{ aspectRatio: "1 / 1.75" }}
-        >
-            <div className="w-full h-2/3 bg-gray-200 dark:bg-zinc-800 relative" />
-            <div className="flex flex-col flex-1 p-4 justify-between -mt-6 z-10 bg-white dark:bg-zinc-950 border-t-2 border-black dark:border-white">
-                <div>
-                    <div className="h-6 bg-gray-200 dark:bg-zinc-800 w-3/4 mb-3" />
-                    <div className="h-4 bg-gray-100 dark:bg-zinc-900 w-1/4 mb-4" />
-                </div>
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            border: '1px solid var(--color-border)',
+            overflow: 'hidden',
+            backgroundColor: 'var(--color-bg-card)',
+        }}>
+            {/* Poster placeholder — 3:4 ratio matching ReviewCard */}
+            <div style={{
+                width: '100%',
+                paddingTop: '133%',
+                position: 'relative',
+                flexShrink: 0,
+            }}>
+                <div
+                    className="skeleton-shimmer"
+                    style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundColor: 'var(--color-border)',
+                    }}
+                />
+            </div>
 
-                <div className="flex items-center gap-2 mt-auto border-t-2 border-gray-100 dark:border-zinc-800 pt-3">
-                    <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-zinc-800" />
-                    <div className="h-3 bg-gray-200 dark:bg-zinc-800 rounded w-1/3" />
+            {/* Content placeholder */}
+            <div style={{
+                padding: '10px 12px 14px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+            }}>
+                {/* Rating line */}
+                <div className="skeleton-shimmer" style={{ height: 11, width: '40%', borderRadius: 2 }} />
+
+                {/* Title lines */}
+                <div className="skeleton-shimmer" style={{ height: 13, width: '90%', borderRadius: 2 }} />
+                <div className="skeleton-shimmer" style={{ height: 13, width: '70%', borderRadius: 2 }} />
+                <div className="skeleton-shimmer" style={{ height: 13, width: '55%', borderRadius: 2 }} />
+
+                {/* Author + date */}
+                <div style={{
+                    marginTop: 6,
+                    paddingTop: 8,
+                    borderTop: '1px solid var(--color-border)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                }}>
+                    <div className="skeleton-shimmer" style={{ height: 10, width: '45%', borderRadius: 2 }} />
+                    <div className="skeleton-shimmer" style={{ height: 10, width: '25%', borderRadius: 2 }} />
                 </div>
             </div>
         </div>

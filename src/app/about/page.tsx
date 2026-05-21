@@ -1,99 +1,132 @@
 import { Film, Tv, MonitorPlay, Users, Globe, PlayCircle } from "lucide-react";
-import Image from "next/image";
 
 export default function AboutPage() {
+    const sections = [
+        {
+            icon: MonitorPlay,
+            title: "The Best in Film & Television",
+            body: "Whether you're watching a thrilling movie or binge-watching a popular TV series, these experiences create lasting memories. At CineBuffs, we bring you honest reviews, detailed analysis, and expert insights. No more wasting time on mediocre content — our criticism helps you choose wisely.",
+        },
+        {
+            icon: Tv,
+            title: "Why Criticism Matters",
+            body: "With so many streaming platforms releasing content every day, choosing what to watch can be overwhelming. CineBuffs makes it simple. Our in-depth reviews ensure you always make the right choice — whether you love action-packed blockbusters or quiet, contemplative dramas.",
+        },
+        {
+            icon: PlayCircle,
+            title: "OTT & Streaming Coverage",
+            body: "Streaming services release new content almost every day. CineBuffs analyzes every detail — from plot and performances to cinematography and sound design — helping you find what suits your taste across Netflix, Prime Video, Disney+, and beyond.",
+        },
+        {
+            icon: Users,
+            title: "A Community of Cinephiles",
+            body: "Movies and TV shows spark discussions, debates, and even friendships. We encourage our readers to share their thoughts in the comments. Your voice adds to the conversation — whether you agree or disagree with our ratings.",
+        },
+        {
+            icon: Globe,
+            title: "Beyond Reviews",
+            body: "We do more than just reviews. Our blog covers everything from classic films to the latest trends, exploring the evolution of storytelling in cinema and television. Deep dives, retrospectives, and cultural commentary — all in one place.",
+        },
+        {
+            icon: Film,
+            title: "Join CineBuffs",
+            body: "Are you a movie lover with a knack for writing? CineBuffs is always looking for fresh voices. If you have unique insights, reviews, or opinions, join our community. Your perspective could reach thousands of fellow film enthusiasts.",
+        },
+    ];
+
     return (
-        <div className="min-h-screen bg-gray-50 text-black pt-10 pb-20">
-            {/* Hero Section */}
-            <section className="relative w-full max-w-5xl mx-auto px-6 lg:px-8 py-20 overflow-hidden text-center border-b-2 border-black">
-                <h1 className="text-4xl md:text-6xl font-black font-serif mb-8 tracking-tight uppercase">
-                    About <span>CineBuffs</span>
-                </h1>
-                <p className="text-sm md:text-base text-gray-500 leading-relaxed font-black uppercase tracking-widest max-w-4xl mx-auto">
-                    Step into a world where stories come alive, emotions run deep, and every frame is a doorway to endless cinematic adventures with CineBuffs. Entertainment offers a perfect escape from the chaos of life.
-                </p>
-            </section>
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
 
-            {/* Content Sections */}
-            <section className="max-w-4xl mx-auto px-6 lg:px-8 py-12 space-y-20">
-
-                {/* Block 1 */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl md:text-3xl font-black font-serif flex items-center gap-3 uppercase">
-                        <MonitorPlay className="w-8 h-8 text-black" />
-                        Check Out the Best Movies and TV Shows with CineBuffs
-                    </h2>
-                    <p className="text-gray-800 text-lg leading-relaxed font-serif bg-white border-2 border-black p-6">
-                        Whether you’re watching a thrilling movie or binge-watching a popular TV series, these experiences create lasting memories. At CineBuffs, we bring you honest movie reviews, detailed TV show reviews, and expert insights into the latest trends. No more wasting time on mediocre content—our reviews will help you pick the best.
+            {/* ── Hero header ── */}
+            <div className="w-full px-5 pt-12 pb-10" style={{ borderBottom: '2px solid var(--color-text-main)' }}>
+                <div style={{ maxWidth: 860, margin: '0 auto' }}>
+                    <p style={{
+                        fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700,
+                        letterSpacing: '0.15em', textTransform: 'uppercase',
+                        color: 'var(--color-brand)', marginBottom: 14,
+                    }}>
+                        CineBuffs / About Us
+                    </p>
+                    <h1 style={{
+                        fontFamily: 'var(--font-serif)', fontWeight: 700,
+                        fontSize: 'clamp(2.2rem, 5vw, 4rem)',
+                        color: 'var(--color-text-main)', lineHeight: 1.1,
+                        letterSpacing: '-0.02em', marginBottom: 20,
+                    }}>
+                        About CineBuffs
+                    </h1>
+                    <p style={{
+                        fontFamily: 'var(--font-sans)', fontSize: 14,
+                        color: 'var(--color-text-muted)', lineHeight: 1.7,
+                        maxWidth: 620,
+                    }}>
+                        Step into a world where stories come alive, emotions run deep, and every frame is a doorway to endless cinematic adventures. CineBuffs is your trusted guide through the world of film and television.
                     </p>
                 </div>
+            </div>
 
-                {/* Block 2 */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl md:text-3xl font-black font-serif flex items-center gap-3 uppercase">
-                        <Tv className="w-8 h-8 text-black" />
-                        Why Movie Reviews and TV Show Reviews Matter
-                    </h2>
-                    <p className="text-gray-800 text-lg leading-relaxed font-serif bg-white border-2 border-black p-6">
-                        With so many streaming platforms like Netflix, Amazon Prime, and Disney+, choosing the right content can be overwhelming. CineBuffs makes it easy. Our in-depth movie reviews and detailed series reviews ensure that you always make the right choice. Whether you love action-packed blockbusters or gripping dramas, we’ve got you covered.
-                    </p>
+            {/* ── Content sections ── */}
+            <div style={{ maxWidth: 860, margin: '0 auto', padding: '4rem 1.25rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
+                    {sections.map(({ icon: Icon, title, body }, i) => (
+                        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                            {/* Section heading with icon */}
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                                <Icon style={{ width: 20, height: 20, color: 'var(--color-brand)', flexShrink: 0, marginTop: 4 }} />
+                                <h2 style={{
+                                    fontFamily: 'var(--font-serif)', fontWeight: 700,
+                                    fontSize: 'clamp(1.1rem, 2vw, 1.5rem)',
+                                    color: 'var(--color-text-main)', lineHeight: 1.2, margin: 0,
+                                }}>
+                                    {title}
+                                </h2>
+                            </div>
+
+                            {/* Red rule */}
+                            <span style={{ display: 'block', width: 32, height: 2, backgroundColor: 'var(--color-brand)', marginLeft: 32 }} />
+
+                            {/* Body */}
+                            <p style={{
+                                fontFamily: 'var(--font-sans)', fontSize: 15,
+                                color: 'var(--color-text-main)', lineHeight: 1.75,
+                                marginLeft: 32,
+                                padding: '1.25rem 1.5rem',
+                                borderLeft: '3px solid var(--color-border)',
+                                backgroundColor: 'var(--color-bg-card)',
+                            }}>
+                                {body}
+                            </p>
+                        </div>
+                    ))}
                 </div>
 
-                {/* Block 3 */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl md:text-3xl font-black font-serif flex items-center gap-3 uppercase">
-                        <PlayCircle className="w-8 h-8 text-black" />
-                        Get the Latest Reviews on Popular OTT Platforms
-                    </h2>
-                    <p className="text-gray-800 text-lg leading-relaxed font-serif bg-white border-2 border-black p-6">
-                        Streaming services release new content almost every day. Staying updated is crucial, and that’s where CineBuffs’ latest movie reviews and TV show critiques come in handy. We analyze every detail, from plot and performances to cinematography and sound design, helping you find what suits your taste.
+                {/* ── Footer CTA ── */}
+                <div style={{
+                    marginTop: '4rem', paddingTop: '2.5rem',
+                    borderTop: '1px solid var(--color-border)',
+                    textAlign: 'center',
+                }}>
+                    <h3 style={{
+                        fontFamily: 'var(--font-serif)', fontWeight: 700,
+                        fontSize: '1.5rem', color: 'var(--color-text-main)', marginBottom: 12,
+                    }}>
+                        Let CineBuffs Be Your Guide
+                    </h3>
+                    <p style={{
+                        fontFamily: 'var(--font-sans)', fontSize: 13,
+                        color: 'var(--color-text-muted)', marginBottom: 8,
+                    }}>
+                        From Hollywood blockbusters to hidden gems — sit back, relax, and let us navigate cinema for you.
+                    </p>
+                    <p style={{
+                        fontFamily: 'var(--font-serif)', fontSize: '1.1rem',
+                        fontWeight: 700, color: 'var(--color-brand)',
+                        letterSpacing: '0.05em',
+                    }}>
+                        Happy Watching.
                     </p>
                 </div>
-
-                {/* Block 4 */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl md:text-3xl font-black font-serif flex items-center gap-3 uppercase">
-                        <Users className="w-8 h-8 text-black" />
-                        Engage with a Community of Movie Enthusiasts
-                    </h2>
-                    <p className="text-gray-800 text-lg leading-relaxed font-serif bg-white border-2 border-black p-6">
-                        Movies and TV shows spark discussions, debates, and even friendships. We encourage our readers to share their thoughts in the comments. Your opinions matter! Whether you agree or disagree with our movie ratings, your voice adds to the conversation.
-                    </p>
-                </div>
-
-                {/* Block 5 */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl md:text-3xl font-black font-serif flex items-center gap-3 uppercase">
-                        <Globe className="w-8 h-8 text-black" />
-                        Beyond Reviews: Exploring Cinema
-                    </h2>
-                    <p className="text-gray-800 text-lg leading-relaxed font-serif bg-white border-2 border-black p-6">
-                        We do more than just movie and TV reviews. Our engaging blogs cover everything from classic films to the latest trends. Want to know about the evolution of sci-fi movies or the impact of storytelling in cinema? Our articles dive deep into the world of entertainment.
-                    </p>
-                </div>
-
-                {/* Block 6 */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl md:text-3xl font-black font-serif flex items-center gap-3 uppercase">
-                        <Film className="w-8 h-8 text-black" />
-                        Join CineBuffs – Share Your Passion for Movies and TV Shows
-                    </h2>
-                    <p className="text-gray-800 text-lg leading-relaxed font-serif bg-white border-2 border-black p-6">
-                        Are you a movie lover with a knack for writing? CineBuffs is always looking for fresh voices. If you have unique insights, reviews, or opinions, join our community. Your perspective could be the next big hit among movie fans.<br /><br />
-                        <strong className="text-black font-black uppercase tracking-widest text-xs">MAVERICK QUILL DIGITAL</strong> is a dynamic digital media company that manages multiple websites, including CineBuffs. As a dedicated platform for film and television enthusiasts, CineBuffs offers in-depth reviews, blogs, and articles on movies and series. It embodies MAVERICK QUILL DIGITAL’s commitment to delivering engaging and insightful entertainment content.
-                    </p>
-                </div>
-
-                {/* Outro */}
-                <div className="text-center pt-10 pb-4 border-t-2 border-black mt-20">
-                    <h2 className="text-3xl font-black font-serif mb-4 uppercase">Let CineBuffs Be Your Guide in the World of Entertainment</h2>
-                    <p className="text-gray-800 text-lg font-serif max-w-2xl mx-auto">
-                        From Hollywood blockbusters to hidden gems, CineBuffs’ movie reviews and series recommendations make your viewing experience effortless. Sit back, relax, and let us help you navigate the ever-growing world of cinema.
-                    </p>
-                    <p className="text-black font-black uppercase tracking-widest text-2xl mt-8">Happy Watching!</p>
-                </div>
-
-            </section>
+            </div>
         </div>
     );
 }

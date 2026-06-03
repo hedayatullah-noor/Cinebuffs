@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, ArrowRight, User, Shield, EyeOff, Eye } from "lucide-react";
-import { motion } from "framer-motion";
+import { Mail, Lock, User, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function SignupPage() {
     const router = useRouter();
-    const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+    const [formData, setFormData]         = useState({ name: "", email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
-    const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+    const [status, setStatus]             = useState<"idle" | "loading" | "success" | "error">("idle");
+    const [errorMsg, setErrorMsg]         = useState("Something went wrong. Please try again.");
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (status === "error") setStatus("idle");
     };
@@ -20,138 +22,216 @@ export default function SignupPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus("loading");
-
         try {
-            const res = await fetch('/api/auth/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+            const res = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
             });
-
             if (res.ok) {
                 setStatus("success");
-                setTimeout(() => {
-                    router.push("/");
-                }, 1500);
+                setTimeout(() => router.push("/"), 2000);
             } else {
+                const data = await res.json().catch(() => ({}));
+                setErrorMsg(data.error || "Something went wrong. Please try again.");
                 setStatus("error");
             }
-        } catch (error) {
+        } catch {
             setStatus("error");
         }
     };
 
+    const inputStyle = (hasError?: boolean) => ({
+        width: "100%",
+        padding: "11px 14px 11px 40px",
+        fontFamily: "var(--font-sans)",
+        fontSize: 14,
+        border: `1px solid ${hasError ? "var(--color-brand)" : "var(--color-border)"}`,
+        backgroundColor: "var(--color-bg-primary)",
+        color: "var(--color-text-main)",
+        outline: "none",
+        transition: "border-color 0.2s ease",
+    });
+
     return (
-        <div className="min-h-screen flex items-center justify-center -mt-16 pt-24 pb-12 px-6 relative overflow-hidden bg-gray-50">
+        <div style={{
+            minHeight: "100vh",
+            backgroundColor: "var(--color-bg-primary)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "2rem 1rem",
+        }}>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="w-full max-w-md bg-white border-2 border-gray-200 rounded-none p-8 sm:p-12 shadow-xl relative z-10"
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                style={{ width: "100%", maxWidth: 420 }}
             >
-                <div className="mb-10 text-center">
-                    <Link href="/" className="inline-flex items-center gap-2 group mb-6">
-                        <div className="w-12 h-12 border-2 border-black flex items-center justify-center text-black font-black uppercase tracking-widest bg-gray-100 group-hover:bg-black group-hover:text-white transition-colors">
-                            CB
-                        </div>
+                {/* Logo */}
+                <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+                    <Link href="/">
+                        <Image
+                            src="/images/logo.png"
+                            alt="CineBuffs"
+                            width={160}
+                            height={48}
+                            style={{ height: 48, width: "auto", objectFit: "contain" }}
+                        />
                     </Link>
-                    <h1 className="text-4xl font-black font-serif text-black tracking-tight uppercase">Create Account</h1>
-                    <p className="text-gray-500 mt-2 text-sm font-bold uppercase tracking-widest">Join the largest community of cinephiles</p>
                 </div>
 
-                {status === "success" ? (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-green-50 border-2 border-green-200 rounded-none p-6 flex flex-col items-center text-center text-green-700"
-                    >
-                        <User className="w-12 h-12 mb-4 drop-shadow-[0_0_15px_rgba(34,197,94,0.4)] text-green-600" />
-                        <p className="font-black font-serif text-xl mb-1 uppercase">Registration Successful!</p>
-                        <p className="text-xs font-bold uppercase tracking-widest text-green-600">Redirecting to your dashboard...</p>
-                    </motion.div>
-                ) : (
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                        <div className="relative group">
-                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-black transition-colors" />
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Full Name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                required
-                                className="w-full bg-white border-2 border-gray-200 focus:border-black pl-12 pr-4 py-4 rounded-none outline-none text-black transition-all placeholder:text-gray-400 font-bold uppercase tracking-widest"
-                            />
-                        </div>
+                {/* Card */}
+                <div style={{ backgroundColor: "var(--color-bg-card)", border: "1px solid var(--color-border)", padding: "2.5rem" }}>
 
-                        <div className="relative group">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-black transition-colors" />
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email address"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                                className="w-full bg-white border-2 border-gray-200 focus:border-black pl-12 pr-4 py-4 rounded-none outline-none text-black transition-all placeholder:text-gray-400 font-bold uppercase tracking-widest"
-                            />
-                        </div>
-
-                        <div className="relative group">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-black transition-colors" />
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                name="password"
-                                placeholder="Password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                                className="w-full bg-white border-2 border-gray-200 focus:border-black pl-12 pr-12 py-4 rounded-none outline-none text-black transition-all placeholder:text-gray-400 font-bold uppercase tracking-widest"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                    {/* Success state */}
+                    <AnimatePresence>
+                        {status === "success" && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                style={{ textAlign: "center", padding: "2rem 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}
                             >
-                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                            </button>
-                        </div>
-
-
-
-                        {status === "error" && (
-                            <motion.p
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="text-red-700 text-xs font-bold uppercase tracking-widest text-center bg-red-50 py-3 border border-red-200 -mt-2 mb-2"
-                            >
-                                Please provide a valid email address or check if the user already exists.
-                            </motion.p>
+                                <CheckCircle2 style={{ width: 44, height: 44, color: "var(--color-brand)" }} />
+                                <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-main)", margin: 0 }}>
+                                    Account Created!
+                                </h2>
+                                <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--color-text-muted)" }}>
+                                    Redirecting you to the homepage...
+                                </p>
+                            </motion.div>
                         )}
+                    </AnimatePresence>
 
-                        <button
-                            type="submit"
-                            disabled={status === "loading"}
-                            className="w-full bg-black border-2 border-black hover:bg-[var(--color-brand)] hover:border-[var(--color-brand)] text-white font-black text-lg py-4 rounded-none flex items-center justify-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed group uppercase tracking-widest mt-2"
-                        >
-                            {status === "loading" ? (
-                                <div className="w-6 h-6 border-4 border-gray-400 border-t-white animate-spin"></div>
-                            ) : (
-                                <>
+                    {status !== "success" && (
+                        <>
+                            {/* Header */}
+                            <div style={{ marginBottom: "2rem", paddingBottom: "1.5rem", borderBottom: "1px solid var(--color-border)" }}>
+                                <p style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--color-brand)", marginBottom: 8 }}>
+                                    New Member
+                                </p>
+                                <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main)", margin: 0, lineHeight: 1.2 }}>
                                     Create Account
-                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </>
-                            )}
-                        </button>
-                    </form>
-                )}
+                                </h1>
+                                <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--color-text-muted)", marginTop: 6 }}>
+                                    Join the CineBuffs community of cinephiles.
+                                </p>
+                            </div>
 
-                <p className="text-center text-gray-500 mt-8 text-xs font-bold uppercase tracking-widest">
-                    Already have an account?{' '}
-                    <Link href="/login" className="text-black hover:text-[var(--color-brand)] font-black transition-colors border-b-2 border-black hover:border-[var(--color-brand)] pb-0.5 ml-1">
-                        Log in here
+                            {/* Error */}
+                            {status === "error" && (
+                                <div style={{ backgroundColor: "#FFF5F5", border: "1px solid #FCA5A5", padding: "10px 14px", marginBottom: "1.25rem" }}>
+                                    <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "#DC2626", margin: 0, fontWeight: 600 }}>
+                                        {errorMsg}
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Form */}
+                            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                                {/* Name */}
+                                <div style={{ position: "relative" }}>
+                                    <User style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", width: 15, height: 15, color: "var(--color-text-muted)" }} />
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        placeholder="Full name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                        style={inputStyle()}
+                                        onFocus={e => (e.target.style.borderColor = "var(--color-brand)")}
+                                        onBlur={e => (e.target.style.borderColor = "var(--color-border)")}
+                                    />
+                                </div>
+
+                                {/* Email */}
+                                <div style={{ position: "relative" }}>
+                                    <Mail style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", width: 15, height: 15, color: "var(--color-text-muted)" }} />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="Email address"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        style={inputStyle(status === "error")}
+                                        onFocus={e => (e.target.style.borderColor = "var(--color-brand)")}
+                                        onBlur={e => (e.target.style.borderColor = status === "error" ? "var(--color-brand)" : "var(--color-border)")}
+                                    />
+                                </div>
+
+                                {/* Password */}
+                                <div style={{ position: "relative" }}>
+                                    <Lock style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", width: 15, height: 15, color: "var(--color-text-muted)" }} />
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        placeholder="Create a password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                        minLength={6}
+                                        style={{ ...inputStyle(), paddingRight: 44 }}
+                                        onFocus={e => (e.target.style.borderColor = "var(--color-brand)")}
+                                        onBlur={e => (e.target.style.borderColor = "var(--color-border)")}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--color-text-muted)", padding: 2 }}
+                                    >
+                                        {showPassword ? <EyeOff style={{ width: 15, height: 15 }} /> : <Eye style={{ width: 15, height: 15 }} />}
+                                    </button>
+                                </div>
+
+                                <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "var(--color-text-muted)", margin: "-4px 0 0" }}>
+                                    Minimum 6 characters.
+                                </p>
+
+                                {/* Submit */}
+                                <button
+                                    type="submit"
+                                    disabled={status === "loading"}
+                                    style={{
+                                        marginTop: "0.5rem",
+                                        padding: "12px",
+                                        backgroundColor: status === "loading" ? "var(--color-text-muted)" : "var(--color-brand)",
+                                        color: "#fff",
+                                        border: "none",
+                                        fontFamily: "var(--font-sans)",
+                                        fontSize: 10,
+                                        fontWeight: 700,
+                                        textTransform: "uppercase",
+                                        letterSpacing: "0.14em",
+                                        cursor: status === "loading" ? "not-allowed" : "pointer",
+                                        transition: "background-color 0.2s ease",
+                                        width: "100%",
+                                    }}
+                                >
+                                    {status === "loading" ? "Creating Account..." : "Create Account"}
+                                </button>
+                            </form>
+
+                            {/* Footer */}
+                            <div style={{ marginTop: "1.5rem", paddingTop: "1.5rem", borderTop: "1px solid var(--color-border)", textAlign: "center" }}>
+                                <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--color-text-muted)" }}>
+                                    Already have an account?{" "}
+                                    <Link href="/login" style={{ color: "var(--color-brand)", fontWeight: 700, textDecoration: "none" }}>
+                                        Sign in
+                                    </Link>
+                                </p>
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                {/* Back to site */}
+                <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+                    <Link href="/" style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--color-text-muted)", textDecoration: "none" }}>
+                        ← Back to CineBuffs
                     </Link>
-                </p>
+                </div>
             </motion.div>
         </div>
     );

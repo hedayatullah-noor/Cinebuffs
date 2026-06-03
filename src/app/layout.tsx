@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import Header from "@/components/Header";
@@ -14,10 +14,17 @@ const inter = Inter({
     display: "swap",
 });
 
-const playfair = Playfair_Display({
+/*
+ * Cormorant Garamond — closest Google Fonts alternative to Didot.
+ * High contrast, elegant serifs, editorial feel identical to Didot.
+ * Using weight 600 & 700 for headings.
+ */
+const didot = Cormorant_Garamond({
     subsets: ["latin"],
-    variable: "--font-playfair",
+    variable: "--font-playfair",   /* keep same CSS var so all components work without change */
     display: "swap",
+    weight: ["400", "600", "700"],
+    style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -46,7 +53,7 @@ export default function RootLayout({
                 />
             </head>
             <body
-                className={`${inter.variable} ${playfair.variable} min-h-screen antialiased`}
+                className={`${inter.variable} ${didot.variable} min-h-screen antialiased`}
                 suppressHydrationWarning
             >
                 {/* Crimson progress bar on route change */}

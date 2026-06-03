@@ -57,6 +57,8 @@ export function ReviewGridInner({
             if (genre)  url.searchParams.set("genre", genre);
             if (search) url.searchParams.set("search", search);
             if (defaultType !== "All") url.searchParams.set("type", defaultType);
+            // Blogs have their own dedicated page — exclude from "All" grid
+            if (defaultType === "All") url.searchParams.set("excludeType", "Blog");
 
             const res  = await fetch(url.toString());
             const data = await res.json();

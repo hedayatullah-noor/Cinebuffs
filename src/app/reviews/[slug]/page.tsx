@@ -219,7 +219,7 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ slug: s
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                         <Star style={{ width: 14, height: 14, fill: 'var(--color-brand)', color: 'var(--color-brand)', flexShrink: 0 }} />
                                         <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontWeight: 700, color: '#F7F4EF' }}>
-                                            {Number(rating).toFixed(1)} / 10
+                                            {(Number(rating) / 2).toFixed(1)} / 5
                                         </span>
                                     </div>
                                 </>

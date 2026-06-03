@@ -8,54 +8,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Using string instead of enums for SQLite compatibility
 // Role: "ADMIN" | "MODERATOR" | "USER"
-
 // ReviewStatus: "PENDING" | "APPROVED" | "REJECTED"
-
-// MediaType: "MOVIE" | "SERIES"
-
-
+// MediaType: "MOVIE" | "SERIES" | "BLOG"
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password      String
-  image         String?  @db.LongText
-  role          String   @default("USER")
-  resetToken    String?  @unique
+  id               String    @id @default(cuid())
+  name             String
+  email            String    @unique
+  password         String
+  image            String?   @db.LongText
+  role             String    @default("USER")
+  resetToken       String?   @unique
   resetTokenExpiry DateTime?
-  bio           String?
-  createdAt     DateTime @default(now())
+  bio              String?
+  createdAt        DateTime  @default(now())
 
-  reviews   Review[]
-  comments  Comment[]
+  reviews  Review[]
+  comments Comment[]
 }
 
 model Review {
-  id               String       @id @default(cuid())
-  title            String
-  slug             String       @unique
-  posterImage      String       @db.LongText
-  rating           Float
-  genre            String
-  type             String
-  authorId         String
-  author           User         @relation(fields: [authorId], references: [id])
-  content          String       @db.LongText
-  director         String?
-  cast             String?
-  availableOn      String?
-  gallery          String?      @db.Text
-  status           String       @default("PENDING")
-  createdAt        DateTime     @default(now())
-  approvedAt       DateTime?
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
 
-  comments         Comment[]
+  /*
+   * TWO IMAGE SYSTEM
+   * -----------------
+   * posterImage  → vertical 2:3 poster (used on ReviewCard)
+   *                Recommended size: 400 × 600 px
+   *
+   * sliderImage  → horizontal 16:9 banner (used on HeroSlider & Featured Review)
+   *                Recommended size: 1280 × 720 px
+   *
+   * sliderImage is optional — if not provided, posterImage is used as fallback.
+   */
+  posterImage String   @db.LongText
+  sliderImage String?  @db.LongText
+
+  rating      Float
+  genre       String
+  type        String
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  content     String   @db.LongText
+  director    String?
+  cast        String?
+  availableOn String?
+  gallery     String?  @db.Text
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+  approvedAt  DateTime?
+
+  comments Comment[]
 
   @@index([status])
   @@index([type])
+  @@index([createdAt])
 }
 
 model Comment {

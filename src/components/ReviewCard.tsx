@@ -114,7 +114,7 @@ export default function ReviewCard({
                                 color: 'var(--color-text-main)',
                             }}>
                                 {Number(rating).toFixed(1)}
-                                <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}> / 10</span>
+                                <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}> / 5</span>
                             </span>
                         </div>
                     )}

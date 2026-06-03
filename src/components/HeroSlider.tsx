@@ -72,18 +72,21 @@ export default function HeroSlider() {
                     width: 100%;
                     border-bottom: 1px solid var(--color-border);
                     margin-bottom: 1rem;
+                    margin-top: 1.5rem;       /* Fix 1: gap from navbar */
                     overflow: hidden;
                     padding-left: 1.25rem;
                     padding-right: 0;
+                             
                 }
                 .cb-hero-inner {
                     display: flex;
                     flex-direction: column;
+                    height: 100%;
                 }
                 .cb-hero-img {
                     position: relative;
                     width: 100%;
-                    height: 300px;
+                    height: 360px;            /* Fix 1: taller on mobile */
                     flex-shrink: 0;
                     overflow: hidden;
                     background: #111;
@@ -109,7 +112,7 @@ export default function HeroSlider() {
                 @media (min-width: 1024px) {
                     .cb-hero-inner {
                         flex-direction: row;
-                        height: 440px;
+                        height: 560px;        /* Fix 1: taller on desktop */
                     }
                     .cb-hero-img {
                         width: 62%;
@@ -142,19 +145,19 @@ export default function HeroSlider() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-                                style={{ position: 'absolute', inset: 0 }}
+                                style={{ position: 'absolute', inset: 0, zIndex: 1 }}
                             >
-                                <img src={review.posterImage} alt={review.title} />
+                                <img src={(review as any).sliderImage || review.posterImage} alt={review.title} />
                             </motion.div>
                         </AnimatePresence>
 
                         {/* Badge */}
-                        <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 10 }}>
+                        <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 50 }}>
                             <span className="tag-label">{review.type}</span>
                         </div>
 
                         {/* Dots */}
-                        <div style={{ position: 'absolute', bottom: 14, left: 14, zIndex: 10, display: 'flex', gap: 6 }}>
+                        <div style={{ position: 'absolute', bottom: 14, left: 14, zIndex: 50, display: 'flex', gap: 6 }}>
                             {reviews.map((_, i) => (
                                 <button key={i} onClick={() => { setActiveIndex(i); resetInterval(); }}
                                     aria-label={`Slide ${i + 1}`}
@@ -168,7 +171,7 @@ export default function HeroSlider() {
                         </div>
 
                         {/* Arrows */}
-                        <div style={{ position: 'absolute', bottom: 14, right: 14, zIndex: 10, display: 'flex', gap: 6 }}>
+                        <div style={{ position: 'absolute', bottom: 14, right: 14, zIndex: 50, display: 'flex', gap: 6 }}>
                             <button onClick={() => { prevSlide(); resetInterval(); }} aria-label="Previous" className="hero-arrow">
                                 <ChevronLeft style={{ width: 16, height: 16 }} />
                             </button>
@@ -190,7 +193,7 @@ export default function HeroSlider() {
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                     <Star style={{ width: 15, height: 15, fill: 'var(--color-brand)', color: 'var(--color-brand)', flexShrink: 0 }} />
                                     <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-main)' }}>
-                                        {ratingDisplay} / 10
+                                        {(Number(review.rating) / 2).toFixed(1)} / 5
                                     </span>
                                 </div>
 

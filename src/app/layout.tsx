@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
+import "react-quill-new/dist/quill.snow.css";
 import { Suspense } from "react";
 import Header from "@/components/Header";
 import Navbar from "@/components/Navbar";

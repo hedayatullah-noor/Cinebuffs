@@ -4,9 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, UploadCloud, Film, Tv, CheckCircle2, Star, FileText, Search, Image as ImageIcon } from "lucide-react";
 import dynamic from "next/dynamic";
-import "react-quill-new/dist/quill.snow.css";
 
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill-new"), { 
+    ssr: false, 
+    loading: () => <div style={{ padding: '20px', textAlign: 'center', border: '1px dashed var(--color-border)' }}>Loading text editor...</div>
+});
 
 interface AddReviewModalProps {
     isOpen: boolean;

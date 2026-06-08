@@ -6,7 +6,6 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Search, Menu, X, User, LogOut, Settings, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
-import Image from 'next/image';
 
 export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -101,15 +100,11 @@ export default function Header() {
                             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </button>
 
-                        {/* ── LOGO — bigger now ── */}
                         <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                            <Image
+                            <img
                                 src="/uploads/logo.png"
                                 alt="CineBuffs"
-                                width={180}
-                                height={54}
-                                className="h-14 w-auto object-contain"
-                                priority
+                                style={{ height: '36px', width: 'auto', objectFit: 'contain', display: 'block' }}
                             />
                         </Link>
                     </div>

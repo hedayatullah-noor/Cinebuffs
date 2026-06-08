@@ -50,43 +50,45 @@ export default function HeroSlider() {
 
     if (loading) {
         return (
-            <div className="w-full bg-[var(--color-bg-card)] animate-pulse border-b border-[var(--color-border)]"
-                style={{ height: 440, marginBottom: '2.5rem' }} />
+            <div className="w-full bg-[var(--color-bg-card)] animate-pulse"
+                style={{ height: 500, marginBottom: '1rem', marginTop: '1.5rem' }} />
         );
     }
 
     if (reviews.length === 0) return null;
 
     const review = reviews[activeIndex];
-    const ratingDisplay = Number(review.rating).toFixed(1);
+
+    const arrowStyle: React.CSSProperties = {
+        width: 40, height: 40,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        backgroundColor: 'var(--color-brand)',
+        border: 'none',
+        cursor: 'pointer',
+        color: '#fff',
+        flexShrink: 0,
+    };
 
     return (
         <>
-            {/*
-              * Full bleed: break out of any parent padding using
-              * negative margin trick. Works regardless of what
-              * page.tsx wraps this in.
-            */}
             <style>{`
                 .cb-hero-outer {
                     width: 100%;
-                    border-bottom: 1px solid var(--color-border);
-                    margin-bottom: 1rem;
-                    margin-top: 1.5rem;       /* Fix 1: gap from navbar */
-                    overflow: hidden;
-                    padding-left: 1.25rem;
-                    padding-right: 0;
-                             
+                    border: 1px solid var(--color-border);      /* border added */
+                    border-left: 4px solid var(--color-brand);  /* left accent border */
+                    margin-bottom: 0;
+                    margin-top: 1.5rem;
+                    margin-left: 1.25rem;                        /* left margin */
+                    width: calc(100% - 1.25rem);                 /* adjust width */
                 }
                 .cb-hero-inner {
                     display: flex;
                     flex-direction: column;
-                    height: 100%;
                 }
                 .cb-hero-img {
                     position: relative;
                     width: 100%;
-                    height: 360px;            /* Fix 1: taller on mobile */
+                    height: 320px;
                     flex-shrink: 0;
                     overflow: hidden;
                     background: #111;
@@ -103,40 +105,43 @@ export default function HeroSlider() {
                 .cb-hero-panel {
                     background-color: var(--color-bg-primary);
                     border-top: 1px solid var(--color-border);
-                    padding: 1.5rem;
+                    padding: 0.75rem 1.25rem;
                     display: flex;
                     flex-direction: column;
-                    justify-content: center;
-                    gap: 1rem;
+                    gap: 0.75rem;
+                    /* NO height/overflow — always fully visible */
                 }
                 @media (min-width: 1024px) {
                     .cb-hero-inner {
                         flex-direction: row;
-                        height: 560px;        /* Fix 1: taller on desktop */
+                        min-height: 500px;
                     }
                     .cb-hero-img {
                         width: 62%;
-                        height: 100%;
+                        height: auto;   /* stretches with row */
+                        min-height: 500px;
                     }
                     .cb-hero-panel {
                         flex: 1;
                         border-top: none;
                         border-left: 1px solid var(--color-border);
-                        padding: 0 2.5rem;
-                        height: 100%;
-                        gap: 1.25rem;
+                        padding: 2rem 2.5rem;
+                        justify-content: center;
                     }
                 }
                 .dark .cb-hero-panel {
                     background-color: var(--color-bg-dark);
                     border-color: var(--color-border-dark);
                 }
+                .cb-arrow:hover {
+                    background-color: var(--color-brand-hover) !important;
+                }
             `}</style>
 
             <section className="cb-hero-outer">
                 <div className="cb-hero-inner">
 
-                    {/* ── Image ── */}
+                    {/* ── Image panel ── */}
                     <div className="cb-hero-img">
                         <AnimatePresence mode="sync">
                             <motion.div
@@ -145,49 +150,52 @@ export default function HeroSlider() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-                                style={{ position: 'absolute', inset: 0, zIndex: 1 }}
+                                style={{ position: 'absolute', inset: 0 }}
                             >
-                                <img src={(review as any).sliderImage || review.posterImage} alt={review.title} />
+                                <img
+                                    src={(review as any).sliderImage || review.posterImage}
+                                    alt={review.title}
+                                />
                             </motion.div>
                         </AnimatePresence>
 
-                        {/* Badge */}
-                        <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 50 }}>
+                        {/* Type badge */}
+                        <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 10 }}>
                             <span className="tag-label">{review.type}</span>
                         </div>
 
-                        {/* Dots */}
-                        <div style={{ position: 'absolute', bottom: 14, left: 14, zIndex: 50, display: 'flex', gap: 6 }}>
+                        {/* Dot indicators */}
+                        <div style={{ position: 'absolute', bottom: 14, left: 14, zIndex: 10, display: 'flex', gap: 6 }}>
                             {reviews.map((_, i) => (
-                                <button key={i} onClick={() => { setActiveIndex(i); resetInterval(); }}
+                                <button
+                                    key={i}
+                                    onClick={() => { setActiveIndex(i); resetInterval(); }}
                                     aria-label={`Slide ${i + 1}`}
                                     style={{
-                                        height: 3, width: i === activeIndex ? 24 : 8, padding: 0, border: 'none', cursor: 'pointer',
-                                        backgroundColor: i === activeIndex ? 'var(--color-brand)' : 'rgba(255,255,255,0.5)',
-                                        transition: 'all 0.3s ease', flexShrink: 0,
+                                        height: 3,
+                                        width: i === activeIndex ? 24 : 8,
+                                        padding: 0, border: 'none', cursor: 'pointer',
+                                        backgroundColor: i === activeIndex
+                                            ? 'var(--color-brand)'
+                                            : 'rgba(255,255,255,0.6)',
+                                        transition: 'all 0.3s ease',
+                                        flexShrink: 0,
                                     }}
                                 />
                             ))}
                         </div>
-
-                        {/* Arrows */}
-                        <div style={{ position: 'absolute', bottom: 14, right: 14, zIndex: 50, display: 'flex', gap: 6 }}>
-                            <button onClick={() => { prevSlide(); resetInterval(); }} aria-label="Previous" className="hero-arrow">
-                                <ChevronLeft style={{ width: 16, height: 16 }} />
-                            </button>
-                            <button onClick={() => { nextSlide(); resetInterval(); }} aria-label="Next" className="hero-arrow">
-                                <ChevronRight style={{ width: 16, height: 16 }} />
-                            </button>
-                        </div>
                     </div>
 
-                    {/* ── Content ── */}
+                    {/* ── Content panel ── */}
                     <div className="cb-hero-panel">
                         <AnimatePresence mode="wait">
-                            <motion.div key={activeIndex}
-                                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: 'easeOut' }}
-                                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                            <motion.div
+                                key={activeIndex}
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.35, ease: 'easeOut' }}
+                                style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}
                             >
                                 {/* Rating */}
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -218,9 +226,54 @@ export default function HeroSlider() {
                                 </Link>
                             </motion.div>
                         </AnimatePresence>
+
+                        {/* ── Prev/Next arrows — always visible in content panel ── */}
+                        <div style={{
+                            display: 'flex',
+                            gap: 8,
+                            paddingTop: '0.5rem',
+                            borderTop: '1px solid var(--color-border)',
+                        }}>
+                            <button
+                                onClick={() => { prevSlide(); resetInterval(); }}
+                                aria-label="Previous slide"
+                                style={{
+                                    width: 44, height: 44,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    backgroundColor: 'var(--color-brand)',
+                                    border: 'none', cursor: 'pointer', color: '#fff',
+                                    fontSize: 18, fontWeight: 700,
+                                }}
+                            >
+                                ‹
+                            </button>
+                            <button
+                                onClick={() => { nextSlide(); resetInterval(); }}
+                                aria-label="Next slide"
+                                style={{
+                                    width: 44, height: 44,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    backgroundColor: 'var(--color-brand)',
+                                    border: 'none', cursor: 'pointer', color: '#fff',
+                                    fontSize: 18, fontWeight: 700,
+                                }}
+                            >
+                                ›
+                            </button>
+                            {/* Slide counter */}
+                            <span style={{
+                                display: 'flex', alignItems: 'center',
+                                fontFamily: 'var(--font-sans)', fontSize: 11,
+                                color: 'var(--color-text-muted)',
+                                fontWeight: 600, marginLeft: 4,
+                            }}>
+                                {activeIndex + 1} / {reviews.length}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </section>
         </>
     );
 }
+

@@ -1,0 +1,37 @@
+1.genre option down ✅
+2.key words for SEO(Api)
+3.CMS API 
+4.search sections working ✅
+5.p picture in by 
+6.logos 
+7.share options 
+8.ad space ✅
+9.DP upload ✅
+10.lite mode ✅
+11. search bar down ✅
+12. writing space 
+13. forget password ✅
+
+search by actor name✅
+decimal rating✅ 
+posting behalf on someone else by selecting username ✅
+comment login bug✅
+add contributor (bio section) ✅
+facebook WhatsApp insta twitter sharing 
+
+
+
+
+things to fix :-
+card size should be fixed, should not change according to title title can be small if that is long✅
+there should be no rating stars mentioned on the blogs the space of rating star should blank ✅
+search bar and browse categories section has to place on the left, beside All reviews ✅
+Loading should be in control if user is wanting to go on footer then he just has to scroll hard 
+cinebuffs logo on the icon 
+login , dashboard design ✅
+contact us content on admin dashboard or email 
+quill editor 
+monotonus changing ✅
+1 line about film/series 
+profile photo of reviewer right after card 
+edit review panel 

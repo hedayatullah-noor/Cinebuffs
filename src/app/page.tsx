@@ -397,14 +397,34 @@ function HomePageContent() {
             <HeroSlider />
 
             {/* ── ALL REVIEWS SECTION ── */}
-            <section className="w-full px-4 sm:px-5 pt-6 pb-4">
-                {/* Filter row */}
-                <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "0.75rem", marginBottom: "1rem", flexWrap: "wrap" }}>
-                    <GenreDropdown />
-                    <SearchBar compact={true} />
+            <section className="w-full px-4 sm:px-5" style={{ paddingTop: '0.5rem', paddingBottom: '1rem' }}>
+                {/* Heading + Filters — same line */}
+                <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                    flexWrap: "wrap",
+                    paddingBottom: "0.5rem",
+                    borderBottom: "2px solid var(--color-text-main)",
+                    marginBottom: "1.25rem",
+                }}>
+                    <h2 style={{
+                        fontFamily: "var(--font-serif)",
+                        fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
+                        fontWeight: 700,
+                        color: "var(--color-text-main)",
+                        margin: 0,
+                        lineHeight: 1.15,
+                        letterSpacing: "0.01em",
+                    }}>
+                        All Reviews
+                    </h2>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                        <GenreDropdown />
+                        <SearchBar compact={true} />
+                    </div>
                 </div>
-
-                <SectionHeading title="All Reviews" />
 
                 {/* Grid */}
                 {loadingAll ? (

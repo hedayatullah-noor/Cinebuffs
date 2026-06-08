@@ -1,0 +1,2 @@
+requirements :-
+1. ek static header jisme 3 elements rahenge 1. most leaft me logo and the name of website 2.most right me search bar aur number 3. at the left of search bar "signup" button  

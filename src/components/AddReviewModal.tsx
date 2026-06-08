@@ -3,6 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, UploadCloud, Film, Tv, CheckCircle2, Star, FileText, Search, Image as ImageIcon } from "lucide-react";
+import dynamic from "next/dynamic";
+import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 interface AddReviewModalProps {
     isOpen: boolean;
@@ -29,6 +33,7 @@ export default function AddReviewModal({
     const [posterPreview, setPosterPreview]   = useState<string>(editData?.posterImage || "");
     const [sliderPreview, setSliderPreview]   = useState<string>(editData?.sliderImage || "");
     const [extraImages, setExtraImages]       = useState<FileList | null>(null);
+    const [content, setContent]               = useState<string>(editData?.content || "");
 
     /* Author override (admin only) */
     const [allUsers, setAllUsers]             = useState<any[]>([]);
@@ -49,6 +54,7 @@ export default function AddReviewModal({
             setSliderFile(null);
             setSelectedAuthor(null);
             setSearchTerm("");
+            setContent(editData?.content || "");
 
             fetch('/api/auth/me')
                 .then(res => res.json())
@@ -111,6 +117,7 @@ export default function AddReviewModal({
         const formData = new FormData(form);
         formData.append("mediaType", mediaType);
         formData.append("rating", mediaType === "Blog" ? "0" : rating.toString());
+        formData.append("content", content);
 
         if (selectedAuthor) formData.append("authorOverride", selectedAuthor.id);
 
@@ -474,16 +481,45 @@ export default function AddReviewModal({
                                     <label style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-text-main)' }}>
                                         Content <span style={{ color: 'var(--color-brand)' }}>*</span>
                                     </label>
-                                    <textarea
-                                        name="content"
-                                        required
-                                        rows={10}
-                                        defaultValue={editData?.content}
-                                        placeholder="Write your review here..."
-                                        style={{ padding: '10px 12px', fontFamily: 'var(--font-sans)', fontSize: 14, border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)', color: 'var(--color-text-main)', outline: 'none', resize: 'vertical' }}
-                                        onFocus={e => (e.target.style.borderColor = 'var(--color-brand)')}
-                                        onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
-                                    />
+                                    <div style={{ backgroundColor: 'var(--color-bg-card)', color: 'var(--color-text-main)', borderRadius: '4px' }}>
+                                        <ReactQuill
+                                            theme="snow"
+                                            value={content}
+                                            onChange={setContent}
+                                            placeholder="Write your review here..."
+                                            modules={{
+                                                toolbar: [
+                                                    [{ 'header': [1, 2, 3, false] }],
+                                                    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                                                    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+                                                    ['link', 'image'],
+                                                    ['clean']
+                                                ],
+                                            }}
+                                        />
+                                    </div>
+                                    <style dangerouslySetInnerHTML={{__html: `
+                                        .quill {
+                                            display: flex;
+                                            flex-direction: column;
+                                        }
+                                        .ql-container {
+                                            flex: 1;
+                                            overflow-y: auto;
+                                            font-family: var(--font-sans);
+                                            font-size: 14px;
+                                            border: 1px solid var(--color-border) !important;
+                                            border-top: none !important;
+                                            min-height: 250px;
+                                        }
+                                        .ql-toolbar {
+                                            border: 1px solid var(--color-border) !important;
+                                            background-color: var(--color-bg-primary);
+                                        }
+                                        .ql-editor {
+                                            min-height: 250px;
+                                        }
+                                    `}} />
                                 </div>
 
                                 {/* Admin: author override */}

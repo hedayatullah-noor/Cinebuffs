@@ -44,7 +44,7 @@ export default function Navbar() {
                     exit={{ y: -44 }}
                     transition={{ duration: 0.28, ease: "easeInOut" }}
                     className="fixed left-0 right-0 h-11 z-40 border-b border-[var(--color-border)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-primary)] dark:bg-[var(--color-bg-dark)]"
-                    style={{ top: '80px' }} /* h-20 = 80px — exact header height */
+                    style={{ top: '80px' }} /* h-20 = 80px */
                 >
                     <div className="page-container h-full flex items-center justify-between">
 

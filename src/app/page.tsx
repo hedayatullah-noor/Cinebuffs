@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Star, ChevronRight, Mail } from "lucide-react";
 import HeroSlider from "@/components/HeroSlider";
 import ReviewCard from "@/components/ReviewCard";
+import LatestReviewCard from "@/components/LatestReviewCard";
 import SkeletonCard from "@/components/SkeletonCard";
 import GenreDropdown from "@/components/GenreDropdown";
 import SearchBar from "@/components/SearchBar";
@@ -43,7 +44,7 @@ function InlineSubscribeForm() {
     }
 
     return (
-        <div style={{ backgroundColor: "var(--color-bg-card)", border: "1px solid var(--color-border)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ backgroundColor: "var(--color-bg-card)", border: "1px solid var(--color-border)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: 14, height: "100%", justifyContent: "center" }}>
             {/* Icon */}
             <div style={{ width: 40, height: 40, border: "1px solid var(--color-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Mail style={{ width: 18, height: 18, color: "var(--color-text-main)" }} />
@@ -495,7 +496,9 @@ function HomePageContent() {
 
                 {loadingLatest ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-                        {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="skeleton-shimmer" style={{ width: '100%', aspectRatio: '16/9', borderRadius: '6px' }} />
+                        ))}
                     </div>
                 ) : (
                     <div
@@ -544,18 +547,18 @@ function HomePageContent() {
                             const review = latestReviews[reviewIdx];
 
                             if (!review) return (
-                                <div key={`empty-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px dashed var(--color-border)", minHeight: 100 }} />
+                                <div key={`empty-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px dashed var(--color-border)", aspectRatio: '16/9', borderRadius: '6px' }} />
                             );
 
                             return (
-                                <ReviewCard
+                                <LatestReviewCard
                                     key={review.id}
-                                    {...review}
+                                    slug={review.slug}
+                                    title={review.title}
+                                    posterImage={review.posterImage}
+                                    sliderImage={review.sliderImage}
+                                    rating={Number(review.rating)}
                                     authorName={review.author?.name || "Unknown"}
-                                    authorImage={review.author?.image || ""}
-                                    category={review.type}
-                                    publishDate={new Date(review.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                                    isBlog={false}
                                 />
                             );
                         })}

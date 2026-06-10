@@ -17,7 +17,7 @@ decimal rating✅
 posting behalf on someone else by selecting username ✅
 comment login bug✅
 add contributor (bio section) ✅
-facebook WhatsApp insta twitter sharing 
+facebook WhatsApp insta twitter copy link sharing 
 
 
 
@@ -35,3 +35,9 @@ monotonus changing ✅
 1 line about film/series 
 profile photo of reviewer right after card 
 edit review panel 
+genre dropdown in form 
+share section on review
+only 2 latest blogs should displayed at blog collection section 
+gap in latest review section 
+borders 
+search and browse bar in movie ,series,blog page 

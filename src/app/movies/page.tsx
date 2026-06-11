@@ -56,7 +56,7 @@ export default function MoviesPage() {
             </div>
 
             {/* ── Grid ── */}
-            <ReviewGrid defaultType="Movie" hideHeader={false} />
+            <ReviewGrid defaultType="Movie" hideHeader={false} hideFilters={true} />
         </div>
     );
 }

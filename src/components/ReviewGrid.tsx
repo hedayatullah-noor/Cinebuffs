@@ -33,9 +33,11 @@ function getColCount(): number {
 export function ReviewGridInner({
     defaultType = "All",
     hideHeader = false,
+    hideFilters = false,
 }: {
     defaultType?: "All" | "Movie" | "Series" | "Blog";
     hideHeader?: boolean;
+    hideFilters?: boolean;
 }) {
     const [reviews, setReviews]               = useState<Review[]>([]);
     const [isLoading, setIsLoading]           = useState(true);
@@ -93,27 +95,14 @@ export function ReviewGridInner({
         fetchReviews(activeGenre, searchQuery);
     }, [activeGenre, searchQuery, defaultType]);
 
-    /* ── Infinite scroll ── */
-    useEffect(() => {
-        if (isLoading || isFiltering || isFetchingMore) return;
-        if (visibleCount >= reviews.length) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (!entries[0].isIntersecting) return;
-                setIsFetchingMore(true);
-                setTimeout(() => {
-                    setVisibleCount(prev => prev + getColCount() * 2);
-                    setIsFetchingMore(false);
-                }, 600);
-            },
-            { rootMargin: "150px" }
-        );
-
-        const sentinel = loadMoreRef.current;
-        if (sentinel) observer.observe(sentinel);
-        return () => { if (sentinel) observer.unobserve(sentinel); };
-    }, [isLoading, isFiltering, isFetchingMore, visibleCount, reviews.length]);
+    /* ── Manual Load More ── */
+    const handleLoadMore = () => {
+        setIsFetchingMore(true);
+        setTimeout(() => {
+            setVisibleCount(prev => prev + getColCount() * 2);
+            setIsFetchingMore(false);
+        }, 400);
+    };
 
     const visibleReviews = reviews.slice(0, visibleCount);
     const hasMore        = visibleCount < reviews.length;
@@ -125,10 +114,12 @@ export function ReviewGridInner({
             {!hideHeader && (
                 <div className="flex flex-col gap-3 mb-6">
                     {/* Filters — same line, right aligned */}
-                    <div className="flex justify-end items-center gap-3">
-                        <GenreDropdown />
-                        <SearchBar compact={true} />
-                    </div>
+                    {!hideFilters && (
+                        <div className="flex justify-end items-center gap-3">
+                            <GenreDropdown />
+                            <SearchBar compact={true} />
+                        </div>
+                    )}
                     {/* Heading */}
                     <h2 className="section-heading w-full">All Reviews</h2>
                 </div>
@@ -180,20 +171,24 @@ export function ReviewGridInner({
                         </div>
                     )}
 
-                    {/* Sentinel */}
+                    {/* Load More Button */}
                     {hasMore && (
-                        <div
-                            ref={loadMoreRef}
-                            className="flex items-center justify-center gap-2 py-10"
-                        >
-                            {isFetchingMore && (
-                                <>
-                                    <div className="load-more-spinner" />
-                                    <span className="text-[10px] font-[var(--font-sans)] uppercase tracking-widest text-[var(--color-text-muted)]">
-                                        Loading more
-                                    </span>
-                                </>
-                            )}
+                        <div className="flex items-center justify-center pt-10 pb-4">
+                            <button
+                                onClick={handleLoadMore}
+                                disabled={isFetchingMore}
+                                className="px-6 py-3 border border-[var(--color-border)] rounded hover:bg-[var(--color-bg-primary)] transition-colors"
+                                style={{
+                                    fontFamily: 'var(--font-sans)',
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.1em',
+                                    color: 'var(--color-text-main)'
+                                }}
+                            >
+                                {isFetchingMore ? "Loading..." : "Load More Reviews"}
+                            </button>
                         </div>
                     )}
                 </>
@@ -205,6 +200,7 @@ export function ReviewGridInner({
 export default function ReviewGrid(props: {
     defaultType?: "All" | "Movie" | "Series" | "Blog";
     hideHeader?: boolean;
+    hideFilters?: boolean;
 }) {
     return (
         <Suspense fallback={null}>

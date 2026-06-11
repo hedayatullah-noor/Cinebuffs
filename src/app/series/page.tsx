@@ -52,7 +52,7 @@ export default function SeriesPage() {
                 </div>
             </div>
 
-            <ReviewGrid defaultType="Series" hideHeader={false} />
+            <ReviewGrid defaultType="Series" hideHeader={false} hideFilters={true} />
         </div>
     );
 }

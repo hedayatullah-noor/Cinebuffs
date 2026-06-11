@@ -44,22 +44,22 @@ function InlineSubscribeForm() {
     }
 
     return (
-        <div style={{ backgroundColor: "var(--color-bg-card)", border: "1px solid var(--color-border)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: 14, height: "100%", justifyContent: "center" }}>
+        <div style={{ backgroundColor: "var(--color-bg-card)", border: "1px solid var(--color-border)", padding: "1rem", display: "flex", flexDirection: "column", gap: 10, height: "100%", justifyContent: "center" }}>
             {/* Icon */}
-            <div style={{ width: 40, height: 40, border: "1px solid var(--color-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Mail style={{ width: 18, height: 18, color: "var(--color-text-main)" }} />
+            <div style={{ width: 32, height: 32, border: "1px solid var(--color-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Mail style={{ width: 14, height: 14, color: "var(--color-text-main)" }} />
             </div>
 
             <div>
-                <h4 style={{ fontFamily: "var(--font-serif)", fontSize: "1.1rem", fontWeight: 700, color: "var(--color-text-main)", margin: "0 0 6px" }}>
+                <h4 style={{ fontFamily: "var(--font-serif)", fontSize: "1rem", fontWeight: 700, color: "var(--color-text-main)", margin: "0 0 4px" }}>
                     Stay Updated
                 </h4>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "var(--color-text-muted)", lineHeight: 1.6, margin: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: 10, color: "var(--color-text-muted)", lineHeight: 1.4, margin: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                     Join cinephiles. Get weekly top reviews straight to your inbox.
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <input
                     type="email"
                     value={email}
@@ -67,7 +67,7 @@ function InlineSubscribeForm() {
                     placeholder="Enter your email address"
                     required
                     style={{
-                        padding: "9px 12px", fontFamily: "var(--font-sans)", fontSize: 12,
+                        padding: "8px 10px", fontFamily: "var(--font-sans)", fontSize: 11,
                         border: `1px solid ${status === "error" ? "var(--color-brand)" : "var(--color-border)"}`,
                         backgroundColor: "var(--color-bg-primary)", color: "var(--color-text-main)", outline: "none",
                     }}
@@ -78,15 +78,15 @@ function InlineSubscribeForm() {
                     type="submit"
                     disabled={status === "loading"}
                     style={{
-                        padding: "10px", backgroundColor: "var(--color-brand)", color: "#fff",
-                        border: "none", fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700,
+                        padding: "8px", backgroundColor: "var(--color-brand)", color: "#fff",
+                        border: "none", fontFamily: "var(--font-sans)", fontSize: 9, fontWeight: 700,
                         textTransform: "uppercase", letterSpacing: "0.12em", cursor: "pointer",
                         opacity: status === "loading" ? 0.7 : 1,
                     }}
                 >
                     {status === "loading" ? "Subscribing..." : "Subscribe Now →"}
                 </button>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: 9, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0, textAlign: "center" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: 8, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0, textAlign: "center" }}>
                     No spam, ever.
                 </p>
             </form>
@@ -525,7 +525,7 @@ function HomePageContent() {
 
                             if (isSubscribeSlot) {
                                 return (
-                                    <div key="subscribe">
+                                    <div key="subscribe" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
                                         <InlineSubscribeForm />
                                     </div>
                                 );
@@ -533,14 +533,11 @@ function HomePageContent() {
 
                             if (isFillerSlot) {
                                 return (
-                                    <div key={`filler-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px solid var(--color-border)", minHeight: 200 }} />
+                                    <div key={`filler-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px solid var(--color-border)", aspectRatio: '16/9', borderRadius: '6px' }} />
                                 );
                             }
 
                             // Calculate actual review index: skip 4th column slots
-                            // Row 0: slots 0,1,2 → reviews 0,1,2
-                            // Row 1: slots 4,5,6 → reviews 3,4,5
-                            // Row 2: slots 8,9,10 → reviews 6,7,8
                             const col = idx % LATEST_COLS;
                             const row = Math.floor(idx / LATEST_COLS);
                             const reviewIdx = row * (LATEST_COLS - 1) + col;

@@ -385,15 +385,36 @@ export default function AddReviewModal({
                                         <label style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-text-main)' }}>
                                             Genre <span style={{ color: 'var(--color-brand)' }}>*</span>
                                         </label>
-                                        <input
-                                            name="genre"
-                                            defaultValue={editData?.genre}
-                                            required={mediaType !== "Blog"}
-                                            placeholder={mediaType === "Blog" ? "Blog Post" : "e.g. Action, Drama"}
-                                            style={{ padding: '10px 12px', fontFamily: 'var(--font-sans)', fontSize: 14, border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)', color: 'var(--color-text-main)', outline: 'none' }}
-                                            onFocus={e => (e.target.style.borderColor = 'var(--color-brand)')}
-                                            onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
-                                        />
+                                        {mediaType === "Blog" ? (
+                                            <input
+                                                name="genre"
+                                                defaultValue={editData?.genre || "Blog Post"}
+                                                readOnly
+                                                style={{ padding: '10px 12px', fontFamily: 'var(--font-sans)', fontSize: 14, border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-main)', outline: 'none', cursor: 'not-allowed' }}
+                                            />
+                                        ) : (
+                                            <select
+                                                name="genre"
+                                                defaultValue={editData?.genre || ""}
+                                                required
+                                                style={{ padding: '10px 12px', fontFamily: 'var(--font-sans)', fontSize: 14, border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)', color: 'var(--color-text-main)', outline: 'none', cursor: 'pointer' }}
+                                                onFocus={e => (e.target.style.borderColor = 'var(--color-brand)')}
+                                                onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
+                                            >
+                                                <option value="" disabled>Select a genre</option>
+                                                <option value="Action">Action</option>
+                                                <option value="Comedy">Comedy</option>
+                                                <option value="Drama">Drama</option>
+                                                <option value="Sci-Fi">Sci-Fi</option>
+                                                <option value="Horror">Horror</option>
+                                                <option value="Romance">Romance</option>
+                                                <option value="Thriller">Thriller</option>
+                                                <option value="Documentary">Documentary</option>
+                                                <option value="Animation">Animation</option>
+                                                <option value="Crime">Crime</option>
+                                                <option value="Fantasy">Fantasy</option>
+                                            </select>
+                                        )}
                                     </div>
 
                                     {mediaType !== "Blog" && (

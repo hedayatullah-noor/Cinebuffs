@@ -38,6 +38,8 @@ edit review panel
 genre dropdown in form 
 share section on review
 only 2 latest blogs should displayed at blog collection section 
-gap in latest review section 
+fix gap in latest review section 
 borders 
 search and browse bar in movie ,series,blog page 
+theme colour should be as logo's color 
+there should noe be long line for every section's partition just an small line of 30 px and heading of the section should be in the centre 

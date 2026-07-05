@@ -9,7 +9,7 @@
   --color-gold-hover: #B8902E;
 
   --color-bg-primary: #F7F4EF;
-  --color-bg-card: #F7F4EF;
+  --color-bg-card: #FFFFFF;          /* pure white — visible against #F7F4EF background */
   --color-bg-dark: #0D0D0D;
   --color-bg-card-dark: #1A1A1A;
 
@@ -17,19 +17,19 @@
   --color-text-muted: #6B6B6B;
   --color-text-light: #F7F4EF;
 
-  --color-border: #E5E0D8;
+  --color-border: #E8E4DC;           /* warm gray — visible against both backgrounds */
   --color-border-dark: #2A2A2A;
 
   --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: var(--font-playfair), 'Didot', 'Bodoni MT', 'Cormorant Garamond',
     Georgia, 'Times New Roman', serif;
+  --font-nav: var(--font-montserrat), 'Montserrat', -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
     background-color: var(--color-bg-primary);
@@ -42,18 +42,12 @@
     margin: 0;
     padding: 0;
   }
-
   .dark body {
     background-color: var(--color-bg-dark);
     color: var(--color-text-light);
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     font-weight: 700;
     letter-spacing: 0.01em;
@@ -61,38 +55,15 @@
     color: var(--color-text-main);
     margin: 0;
   }
-
   /* Didot-style: larger heading sizes */
-  h1 {
-    font-size: clamp(2.2rem, 5vw, 4rem);
-  }
-
-  h2 {
-    font-size: clamp(1.5rem, 3vw, 2.4rem);
-  }
-
-  h3 {
-    font-size: clamp(1.15rem, 2vw, 1.6rem);
-  }
-
-  h4 {
-    font-size: 1.15rem;
-  }
-
-  h5 {
-    font-size: 1rem;
-  }
-
-  h6 {
-    font-size: 0.9rem;
-  }
-
-  .dark h1,
-  .dark h2,
-  .dark h3,
-  .dark h4,
-  .dark h5,
-  .dark h6 {
+  h1 { font-size: clamp(2.2rem, 5vw, 4rem); }
+  h2 { font-size: clamp(1.5rem, 3vw, 2.4rem); }
+  h3 { font-size: clamp(1.15rem, 2vw, 1.6rem); }
+  h4 { font-size: 1.15rem; }
+  h5 { font-size: 1rem; }
+  h6 { font-size: 0.9rem; }
+  .dark h1, .dark h2, .dark h3,
+  .dark h4, .dark h5, .dark h6 {
     color: var(--color-text-light);
   }
 
@@ -100,15 +71,9 @@
     box-sizing: border-box;
     border-color: var(--color-border);
   }
+  .dark * { border-color: var(--color-border-dark); }
 
-  .dark * {
-    border-color: var(--color-border-dark);
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+  a { color: inherit; text-decoration: none; }
 
   ::selection {
     background-color: var(--color-brand);
@@ -124,20 +89,13 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
-
   .dark .glass {
     background-color: rgba(13, 13, 13, 0.94);
   }
 
   /* ── Scrollbar hide ── */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
   /* ── Red rule ── */
   .rule-red {
@@ -169,27 +127,14 @@
     font-weight: 700;
     color: var(--color-text-main);
     padding-bottom: 0.4rem;
-    text-align: center;
-    display: block;
+    border-bottom: 2px solid var(--color-text-main);
+    display: inline-block;
     margin: 0;
     line-height: 1.2;
   }
-
-  .section-heading::after {
-    content: "";
-    display: block;
-    width: 30px;
-    height: 3px;
-    background-color: var(--color-text-main);
-    margin: 12px auto 0;
-  }
-
   .dark .section-heading {
     color: var(--color-text-light);
-  }
-
-  .dark .section-heading::after {
-    background-color: var(--color-text-light);
+    border-bottom-color: var(--color-text-light);
   }
 
   /* ─────────────────────────────────────────────
@@ -200,12 +145,9 @@
   ───────────────────────────────────────────── */
   .page-container {
     width: 100%;
-    max-width: 1600px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.25rem;
-    /* 20px - tight but breathable */
-    padding-right: 1.25rem;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
   }
 
   /* ── Card base ── */
@@ -214,7 +156,6 @@
     border: 1px solid var(--color-border);
     transition: box-shadow 0.25s ease, transform 0.25s ease;
   }
-
   .dark .card-base {
     background-color: var(--color-bg-card-dark);
     border-color: var(--color-border-dark);
@@ -227,8 +168,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.55);
-    /* dark so visible on any image */
+    background-color: rgba(0, 0, 0, 0.55);   /* dark so visible on any image */
     border: 1px solid rgba(255, 255, 255, 0.4);
     cursor: pointer;
     color: #ffffff;
@@ -236,7 +176,6 @@
     flex-shrink: 0;
     padding: 0;
   }
-
   .hero-arrow:hover {
     background-color: var(--color-brand);
     border-color: var(--color-brand);
@@ -259,18 +198,15 @@
     cursor: pointer;
     white-space: nowrap;
   }
-
   .hero-cta:hover {
     background-color: var(--color-brand);
     border-color: var(--color-brand);
     color: #fff;
   }
-
   .dark .hero-cta {
     border-color: var(--color-text-light);
     color: var(--color-text-light);
   }
-
   .dark .hero-cta:hover {
     background-color: var(--color-brand);
     border-color: var(--color-brand);
@@ -287,11 +223,8 @@
     animation: cb-spin 0.7s linear infinite;
     flex-shrink: 0;
   }
-
   @keyframes cb-spin {
-    to {
-      transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
   }
 
   /* ── Review card hover ── */
@@ -305,15 +238,12 @@
     position: absolute;
     inset: 0;
   }
-
   .review-card-wrap:hover .card-poster-img {
     transform: scale(1.04);
   }
-
   .review-card-wrap:hover .card-hover-overlay {
     background-color: rgba(0, 0, 0, 0.10) !important;
   }
-
   .review-card-wrap:hover .card-title-el {
     color: var(--color-brand) !important;
   }
@@ -323,11 +253,9 @@
     background-color: var(--color-bg-card-dark);
     border-color: var(--color-border-dark);
   }
-
   .dark .card-title-el {
     color: var(--color-text-light);
   }
-
   .dark .card-author-date {
     border-top-color: var(--color-border-dark);
     color: var(--color-text-muted);
@@ -337,72 +265,53 @@
 
   /* Shimmer loading skeleton */
   @keyframes cb-shimmer {
-    0% {
-      background-position: -400px 0;
-    }
-
-    100% {
-      background-position: 400px 0;
-    }
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
   }
-
   .skeleton-shimmer {
-    background: linear-gradient(90deg,
-        var(--color-bg-card) 25%,
-        var(--color-border) 50%,
-        var(--color-bg-card) 75%);
+    background: linear-gradient(
+      90deg,
+      var(--color-bg-card) 25%,
+      var(--color-border) 50%,
+      var(--color-bg-card) 75%
+    );
     background-size: 800px 100%;
     animation: cb-shimmer 1.4s ease-in-out infinite;
   }
 
   /* Pulse animation (for loading states) */
   @keyframes cb-pulse {
-
-    0%,
-    100% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0.45;
-    }
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
   }
-
   .cb-pulse {
     animation: cb-pulse 1.8s ease-in-out infinite;
   }
 
   /* Stagger children: add to parent, children get delay via nth-child */
-  .stagger-children>*:nth-child(1) {
-    animation-delay: 0ms;
-  }
-
-  .stagger-children>*:nth-child(2) {
-    animation-delay: 60ms;
-  }
-
-  .stagger-children>*:nth-child(3) {
-    animation-delay: 120ms;
-  }
-
-  .stagger-children>*:nth-child(4) {
-    animation-delay: 180ms;
-  }
-
-  .stagger-children>*:nth-child(5) {
-    animation-delay: 240ms;
-  }
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 60ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 120ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 180ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 240ms; }
 
   /* Smooth image loading fade-in */
   img {
     transition: opacity 0.3s ease;
   }
-
   img[loading="lazy"] {
     opacity: 0;
   }
-
   img[loading="lazy"].loaded {
     opacity: 1;
   }
 }
+
+  /* ── Spotlight animation (for HeroSection) ── */
+  @keyframes spotlight {
+    0% { opacity: 0; transform: translate(-72%, -62%) scale(0.5); }
+    100% { opacity: 1; transform: translate(-50%, -40%) scale(1); }
+  }
+  .animate-spotlight {
+    animation: spotlight 2s ease 0.75s 1 forwards;
+  }

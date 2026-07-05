@@ -48,8 +48,8 @@ export default function Navbar() {
                 >
                     <div className="page-container h-full flex items-center justify-between">
 
-                        {/* Nav links */}
-                        <ul className="hidden md:flex items-center gap-0 h-full overflow-x-auto no-scrollbar">
+                        {/* Nav links — evenly spread across the full navbar width */}
+                        <ul className="hidden md:flex flex-1 items-center justify-evenly h-full">
                             {navLinks.map((link) => {
                                 const isActive = pathname === link.href;
                                 return (
@@ -58,8 +58,8 @@ export default function Navbar() {
                                             href={link.href}
                                             className={`
                                                 relative h-full flex items-center px-4
-                                                text-[10px] font-bold uppercase tracking-widest
-                                                font-[var(--font-sans)]
+                                                text-[13px] font-semibold uppercase tracking-wide
+                                                font-[var(--font-nav)]
                                                 whitespace-nowrap
                                                 transition-colors duration-200
                                                 ${isActive

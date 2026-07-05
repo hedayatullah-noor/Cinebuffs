@@ -104,7 +104,7 @@ export default function Header() {
                             <img
                                 src="/uploads/logo.png"
                                 alt="CineBuffs"
-                                style={{ height: '36px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                                style={{ height: '52px', width: 'auto', objectFit: 'contain', display: 'block' }}
                             />
                         </Link>
                     </div>

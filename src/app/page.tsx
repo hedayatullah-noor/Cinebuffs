@@ -5,9 +5,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Star, ChevronRight, Mail } from "lucide-react";
-import HeroSlider from "@/components/HeroSlider";
+import HeroSlider  from "@/components/HeroSlider";
 import ReviewCard from "@/components/ReviewCard";
-import LatestReviewCard from "@/components/LatestReviewCard";
 import SkeletonCard from "@/components/SkeletonCard";
 import GenreDropdown from "@/components/GenreDropdown";
 import SearchBar from "@/components/SearchBar";
@@ -44,7 +43,7 @@ function InlineSubscribeForm() {
     }
 
     return (
-        <div style={{ backgroundColor: "var(--color-bg-card)", border: "1px solid var(--color-border)", padding: "1rem", display: "flex", flexDirection: "column", gap: 10, height: "100%", justifyContent: "center" }}>
+        <div style={{ backgroundColor: "var(--color-bg-card)", border: "1px solid var(--color-border)", padding: "1rem", display: "flex", flexDirection: "column", gap: 10, height: "100%", justifyContent: "center", minWidth: 0, overflow: "hidden", boxSizing: "border-box" }}>
             {/* Icon */}
             <div style={{ width: 32, height: 32, border: "1px solid var(--color-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Mail style={{ width: 14, height: 14, color: "var(--color-text-main)" }} />
@@ -70,6 +69,7 @@ function InlineSubscribeForm() {
                         padding: "8px 10px", fontFamily: "var(--font-sans)", fontSize: 11,
                         border: `1px solid ${status === "error" ? "var(--color-brand)" : "var(--color-border)"}`,
                         backgroundColor: "var(--color-bg-primary)", color: "var(--color-text-main)", outline: "none",
+                        width: "100%", boxSizing: "border-box", minWidth: 0,
                     }}
                     onFocus={e => (e.target.style.borderColor = "var(--color-brand)")}
                     onBlur={e => (e.target.style.borderColor = status === "error" ? "var(--color-brand)" : "var(--color-border)")}
@@ -82,6 +82,7 @@ function InlineSubscribeForm() {
                         border: "none", fontFamily: "var(--font-sans)", fontSize: 9, fontWeight: 700,
                         textTransform: "uppercase", letterSpacing: "0.12em", cursor: "pointer",
                         opacity: status === "loading" ? 0.7 : 1,
+                        width: "100%", boxSizing: "border-box",
                     }}
                 >
                     {status === "loading" ? "Subscribing..." : "Subscribe Now →"}
@@ -256,7 +257,7 @@ function BlogCard({ review, large = false }: { review: any; large?: boolean }) {
                         style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", transition: "transform 0.4s ease" }}
                     />
                     <div style={{ position: "absolute", top: 0, left: 0 }}>
-                        <span className="tag-label">Blog</span>
+                        <span className="tag-label">{review.type || "Blog"}</span>
                     </div>
                 </div>
 
@@ -292,6 +293,72 @@ function BlogCard({ review, large = false }: { review: any; large?: boolean }) {
     );
 }
 
+/* ─── Latest Blog grid card — image on top, title + writer below, no rating ─── */
+function LatestBlogCard({ slug, title, posterImage, sliderImage, authorName }: {
+    slug: string; title: string; posterImage: string; sliderImage?: string; authorName: string;
+}) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{ duration: 0.4 }}
+        >
+            <Link
+                href={`/reviews/${slug}`}
+                className="latest-blog-card-wrap"
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    textDecoration: 'none',
+                    border: '1px solid var(--color-border)',
+                    backgroundColor: 'var(--color-bg-card)',
+                    overflow: 'hidden',
+                    height: '100%',
+                    minWidth: 0,
+                }}
+            >
+                <style>{`
+                    .latest-blog-card-wrap:hover .latest-blog-card-img { transform: scale(1.04); }
+                    .latest-blog-card-wrap:hover .latest-blog-card-title { color: var(--color-brand) !important; }
+                `}</style>
+
+                {/* Image on top */}
+                <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', overflow: 'hidden', backgroundColor: '#111', flexShrink: 0 }}>
+                    <img
+                        src={sliderImage || posterImage}
+                        alt={title}
+                        className="latest-blog-card-img"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block', transition: 'transform 0.4s ease' }}
+                    />
+                    <div style={{ position: 'absolute', top: 0, left: 0 }}>
+                        <span className="tag-label">Blog</span>
+                    </div>
+                </div>
+
+                {/* Title + writer below — clean layout, no star rating */}
+                <div style={{ padding: '0.75rem 0.9rem', display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                    <h4 className="latest-blog-card-title" style={{
+                        fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '0.95rem',
+                        color: 'var(--color-text-main)', margin: 0, lineHeight: 1.3,
+                        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                        transition: 'color 0.2s ease',
+                    }}>
+                        {title}
+                    </h4>
+                    <p style={{
+                        fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700,
+                        textTransform: 'uppercase', letterSpacing: '0.08em',
+                        color: 'var(--color-text-muted)', margin: 0, marginTop: 'auto',
+                    }}>
+                        By {authorName}
+                    </p>
+                </div>
+            </Link>
+        </motion.div>
+    );
+}
+
 /* ─── Main homepage content ─── */
 function HomePageContent() {
     const searchParams = useSearchParams();
@@ -304,13 +371,13 @@ function HomePageContent() {
     const [showMore, setShowMore]           = useState(false);
     const [loadingMore, setLoadingMore]     = useState(false);
 
-    // Latest reviews (non-blog)
-    const [latestReviews, setLatestReviews] = useState<any[]>([]);
+    // Latest Blog grid (blogs only — movies/series filtered out)
+    const [latestBlogs, setLatestBlogs]     = useState<any[]>([]);
     const [loadingLatest, setLoadingLatest] = useState(true);
 
-    // Blog collection
-    const [blogs, setBlogs]                 = useState<any[]>([]);
-    const [loadingBlogs, setLoadingBlogs]   = useState(true);
+    // Series reviews (replaces the old Blog Collection section)
+    const [seriesReviews, setSeriesReviews] = useState<any[]>([]);
+    const [loadingSeries, setLoadingSeries]  = useState(true);
 
     // Hit reviews (rating >= 8)
     const [hitReviews, setHitReviews]       = useState<any[]>([]);
@@ -344,21 +411,17 @@ function HomePageContent() {
             })
             .finally(() => setLoadingAll(false));
 
-        // Latest reviews — non-blog, limit 12
-        fetch("/api/reviews?status=APPROVED&limit=12")
+        // Series reviews — limit 4 (Series Review section, replaces old Blog Collection)
+        fetch("/api/reviews?status=APPROVED&type=Series&limit=4")
             .then(r => r.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    setLatestReviews(data.filter((r: any) => r.type !== "Blog").slice(0, 12));
-                }
-            })
-            .finally(() => setLoadingLatest(false));
+            .then(data => { if (Array.isArray(data)) setSeriesReviews(data.slice(0, 4)); })
+            .finally(() => setLoadingSeries(false));
 
-        // Blogs — limit 4
-        fetch("/api/reviews?status=APPROVED&type=Blog&limit=4")
+        // Latest Blog grid — separate limit-12 fetch so it doesn't affect Blog Collection below
+        fetch("/api/reviews?status=APPROVED&type=Blog&limit=12")
             .then(r => r.json())
-            .then(data => { if (Array.isArray(data)) setBlogs(data.slice(0, 4)); })
-            .finally(() => setLoadingBlogs(false));
+            .then(data => { if (Array.isArray(data)) setLatestBlogs(data.slice(0, 12)); })
+            .finally(() => setLoadingLatest(false));
 
         // Hit reviews — fetch all then filter rating >= 8, limit 10
         fetch("/api/reviews?status=APPROVED&limit=50")
@@ -398,7 +461,7 @@ function HomePageContent() {
             <HeroSlider />
 
             {/* ── ALL REVIEWS SECTION ── */}
-            <section className="w-full px-4 sm:px-5" style={{ paddingTop: '0.5rem', paddingBottom: '1rem' }}>
+            <section className="page-container" style={{ paddingTop: '3.5rem', paddingBottom: '1rem' }}>
                 {/* Heading + Filters — same line */}
                 <div style={{
                     display: "flex",
@@ -485,14 +548,14 @@ function HomePageContent() {
 
             {/* ── FEATURED REVIEW (horizontal, latest) ── */}
             {featuredReview && (
-                <section className="w-full px-4 sm:px-5 py-8">
+                <section className="page-container py-8">
                     <FeaturedReview review={featuredReview} />
                 </section>
             )}
 
-            {/* ── LATEST REVIEWS SECTION ── */}
-            <section className="w-full px-4 sm:px-5 py-8">
-                <SectionHeading title="Latest Reviews" />
+            {/* ── LATEST BLOG SECTION ── */}
+            <section className="page-container py-8">
+                <SectionHeading title="Latest Blog" />
 
                 {loadingLatest ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -502,18 +565,18 @@ function HomePageContent() {
                     </div>
                 ) : (
                     <div
-                        style={{ display: "grid", gap: "1.25rem" }}
-                        className="latest-reviews-grid"
+                        style={{ display: "grid", gap: "1.25rem", overflow: "hidden" }}
+                        className="latest-blog-grid"
                     >
                         <style>{`
-                            .latest-reviews-grid {
-                                grid-template-columns: repeat(2, 1fr);
+                            .latest-blog-grid {
+                                grid-template-columns: repeat(2, minmax(0, 1fr));
                             }
                             @media (min-width: 640px) {
-                                .latest-reviews-grid { grid-template-columns: repeat(3, 1fr); }
+                                .latest-blog-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
                             }
                             @media (min-width: 1024px) {
-                                .latest-reviews-grid { grid-template-columns: repeat(4, 1fr); }
+                                .latest-blog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
                             }
                         `}</style>
 
@@ -525,7 +588,7 @@ function HomePageContent() {
 
                             if (isSubscribeSlot) {
                                 return (
-                                    <div key="subscribe" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
+                                    <div key="subscribe" style={{ aspectRatio: '16/9', overflow: 'hidden', minWidth: 0 }}>
                                         <InlineSubscribeForm />
                                     </div>
                                 );
@@ -533,7 +596,7 @@ function HomePageContent() {
 
                             if (isFillerSlot) {
                                 return (
-                                    <div key={`filler-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px solid var(--color-border)", aspectRatio: '16/9', borderRadius: '6px' }} />
+                                    <div key={`filler-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px solid var(--color-border)", aspectRatio: '16/9', borderRadius: '6px', minWidth: 0 }} />
                                 );
                             }
 
@@ -541,53 +604,52 @@ function HomePageContent() {
                             const col = idx % LATEST_COLS;
                             const row = Math.floor(idx / LATEST_COLS);
                             const reviewIdx = row * (LATEST_COLS - 1) + col;
-                            const review = latestReviews[reviewIdx];
+                            const review = latestBlogs[reviewIdx];
 
                             if (!review) return (
-                                <div key={`empty-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px dashed var(--color-border)", aspectRatio: '16/9', borderRadius: '6px' }} />
+                                <div key={`empty-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px dashed var(--color-border)", aspectRatio: '16/9', borderRadius: '6px', minWidth: 0 }} />
                             );
 
                             return (
-                                <LatestReviewCard
+                                <LatestBlogCard
                                     key={review.id}
                                     slug={review.slug}
                                     title={review.title}
                                     posterImage={review.posterImage}
                                     sliderImage={review.sliderImage}
-                                    rating={Number(review.rating)}
                                     authorName={review.author?.name || "Unknown"}
                                 />
                             );
                         })}
                     </div>
                 )}
-                <ViewAllButton href="/movies" label="View All Latest" />
+                <ViewAllButton href="/blog" label="View All Blogs" />
             </section>
 
             {/* ── BLOG COLLECTION SECTION ── */}
-            <section className="w-full px-4 sm:px-5 py-8" style={{ borderTop: "1px solid var(--color-border)" }}>
-                <SectionHeading title="Blog Collection" />
+            <section className="page-container py-8" style={{ borderTop: "1px solid var(--color-border)" }}>
+                <SectionHeading title="Series Review" />
 
-                {loadingBlogs ? (
+                {loadingSeries ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                         {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="skeleton-shimmer" style={{ height: 120, width: "100%" }} />
                         ))}
                     </div>
-                ) : blogs.length === 0 ? (
+                ) : seriesReviews.length === 0 ? (
                     <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--color-text-muted)", textAlign: "center", padding: "2rem 0" }}>
-                        No blogs yet.
+                        No series reviews yet.
                     </p>
                 ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                        {blogs.map(blog => <BlogCard key={blog.id} review={blog} large={true} />)}
+                        {seriesReviews.map(series => <BlogCard key={series.id} review={series} large={true} />)}
                     </div>
                 )}
-                <ViewAllButton href="/blog" label="View All Blogs" />
+                <ViewAllButton href="/series" label="View All Series" />
             </section>
 
             {/* ── HIT REVIEWS SECTION ── */}
-            <section className="w-full px-4 sm:px-5 py-8" style={{ borderTop: "1px solid var(--color-border)" }}>
+            <section className="page-container py-8" style={{ borderTop: "1px solid var(--color-border)" }}>
                 <SectionHeading title="Hit Reviews" />
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1.5rem", marginTop: "-1rem" }}>
                     Rated 4 and above

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
+import { Inter, Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import "react-quill-new/dist/quill.snow.css";
 import { Suspense } from "react";
@@ -26,6 +26,17 @@ const didot = Cormorant_Garamond({
     display: "swap",
     weight: ["400", "600", "700"],
     style: ["normal", "italic"],
+});
+
+/*
+ * Montserrat — used exclusively for the Navbar (--font-nav).
+ * Clean, geometric sans-serif for the nav links.
+ */
+const montserrat = Montserrat({
+    subsets: ["latin"],
+    variable: "--font-montserrat",
+    display: "swap",
+    weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -57,7 +68,7 @@ export default function RootLayout({
                 />
             </head>
             <body
-                className={`${inter.variable} ${didot.variable} min-h-screen antialiased`}
+                className={`${inter.variable} ${didot.variable} ${montserrat.variable} min-h-screen antialiased`}
                 suppressHydrationWarning
             >
                 {/* Crimson progress bar on route change */}

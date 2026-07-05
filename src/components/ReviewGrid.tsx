@@ -108,7 +108,7 @@ export function ReviewGridInner({
     const hasMore        = visibleCount < reviews.length;
 
     return (
-        <section className="w-full px-4 sm:px-5 pt-8 pb-12">
+        <section className="page-container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
 
             {/* ── Section header ── */}
             {!hideHeader && (

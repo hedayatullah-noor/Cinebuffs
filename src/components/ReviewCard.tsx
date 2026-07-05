@@ -94,6 +94,30 @@ export default function ReviewCard({
                             zIndex: 5,
                         }}
                     />
+
+                    {/* Star rating — overlay graphic, bottom-right corner of poster */}
+                    {!isBlog && (
+                        <div style={{
+                            position: 'absolute',
+                            bottom: 8,
+                            right: 8,
+                            zIndex: 10,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 3,
+                            backgroundColor: 'rgba(0,0,0,0.65)',
+                            padding: '3px 7px',
+                        }}>
+                            <Star style={{ width: 11, height: 11, fill: 'var(--color-gold)', color: 'var(--color-gold)', flexShrink: 0 }} />
+                            <span style={{
+                                fontSize: 11, fontWeight: 700,
+                                fontFamily: 'var(--font-sans)',
+                                color: '#fff',
+                            }}>
+                                {Number(rating).toFixed(1)}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* ── Text content ── */}
@@ -104,21 +128,6 @@ export default function ReviewCard({
                     padding: '10px 12px 12px',
                     gap: 6,
                 }}>
-                    {/* Star rating — not for blog posts */}
-                    {!isBlog && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                            <Star style={{ width: 11, height: 11, fill: 'var(--color-brand)', color: 'var(--color-brand)', flexShrink: 0 }} />
-                            <span style={{
-                                fontSize: 11, fontWeight: 700,
-                                fontFamily: 'var(--font-sans)',
-                                color: 'var(--color-text-main)',
-                            }}>
-                                {Number(rating).toFixed(1)}
-                                <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}> / 5</span>
-                            </span>
-                        </div>
-                    )}
-
                     {/* Title — .card-title-el gets color:brand on hover via globals.css */}
                     <h3
                         className="card-title-el"

@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Star } from "lucide-react";
 
 interface Review {
     id: string;
@@ -33,10 +32,6 @@ export default function HeroSlider() {
         setActiveIndex(prev => (prev + 1) % reviews.length);
     }, [reviews.length]);
 
-    const prevSlide = useCallback(() => {
-        setActiveIndex(prev => (prev - 1 + reviews.length) % reviews.length);
-    }, [reviews.length]);
-
     const resetInterval = useCallback(() => {
         if (intervalRef.current) clearInterval(intervalRef.current);
         intervalRef.current = setInterval(nextSlide, 6000);
@@ -50,24 +45,15 @@ export default function HeroSlider() {
 
     if (loading) {
         return (
-            <div className="w-full bg-[var(--color-bg-card)] animate-pulse"
-                style={{ height: 500, marginBottom: '1rem', marginTop: '1.5rem' }} />
+            <div className="page-container" style={{ marginTop: '1.5rem', marginBottom: '1rem' }}>
+                <div className="w-full bg-[var(--color-bg-card)] animate-pulse" style={{ height: 500 }} />
+            </div>
         );
     }
 
     if (reviews.length === 0) return null;
 
     const review = reviews[activeIndex];
-
-    const arrowStyle: React.CSSProperties = {
-        width: 40, height: 40,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backgroundColor: 'var(--color-brand)',
-        border: 'none',
-        cursor: 'pointer',
-        color: '#fff',
-        flexShrink: 0,
-    };
 
     return (
         <>
@@ -78,8 +64,6 @@ export default function HeroSlider() {
                     border-left: 4px solid var(--color-brand);  /* left accent border */
                     margin-bottom: 0;
                     margin-top: 1.5rem;
-                    margin-left: 1.25rem;                        /* left margin */
-                    width: calc(100% - 1.25rem);                 /* adjust width */
                 }
                 .cb-hero-inner {
                     display: flex;
@@ -138,6 +122,7 @@ export default function HeroSlider() {
                 }
             `}</style>
 
+            <div className="page-container">
             <section className="cb-hero-outer">
                 <div className="cb-hero-inner">
 
@@ -162,6 +147,24 @@ export default function HeroSlider() {
                         {/* Type badge */}
                         <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 10 }}>
                             <span className="tag-label">{review.type}</span>
+                        </div>
+
+                        {/* Star rating — overlay graphic, bottom-right corner of poster */}
+                        <div style={{
+                            position: 'absolute',
+                            bottom: 14,
+                            right: 14,
+                            zIndex: 10,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 5,
+                            backgroundColor: 'rgba(0,0,0,0.6)',
+                            padding: '5px 10px',
+                        }}>
+                            <Star style={{ width: 14, height: 14, fill: 'var(--color-gold)', color: 'var(--color-gold)', flexShrink: 0 }} />
+                            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>
+                                {(Number(review.rating) / 2).toFixed(1)} / 5
+                            </span>
                         </div>
 
                         {/* Dot indicators */}
@@ -195,16 +198,8 @@ export default function HeroSlider() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -8 }}
                                 transition={{ duration: 0.35, ease: 'easeOut' }}
-                                style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}
+                                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '1rem', flex: 1 }}
                             >
-                                {/* Rating */}
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <Star style={{ width: 15, height: 15, fill: 'var(--color-brand)', color: 'var(--color-brand)', flexShrink: 0 }} />
-                                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-main)' }}>
-                                        {(Number(review.rating) / 2).toFixed(1)} / 5
-                                    </span>
-                                </div>
-
                                 {/* Title */}
                                 <h2 style={{
                                     fontFamily: 'var(--font-serif)', fontWeight: 700, lineHeight: 1.2, margin: 0,
@@ -219,61 +214,13 @@ export default function HeroSlider() {
                                     Featured in: <span style={{ color: 'var(--color-text-main)' }}>{review.genre}</span>
                                 </p>
 
-                                <span className="rule-red" />
-
-                                <Link href={`/reviews/${review.slug}`} className="hero-cta" style={{ alignSelf: 'flex-start' }}>
-                                    Read Full Article
-                                </Link>
+                                <span className="rule-red" style={{ marginLeft: 'auto', marginRight: 'auto' }} />
                             </motion.div>
                         </AnimatePresence>
-
-                        {/* ── Prev/Next arrows — always visible in content panel ── */}
-                        <div style={{
-                            display: 'flex',
-                            gap: 8,
-                            paddingTop: '0.5rem',
-                            borderTop: '1px solid var(--color-border)',
-                        }}>
-                            <button
-                                onClick={() => { prevSlide(); resetInterval(); }}
-                                aria-label="Previous slide"
-                                style={{
-                                    width: 44, height: 44,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    backgroundColor: 'var(--color-brand)',
-                                    border: 'none', cursor: 'pointer', color: '#fff',
-                                    fontSize: 18, fontWeight: 700,
-                                }}
-                            >
-                                ‹
-                            </button>
-                            <button
-                                onClick={() => { nextSlide(); resetInterval(); }}
-                                aria-label="Next slide"
-                                style={{
-                                    width: 44, height: 44,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    backgroundColor: 'var(--color-brand)',
-                                    border: 'none', cursor: 'pointer', color: '#fff',
-                                    fontSize: 18, fontWeight: 700,
-                                }}
-                            >
-                                ›
-                            </button>
-                            {/* Slide counter */}
-                            <span style={{
-                                display: 'flex', alignItems: 'center',
-                                fontFamily: 'var(--font-sans)', fontSize: 11,
-                                color: 'var(--color-text-muted)',
-                                fontWeight: 600, marginLeft: 4,
-                            }}>
-                                {activeIndex + 1} / {reviews.length}
-                            </span>
-                        </div>
                     </div>
                 </div>
             </section>
+            </div>
         </>
     );
 }
-

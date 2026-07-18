@@ -4377,230 +4377,6 @@ export default function ContactPage() {
 }
 </file>
 
-<file path="src/app/contributors/page.tsx">
-"use client";
-
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { User, Mail } from "lucide-react";
-
-export default function ContributorsPage() {
-    const [contributors, setContributors] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetch("/api/contributors")
-            .then(res => res.json())
-            .then(data => { if (Array.isArray(data)) setContributors(data); })
-            .catch(() => {})
-            .finally(() => setLoading(false));
-    }, []);
-
-    const getRoleLabel = (role: string) => {
-        if (role === 'ADMIN') return 'Chief Editor';
-        if (role === 'MODERATOR') return 'Senior Contributor';
-        return 'Story Contributor';
-    };
-
-    return (
-        <div className="min-h-screen" style={{ backgroundColor: "var(--color-bg-primary)" }}>
-
-            {/* ── Page header ── */}
-            <div className="w-full px-5 pt-10 pb-10" style={{ borderBottom: "2px solid var(--color-text-main)" }}>
-                <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center" }}>
-                    <p style={{
-                        fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700,
-                        letterSpacing: "0.15em", textTransform: "uppercase",
-                        color: "var(--color-brand)", marginBottom: 16,
-                    }}>
-                        CineBuffs / Contributors
-                    </p>
-                    <h1 style={{
-                        fontFamily: "var(--font-serif)", fontWeight: 700,
-                        fontSize: "clamp(2rem, 5vw, 3.5rem)",
-                        color: "var(--color-text-main)", lineHeight: 1.1,
-                        letterSpacing: "-0.02em", marginBottom: 16,
-                    }}>
-                        Featured Contributors
-                    </h1>
-                    <p style={{
-                        fontFamily: "var(--font-sans)", fontSize: 13,
-                        color: "var(--color-text-muted)", maxWidth: 500,
-                        lineHeight: 1.6, margin: "0 auto",
-                    }}>
-                        The critics, writers, and cinephiles behind every review and essay on CineBuffs.
-                    </p>
-                </div>
-            </div>
-
-            {/* ── Loading ── */}
-            {loading && (
-                <div style={{ display: "flex", justifyContent: "center", padding: "4rem 0" }}>
-                    <div className="load-more-spinner" />
-                </div>
-            )}
-
-            {/* ── Contributors list — Roger Ebert style ── */}
-            {!loading && (
-                <div style={{ maxWidth: 900, margin: "0 auto", padding: "4rem 1.25rem" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0", borderTop: "1px solid var(--color-border)" }}>
-                        {contributors.map((person, idx) => (
-                            <motion.div
-                                key={person.id}
-                                initial={{ opacity: 0, y: 16 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.08, duration: 0.4 }}
-                                style={{
-                                    display: "flex",
-                                    alignItems: "flex-start",
-                                    gap: "1.5rem",
-                                    padding: "2.5rem",
-                                    borderBottom: "1px solid var(--color-border)",
-                                    borderRight: idx % 2 === 0 ? "1px solid var(--color-border)" : "none",
-                                }}
-                            >
-                                {/* ── Circular avatar — Roger Ebert style ── */}
-                                <div style={{ flexShrink: 0 }}>
-                                    <div style={{
-                                        width: 100,
-                                        height: 100,
-                                        borderRadius: "50%",
-                                        overflow: "hidden",
-                                        border: "2px solid var(--color-border)",
-                                        backgroundColor: "#e8e5e0",
-                                        flexShrink: 0,
-                                    }}>
-                                        {person.image ? (
-                                            <img
-                                                src={person.image}
-                                                alt={person.name}
-                                                style={{
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    objectFit: "cover",
-                                                    objectPosition: "center top",
-                                                    display: "block",
-                                                }}
-                                            />
-                                        ) : (
-                                            <div style={{
-                                                width: "100%", height: "100%",
-                                                display: "flex", alignItems: "center", justifyContent: "center",
-                                                backgroundColor: "var(--color-brand)",
-                                            }}>
-                                                <span style={{
-                                                    color: "#fff",
-                                                    fontSize: "2rem",
-                                                    fontFamily: "var(--font-serif)",
-                                                    fontWeight: 700,
-                                                }}>
-                                                    {person.name?.charAt(0)?.toUpperCase()}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* ── Info ── */}
-                                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
-                                    {/* Name */}
-                                    <h2 style={{
-                                        fontFamily: "var(--font-serif)",
-                                        fontWeight: 700,
-                                        fontSize: "clamp(1.25rem, 2.5vw, 1.6rem)",
-                                        color: "var(--color-text-main)",
-                                        margin: 0,
-                                        lineHeight: 1.2,
-                                    }}>
-                                        {person.name}
-                                    </h2>
-
-                                    {/* Role */}
-                                    <p style={{
-                                        fontFamily: "var(--font-sans)",
-                                        fontSize: 11,
-                                        fontWeight: 700,
-                                        textTransform: "uppercase",
-                                        letterSpacing: "0.1em",
-                                        color: "var(--color-brand)",
-                                        margin: 0,
-                                    }}>
-                                        {getRoleLabel(person.role)}
-                                    </p>
-
-                                    {/* Bio */}
-                                    <p style={{
-                                        fontFamily: "var(--font-sans)",
-                                        fontSize: 14,
-                                        color: person.bio ? "var(--color-text-main)" : "var(--color-text-muted)",
-                                        lineHeight: 1.75,
-                                        fontStyle: person.bio ? "normal" : "italic",
-                                        margin: 0,
-                                        maxWidth: 600,
-                                    }}>
-                                        {person.bio || "No bio available for this contributor yet."}
-                                    </p>
-
-                                    {/* Links */}
-                                    <div style={{ display: "flex", gap: 16, marginTop: 4 }}>
-                                        {person.email && (
-                                            <a
-                                                href={`mailto:${person.email}`}
-                                                style={{
-                                                    display: "flex", alignItems: "center", gap: 5,
-                                                    fontFamily: "var(--font-sans)", fontSize: 11,
-                                                    fontWeight: 700, textTransform: "uppercase",
-                                                    letterSpacing: "0.08em",
-                                                    color: "var(--color-text-muted)",
-                                                    textDecoration: "none",
-                                                    transition: "color 0.2s ease",
-                                                }}
-                                                onMouseEnter={e => (e.currentTarget.style.color = "var(--color-brand)")}
-                                                onMouseLeave={e => (e.currentTarget.style.color = "var(--color-text-muted)")}
-                                            >
-                                                <Mail style={{ width: 12, height: 12 }} />
-                                                Contact
-                                            </a>
-                                        )}
-                                        <Link
-                                            href={`/profile/${person.id}`}
-                                            style={{
-                                                display: "flex", alignItems: "center", gap: 5,
-                                                fontFamily: "var(--font-sans)", fontSize: 11,
-                                                fontWeight: 700, textTransform: "uppercase",
-                                                letterSpacing: "0.08em",
-                                                color: "var(--color-brand)",
-                                                textDecoration: "none",
-                                            }}
-                                        >
-                                            Full Profile →
-                                        </Link>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {/* Footer note */}
-                    <p style={{
-                        textAlign: "center",
-                        marginTop: "3rem",
-                        fontFamily: "var(--font-sans)",
-                        fontSize: 10,
-                        color: "var(--color-text-muted)",
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                    }}>
-                        CineBuffs Editorial Board · Established 2024
-                    </p>
-                </div>
-            )}
-        </div>
-    );
-}
-</file>
-
 <file path="src/app/forgot-password/page.tsx">
 "use client";
 
@@ -6405,6 +6181,230 @@ export default function BlogPage() {
 }
 </file>
 
+<file path="src/app/contributors/page.tsx">
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { User, Mail } from "lucide-react";
+
+export default function ContributorsPage() {
+    const [contributors, setContributors] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch("/api/contributors")
+            .then(res => res.json())
+            .then(data => { if (Array.isArray(data)) setContributors(data); })
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, []);
+
+    const getRoleLabel = (role: string) => {
+        if (role === 'ADMIN') return 'Chief Editor';
+        if (role === 'MODERATOR') return 'Senior Contributor';
+        return 'Story Contributor';
+    };
+
+    return (
+        <div className="min-h-screen" style={{ backgroundColor: "var(--color-bg-primary)" }}>
+
+            {/* ── Page header ── */}
+            <div className="w-full px-5 pt-10 pb-10" style={{ borderBottom: "2px solid var(--color-text-main)" }}>
+                <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center" }}>
+                    <p style={{
+                        fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700,
+                        letterSpacing: "0.15em", textTransform: "uppercase",
+                        color: "var(--color-brand)", marginBottom: 16,
+                    }}>
+                        CineBuffs / Contributors
+                    </p>
+                    <h1 style={{
+                        fontFamily: "var(--font-serif)", fontWeight: 700,
+                        fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                        color: "var(--color-text-main)", lineHeight: 1.1,
+                        letterSpacing: "-0.02em", marginBottom: 16,
+                    }}>
+                        Featured Contributors
+                    </h1>
+                    <p style={{
+                        fontFamily: "var(--font-sans)", fontSize: 13,
+                        color: "var(--color-text-muted)", maxWidth: 500,
+                        lineHeight: 1.6, margin: "0 auto",
+                    }}>
+                        The critics, writers, and cinephiles behind every review and essay on CineBuffs.
+                    </p>
+                </div>
+            </div>
+
+            {/* ── Loading ── */}
+            {loading && (
+                <div style={{ display: "flex", justifyContent: "center", padding: "4rem 0" }}>
+                    <div className="load-more-spinner" />
+                </div>
+            )}
+
+            {/* ── Contributors list — Roger Ebert style ── */}
+            {!loading && (
+                <div style={{ maxWidth: 900, margin: "0 auto", padding: "4rem 1.25rem" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0", borderTop: "1px solid var(--color-border)" }}>
+                        {contributors.map((person, idx) => (
+                            <motion.div
+                                key={person.id}
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.08, duration: 0.4 }}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    gap: "1.5rem",
+                                    padding: "2.5rem",
+                                    borderBottom: "1px solid var(--color-border)",
+                                    borderRight: idx % 2 === 0 ? "1px solid var(--color-border)" : "none",
+                                }}
+                            >
+                                {/* ── Circular avatar — Roger Ebert style ── */}
+                                <div style={{ flexShrink: 0 }}>
+                                    <div style={{
+                                        width: 100,
+                                        height: 100,
+                                        borderRadius: "50%",
+                                        overflow: "hidden",
+                                        border: "2px solid var(--color-border)",
+                                        backgroundColor: "#e8e5e0",
+                                        flexShrink: 0,
+                                    }}>
+                                        {person.image ? (
+                                            <img
+                                                src={person.image}
+                                                alt={person.name}
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    objectFit: "cover",
+                                                    objectPosition: "center top",
+                                                    display: "block",
+                                                }}
+                                            />
+                                        ) : (
+                                            <div style={{
+                                                width: "100%", height: "100%",
+                                                display: "flex", alignItems: "center", justifyContent: "center",
+                                                backgroundColor: "var(--color-brand)",
+                                            }}>
+                                                <span style={{
+                                                    color: "#fff",
+                                                    fontSize: "2rem",
+                                                    fontFamily: "var(--font-serif)",
+                                                    fontWeight: 700,
+                                                }}>
+                                                    {person.name?.charAt(0)?.toUpperCase()}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* ── Info ── */}
+                                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+                                    {/* Name */}
+                                    <h2 style={{
+                                        fontFamily: "var(--font-serif)",
+                                        fontWeight: 700,
+                                        fontSize: "clamp(1.25rem, 2.5vw, 1.6rem)",
+                                        color: "var(--color-text-main)",
+                                        margin: 0,
+                                        lineHeight: 1.2,
+                                    }}>
+                                        {person.name}
+                                    </h2>
+
+                                    {/* Role */}
+                                    <p style={{
+                                        fontFamily: "var(--font-sans)",
+                                        fontSize: 11,
+                                        fontWeight: 700,
+                                        textTransform: "uppercase",
+                                        letterSpacing: "0.1em",
+                                        color: "var(--color-brand)",
+                                        margin: 0,
+                                    }}>
+                                        {getRoleLabel(person.role)}
+                                    </p>
+
+                                    {/* Bio */}
+                                    <p style={{
+                                        fontFamily: "var(--font-sans)",
+                                        fontSize: 14,
+                                        color: person.bio ? "var(--color-text-main)" : "var(--color-text-muted)",
+                                        lineHeight: 1.75,
+                                        fontStyle: person.bio ? "normal" : "italic",
+                                        margin: 0,
+                                        maxWidth: 600,
+                                    }}>
+                                        {person.bio || "No bio available for this contributor yet."}
+                                    </p>
+
+                                    {/* Links */}
+                                    <div style={{ display: "flex", gap: 16, marginTop: 4 }}>
+                                        {person.email && (
+                                            <a
+                                                href={`mailto:${person.email}`}
+                                                style={{
+                                                    display: "flex", alignItems: "center", gap: 5,
+                                                    fontFamily: "var(--font-sans)", fontSize: 11,
+                                                    fontWeight: 700, textTransform: "uppercase",
+                                                    letterSpacing: "0.08em",
+                                                    color: "var(--color-text-muted)",
+                                                    textDecoration: "none",
+                                                    transition: "color 0.2s ease",
+                                                }}
+                                                onMouseEnter={e => (e.currentTarget.style.color = "var(--color-brand)")}
+                                                onMouseLeave={e => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                                            >
+                                                <Mail style={{ width: 12, height: 12 }} />
+                                                Contact
+                                            </a>
+                                        )}
+                                        <Link
+                                            href={`/profile/${person.id}`}
+                                            style={{
+                                                display: "flex", alignItems: "center", gap: 5,
+                                                fontFamily: "var(--font-sans)", fontSize: 11,
+                                                fontWeight: 700, textTransform: "uppercase",
+                                                letterSpacing: "0.08em",
+                                                color: "var(--color-brand)",
+                                                textDecoration: "none",
+                                            }}
+                                        >
+                                            Full Profile →
+                                        </Link>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    {/* Footer note */}
+                    <p style={{
+                        textAlign: "center",
+                        marginTop: "3rem",
+                        fontFamily: "var(--font-sans)",
+                        fontSize: 10,
+                        color: "var(--color-text-muted)",
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                    }}>
+                        CineBuffs Editorial Board · Established 2024
+                    </p>
+                </div>
+            )}
+        </div>
+    );
+}
+</file>
+
 <file path="src/app/movies/page.tsx">
 import ReviewGrid from "@/components/ReviewGrid";
 
@@ -6527,197 +6527,6 @@ export default function SeriesPage() {
 
             <ReviewGrid defaultType="Series" hideHeader={false} hideFilters={true} />
         </div>
-    );
-}
-</file>
-
-<file path="src/components/ReviewCard.tsx">
-"use client";
-
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Star } from "lucide-react";
-
-interface ReviewCardProps {
-    id: string;
-    slug: string;
-    title: string;
-    posterImage: string;
-    rating: number;
-    genre: string;
-    authorName: string;
-    authorImage: string;
-    category?: string;
-    publishDate?: string;
-    isBlog?: boolean;
-}
-
-export default function ReviewCard({
-    slug,
-    title,
-    posterImage,
-    rating,
-    authorName,
-    category = "Movie",
-    publishDate = "",
-    isBlog = false,
-}: ReviewCardProps) {
-    return (
-        <motion.div
-            className="review-card-wrap"
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-30px" }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            style={{
-                backgroundColor: 'var(--color-bg-card)',
-                border: '1px solid var(--color-border)',
-                overflow: 'hidden',
-                cursor: 'pointer',
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-            }}
-        >
-            <Link
-                href={`/reviews/${slug}`}
-                style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', color: 'inherit' }}
-            >
-
-                {/* ── Poster: 3:4 movie poster ratio ── */}
-                <div style={{
-                    position: 'relative',
-                    width: '100%',
-                    paddingTop: '133%',  /* 4/3 * 100 = 133.33% gives 3:4 ratio */
-                    overflow: 'hidden',
-                    backgroundColor: '#e8e5e0',
-                    flexShrink: 0,
-                }}>
-                    {/* Category badge */}
-                    <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-                        <span className="tag-label">{category}</span>
-                    </div>
-
-                    {/* Image — uses .card-poster-img from globals.css for hover scale */}
-                    {posterImage ? (
-                        <img
-                            src={posterImage}
-                            alt={title}
-                            className="card-poster-img"
-                        />
-                    ) : (
-                        <div style={{
-                            position: 'absolute', inset: 0,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            backgroundColor: '#d0cdc8',
-                        }}>
-                            <span style={{ fontSize: 10, color: '#888', fontFamily: 'var(--font-sans)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                No Image
-                            </span>
-                        </div>
-                    )}
-
-                    {/* Hover overlay — darkens slightly on hover via globals.css */}
-                    <div
-                        className="card-hover-overlay"
-                        style={{
-                            position: 'absolute', inset: 0,
-                            backgroundColor: 'rgba(0,0,0,0)',
-                            transition: 'background-color 0.3s ease',
-                            zIndex: 5,
-                        }}
-                    />
-
-                    {/* Star rating — overlay graphic, bottom-right corner of poster */}
-                    {!isBlog && (
-                        <div style={{
-                            position: 'absolute',
-                            bottom: 8,
-                            right: 8,
-                            zIndex: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 3,
-                            backgroundColor: 'rgba(0,0,0,0.65)',
-                            padding: '3px 7px',
-                        }}>
-                            <Star style={{ width: 11, height: 11, fill: 'var(--color-gold)', color: 'var(--color-gold)', flexShrink: 0 }} />
-                            <span style={{
-                                fontSize: 11, fontWeight: 700,
-                                fontFamily: 'var(--font-sans)',
-                                color: '#fff',
-                            }}>
-                                {Number(rating).toFixed(1)}
-                            </span>
-                        </div>
-                    )}
-                </div>
-
-                {/* ── Text content ── */}
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                    padding: '10px 12px 12px',
-                    gap: 6,
-                }}>
-                    {/* Title — .card-title-el gets color:brand on hover via globals.css */}
-                    <h3
-                        className="card-title-el"
-                        style={{
-                            fontFamily: 'var(--font-serif)',
-                            fontWeight: 700,
-                            fontSize: '0.875rem',
-                            lineHeight: 1.35,
-                            color: 'var(--color-text-main)',
-                            margin: 0,
-                            display: '-webkit-box',
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            transition: 'color 0.2s ease',
-                        }}
-                    >
-                        {title}
-                    </h3>
-
-                    {/* Author + date */}
-                    <div
-                        className="card-author-date"
-                        style={{
-                            marginTop: 'auto',
-                            paddingTop: 8,
-                            borderTop: '1px solid var(--color-border)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            gap: 4,
-                        }}
-                    >
-                        <span style={{
-                            fontSize: 10, fontWeight: 700,
-                            textTransform: 'uppercase', letterSpacing: '0.08em',
-                            fontFamily: 'var(--font-sans)',
-                            color: 'var(--color-text-muted)',
-                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                        }}>
-                            By {authorName}
-                        </span>
-                        {publishDate && (
-                            <span style={{
-                                fontSize: 10,
-                                fontFamily: 'var(--font-sans)',
-                                color: 'var(--color-text-muted)',
-                                whiteSpace: 'nowrap', flexShrink: 0,
-                            }}>
-                                {publishDate}
-                            </span>
-                        )}
-                    </div>
-                </div>
-            </Link>
-        </motion.div>
     );
 }
 </file>
@@ -7529,6 +7338,197 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ slug: s
 }
 </file>
 
+<file path="src/components/ReviewCard.tsx">
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Star } from "lucide-react";
+
+interface ReviewCardProps {
+    id: string;
+    slug: string;
+    title: string;
+    posterImage: string;
+    rating: number;
+    genre: string;
+    authorName: string;
+    authorImage: string;
+    category?: string;
+    publishDate?: string;
+    isBlog?: boolean;
+}
+
+export default function ReviewCard({
+    slug,
+    title,
+    posterImage,
+    rating,
+    authorName,
+    category = "Movie",
+    publishDate = "",
+    isBlog = false,
+}: ReviewCardProps) {
+    return (
+        <motion.div
+            className="review-card-wrap"
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            style={{
+                backgroundColor: 'var(--color-bg-card)',
+                border: '1px solid var(--color-border)',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
+            <Link
+                href={`/reviews/${slug}`}
+                style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', color: 'inherit' }}
+            >
+
+                {/* ── Poster: 3:4 movie poster ratio ── */}
+                <div style={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '133%',  /* 4/3 * 100 = 133.33% gives 3:4 ratio */
+                    overflow: 'hidden',
+                    backgroundColor: '#e8e5e0',
+                    flexShrink: 0,
+                }}>
+                    {/* Category badge */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+                        <span className="tag-label">{category}</span>
+                    </div>
+
+                    {/* Image — uses .card-poster-img from globals.css for hover scale */}
+                    {posterImage ? (
+                        <img
+                            src={posterImage}
+                            alt={title}
+                            className="card-poster-img"
+                        />
+                    ) : (
+                        <div style={{
+                            position: 'absolute', inset: 0,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            backgroundColor: '#d0cdc8',
+                        }}>
+                            <span style={{ fontSize: 10, color: '#888', fontFamily: 'var(--font-sans)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                No Image
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Hover overlay — darkens slightly on hover via globals.css */}
+                    <div
+                        className="card-hover-overlay"
+                        style={{
+                            position: 'absolute', inset: 0,
+                            backgroundColor: 'rgba(0,0,0,0)',
+                            transition: 'background-color 0.3s ease',
+                            zIndex: 5,
+                        }}
+                    />
+
+                    {/* Star rating — overlay graphic, bottom-right corner of poster */}
+                    {!isBlog && (
+                        <div style={{
+                            position: 'absolute',
+                            bottom: 8,
+                            right: 8,
+                            zIndex: 10,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 3,
+                            backgroundColor: 'rgba(0,0,0,0.65)',
+                            padding: '3px 7px',
+                        }}>
+                            <Star style={{ width: 11, height: 11, fill: 'var(--color-gold)', color: 'var(--color-gold)', flexShrink: 0 }} />
+                            <span style={{
+                                fontSize: 11, fontWeight: 700,
+                                fontFamily: 'var(--font-sans)',
+                                color: '#fff',
+                            }}>
+                                {Number(rating).toFixed(1)}
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                {/* ── Text content ── */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flex: 1,
+                    padding: '10px 12px 12px',
+                    gap: 6,
+                }}>
+                    {/* Title — .card-title-el gets color:brand on hover via globals.css */}
+                    <h3
+                        className="card-title-el"
+                        style={{
+                            fontFamily: 'var(--font-serif)',
+                            fontWeight: 700,
+                            fontSize: '0.875rem',
+                            lineHeight: 1.35,
+                            color: 'var(--color-text-main)',
+                            margin: 0,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            transition: 'color 0.2s ease',
+                        }}
+                    >
+                        {title}
+                    </h3>
+
+                    {/* Author + date */}
+                    <div
+                        className="card-author-date"
+                        style={{
+                            marginTop: 'auto',
+                            paddingTop: 8,
+                            borderTop: '1px solid var(--color-border)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: 4,
+                        }}
+                    >
+                        <span style={{
+                            fontSize: 10, fontWeight: 700,
+                            textTransform: 'uppercase', letterSpacing: '0.08em',
+                            fontFamily: 'var(--font-sans)',
+                            color: 'var(--color-text-muted)',
+                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        }}>
+                            By {authorName}
+                        </span>
+                        {publishDate && (
+                            <span style={{
+                                fontSize: 10,
+                                fontFamily: 'var(--font-sans)',
+                                color: 'var(--color-text-muted)',
+                                whiteSpace: 'nowrap', flexShrink: 0,
+                            }}>
+                                {publishDate}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </Link>
+        </motion.div>
+    );
+}
+</file>
+
 <file path="src/components/Header.tsx">
 "use client";
 
@@ -7836,8 +7836,9 @@ export default function HeroSlider() {
 
     if (loading) {
         return (
-            <div className="w-full bg-[var(--color-bg-card)] animate-pulse"
-                style={{ height: 500, marginBottom: '1rem', marginTop: '1.5rem' }} />
+            <div className="page-container" style={{ marginTop: '1.5rem', marginBottom: '1rem' }}>
+                <div className="w-full bg-[var(--color-bg-card)] animate-pulse" style={{ height: 500 }} />
+            </div>
         );
     }
 
@@ -7854,8 +7855,6 @@ export default function HeroSlider() {
                     border-left: 4px solid var(--color-brand);  /* left accent border */
                     margin-bottom: 0;
                     margin-top: 1.5rem;
-                    margin-left: 1.25rem;                        /* left margin */
-                    width: calc(100% - 1.25rem);                 /* adjust width */
                 }
                 .cb-hero-inner {
                     display: flex;
@@ -7914,6 +7913,7 @@ export default function HeroSlider() {
                 }
             `}</style>
 
+            <div className="page-container">
             <section className="cb-hero-outer">
                 <div className="cb-hero-inner">
 
@@ -8011,6 +8011,7 @@ export default function HeroSlider() {
                     </div>
                 </div>
             </section>
+            </div>
         </>
     );
 }
@@ -8274,11 +8275,9 @@ export default function Navbar() {
   ───────────────────────────────────────────── */
   .page-container {
     width: 100%;
-    max-width: 1600px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.25rem;   /* 20px - tight but breathable */
-    padding-right: 1.25rem;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
   }
 
   /* ── Card base ── */
@@ -8912,7 +8911,7 @@ function HomePageContent() {
             <HeroSlider />
 
             {/* ── ALL REVIEWS SECTION ── */}
-            <section className="w-full px-4 sm:px-5" style={{ paddingTop: '3.5rem', paddingBottom: '1rem' }}>
+            <section className="page-container" style={{ paddingTop: '3.5rem', paddingBottom: '1rem' }}>
                 {/* Heading + Filters — same line */}
                 <div style={{
                     display: "flex",
@@ -8999,13 +8998,13 @@ function HomePageContent() {
 
             {/* ── FEATURED REVIEW (horizontal, latest) ── */}
             {featuredReview && (
-                <section className="w-full px-4 sm:px-5 py-8">
+                <section className="page-container py-8">
                     <FeaturedReview review={featuredReview} />
                 </section>
             )}
 
             {/* ── LATEST BLOG SECTION ── */}
-            <section className="w-full px-4 sm:px-5 py-8">
+            <section className="page-container py-8">
                 <SectionHeading title="Latest Blog" />
 
                 {loadingLatest ? (
@@ -9078,7 +9077,7 @@ function HomePageContent() {
             </section>
 
             {/* ── BLOG COLLECTION SECTION ── */}
-            <section className="w-full px-4 sm:px-5 py-8" style={{ borderTop: "1px solid var(--color-border)" }}>
+            <section className="page-container py-8" style={{ borderTop: "1px solid var(--color-border)" }}>
                 <SectionHeading title="Series Review" />
 
                 {loadingSeries ? (
@@ -9100,7 +9099,7 @@ function HomePageContent() {
             </section>
 
             {/* ── HIT REVIEWS SECTION ── */}
-            <section className="w-full px-4 sm:px-5 py-8" style={{ borderTop: "1px solid var(--color-border)" }}>
+            <section className="page-container py-8" style={{ borderTop: "1px solid var(--color-border)" }}>
                 <SectionHeading title="Hit Reviews" />
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1.5rem", marginTop: "-1rem" }}>
                     Rated 4 and above
@@ -9303,7 +9302,7 @@ export function ReviewGridInner({
     const hasMore        = visibleCount < reviews.length;
 
     return (
-        <section className="w-full px-4 sm:px-5 pt-8 pb-12">
+        <section className="page-container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
 
             {/* ── Section header ── */}
             {!hideHeader && (

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star } from "lucide-react";
+import RatingStars from "@/components/RatingStars";
 
 interface Review {
     id: string;
@@ -155,16 +155,10 @@ export default function HeroSlider() {
                             bottom: 14,
                             right: 14,
                             zIndex: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 5,
                             backgroundColor: 'rgba(0,0,0,0.6)',
-                            padding: '5px 10px',
+                            padding: '6px 10px',
                         }}>
-                            <Star style={{ width: 14, height: 14, fill: 'var(--color-gold)', color: 'var(--color-gold)', flexShrink: 0 }} />
-                            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>
-                                {(Number(review.rating) / 2).toFixed(1)} / 5
-                            </span>
+                            <RatingStars rating={Number(review.rating) / 2} size={14} gap={3} />
                         </div>
 
                         {/* Dot indicators */}

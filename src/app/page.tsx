@@ -4,7 +4,8 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Star, ChevronRight, Mail } from "lucide-react";
+import { ChevronRight, Mail } from "lucide-react";
+import RatingStars from "@/components/RatingStars";
 import HeroSlider  from "@/components/HeroSlider";
 import ReviewCard from "@/components/ReviewCard";
 import SkeletonCard from "@/components/SkeletonCard";
@@ -191,12 +192,7 @@ function FeaturedReview({ review }: { review: any }) {
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", gap: 14, overflow: "hidden" }}>
                     {/* Rating */}
                     {review.type !== "Blog" && (
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                            <Star style={{ width: 14, height: 14, fill: "var(--color-brand)", color: "var(--color-brand)", flexShrink: 0 }} />
-                            <span style={{ fontFamily: "var(--font-serif)", fontSize: "0.95rem", fontWeight: 700, color: "var(--color-text-main)" }}>
-                                {(Number(review.rating) / 2).toFixed(1)} / 5
-                            </span>
-                        </div>
+                        <RatingStars rating={Number(review.rating) / 2} size={16} gap={3} />
                     )}
 
                     <h3 style={{

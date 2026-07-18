@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Star } from "lucide-react";
+import RatingStars from "@/components/RatingStars";
 
 interface ReviewCardProps {
     id: string;
@@ -99,23 +99,12 @@ export default function ReviewCard({
                     {!isBlog && (
                         <div style={{
                             position: 'absolute',
-                            bottom: 8,
-                            right: 8,
+                            bottom: 10,
+                            right: 10,
                             zIndex: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 3,
-                            backgroundColor: 'rgba(0,0,0,0.65)',
-                            padding: '3px 7px',
+                            filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.9))',
                         }}>
-                            <Star style={{ width: 11, height: 11, fill: 'var(--color-gold)', color: 'var(--color-gold)', flexShrink: 0 }} />
-                            <span style={{
-                                fontSize: 11, fontWeight: 700,
-                                fontFamily: 'var(--font-sans)',
-                                color: '#fff',
-                            }}>
-                                {Number(rating).toFixed(1)}
-                            </span>
+                            <RatingStars rating={Number(rating) / 2} size={16} gap={2.5} unfilledColor="rgba(255,255,255,0.55)" />
                         </div>
                     )}
                 </div>

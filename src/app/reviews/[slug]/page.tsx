@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-    Star, Calendar, MessageCircle,
+    Calendar, MessageCircle,
     User, Link as LinkIcon, Facebook, Twitter, X,
     Users, Clapperboard, MonitorPlay
 } from "lucide-react";
@@ -216,12 +216,7 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ slug: s
                             {!isBlog && (
                                 <>
                                     <span style={{ width: 1, height: 14, backgroundColor: 'rgba(255,255,255,0.2)' }} />
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                        <Star style={{ width: 14, height: 14, fill: 'var(--color-brand)', color: 'var(--color-brand)', flexShrink: 0 }} />
-                                        <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontWeight: 700, color: '#F7F4EF' }}>
-                                            {(Number(rating) / 2).toFixed(1)} / 5
-                                        </span>
-                                    </div>
+                                    <RatingStars rating={Number(rating) / 2} size={16} gap={3} />
                                 </>
                             )}
                         </div>

@@ -416,7 +416,7 @@ function HomePageContent() {
         // Latest Blog grid — separate limit-12 fetch so it doesn't affect Blog Collection below
         fetch("/api/reviews?status=APPROVED&type=Blog&limit=12")
             .then(r => r.json())
-            .then(data => { if (Array.isArray(data)) setLatestBlogs(data.slice(0, 12)); })
+            .then(data => { if (Array.isArray(data)) setLatestBlogs(data.slice(0, 11)); })
             .finally(() => setLoadingLatest(false));
 
         // Hit reviews — fetch all then filter rating >= 8, limit 10
@@ -444,11 +444,6 @@ function HomePageContent() {
     const visibleAllReviews = showMore
         ? allReviews.slice(0, initialCount + moreCount)
         : allReviews.slice(0, initialCount);
-
-    // Latest reviews grid: 4 per row, 3 rows = 12 cards
-    // Last column (position 4, 8, 12) replaced by subscribe form in row 1
-    const LATEST_COLS = 4;
-    const LATEST_ROWS = 3;
 
     return (
         <div style={{ minHeight: "100vh", backgroundColor: "var(--color-bg-primary)" }}>
@@ -554,70 +549,61 @@ function HomePageContent() {
                 <SectionHeading title="Latest Blog" />
 
                 {loadingLatest ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-                        {Array.from({ length: 8 }).map((_, i) => (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+                        {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="skeleton-shimmer" style={{ width: '100%', aspectRatio: '16/9', borderRadius: '6px' }} />
                         ))}
                     </div>
                 ) : (
-                    <div
-                        style={{ display: "grid", gap: "1.25rem", overflow: "hidden" }}
-                        className="latest-blog-grid"
-                    >
-                        <style>{`
-                            .latest-blog-grid {
-                                grid-template-columns: repeat(2, minmax(0, 1fr));
-                            }
-                            @media (min-width: 640px) {
-                                .latest-blog-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-                            }
-                            @media (min-width: 1024px) {
-                                .latest-blog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-                            }
-                        `}</style>
-
-                        {Array.from({ length: LATEST_COLS * LATEST_ROWS }).map((_, idx) => {
-                            // Position 3 (0-indexed) = 4th column, 1st row → subscribe form
-                            const isSubscribeSlot = idx === LATEST_COLS - 1;
-                            // Positions 7, 11 = 4th column, rows 2 & 3 → off-white filler
-                            const isFillerSlot = idx === (LATEST_COLS * 2 - 1) || idx === (LATEST_COLS * 3 - 1);
-
-                            if (isSubscribeSlot) {
-                                return (
-                                    <div key="subscribe" style={{ aspectRatio: '16/9', overflow: 'hidden', minWidth: 0 }}>
-                                        <InlineSubscribeForm />
-                                    </div>
-                                );
-                            }
-
-                            if (isFillerSlot) {
-                                return (
-                                    <div key={`filler-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px solid var(--color-border)", aspectRatio: '16/9', borderRadius: '6px', minWidth: 0 }} />
-                                );
-                            }
-
-                            // Calculate actual review index: skip 4th column slots
-                            const col = idx % LATEST_COLS;
-                            const row = Math.floor(idx / LATEST_COLS);
-                            const reviewIdx = row * (LATEST_COLS - 1) + col;
-                            const review = latestBlogs[reviewIdx];
-
-                            if (!review) return (
-                                <div key={`empty-${idx}`} style={{ backgroundColor: "var(--color-bg-primary)", border: "1px dashed var(--color-border)", aspectRatio: '16/9', borderRadius: '6px', minWidth: 0 }} />
-                            );
-
-                            return (
+                    <>
+                    <style>{`
+                        .latest-blog-grid {
+                            grid-template-columns: repeat(2, minmax(0, 1fr));
+                        }
+                        @media (min-width: 640px) {
+                            .latest-blog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+                            /* Blogs always sit in columns 1–3 (max 3 per row, explicitly pinned
+                               position-by-position) — column 4 stays reserved for the subscribe
+                               form (row 1) and empty on later rows, so every card is the exact
+                               same size and row 1 / column 1 is never left blank. */
+                            .latest-blog-grid .latest-blog-item:nth-child(1) { grid-column: 1; grid-row: 1; }
+                            .latest-blog-grid .latest-blog-item:nth-child(2) { grid-column: 2; grid-row: 1; }
+                            .latest-blog-grid .latest-blog-item:nth-child(3) { grid-column: 3; grid-row: 1; }
+                            .latest-blog-grid .latest-blog-item:nth-child(4) { grid-column: 1; grid-row: 2; }
+                            .latest-blog-grid .latest-blog-item:nth-child(5) { grid-column: 2; grid-row: 2; }
+                            .latest-blog-grid .latest-blog-item:nth-child(6) { grid-column: 3; grid-row: 2; }
+                            .latest-blog-grid .latest-blog-item:nth-child(7) { grid-column: 1; grid-row: 3; }
+                            .latest-blog-grid .latest-blog-item:nth-child(8) { grid-column: 2; grid-row: 3; }
+                            .latest-blog-grid .latest-blog-item:nth-child(9) { grid-column: 3; grid-row: 3; }
+                            .latest-blog-grid .latest-blog-item:nth-child(10) { grid-column: 1; grid-row: 4; }
+                            .latest-blog-grid .latest-blog-item:nth-child(11) { grid-column: 2; grid-row: 4; }
+                            .latest-blog-grid .latest-blog-subscribe { grid-column: 4; grid-row: 1; }
+                        }
+                    `}</style>
+                    <div style={{ display: "grid", gap: "1.25rem", overflow: "hidden" }} className="latest-blog-grid">
+                        {latestBlogs.map(review => (
+                            <div key={review.id} className="latest-blog-item" style={{ minWidth: 0 }}>
                                 <LatestBlogCard
-                                    key={review.id}
                                     slug={review.slug}
                                     title={review.title}
                                     posterImage={review.posterImage}
                                     sliderImage={review.sliderImage}
                                     authorName={review.author?.name || "Unknown"}
                                 />
-                            );
-                        })}
+                            </div>
+                        ))}
+
+                        {/* Subscribe form cell — the form itself keeps its 16:9 box, and any
+                            leftover height in this cell (since neighbouring blog cards are taller)
+                            is filled by a plain white box, 5px below the form. */}
+                        <div className="latest-blog-subscribe" style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignSelf: 'stretch' }}>
+                            <div style={{ aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0 }}>
+                                <InlineSubscribeForm />
+                            </div>
+                            <div style={{ marginTop: 5, flex: 1, backgroundColor: '#fff', border: '1px solid var(--color-border)' }} />
+                        </div>
                     </div>
+                    </>
                 )}
                 <ViewAllButton href="/blog" label="View All Blogs" />
             </section>

@@ -15,7 +15,14 @@ export async function GET() {
                 genre: true,
                 status: true,
                 createdAt: true,
-                author: { select: { name: true } }
+                posterImage: true,
+                sliderImage: true,
+                director: true,
+                cast: true,
+                availableOn: true,
+                gallery: true,
+                content: true,
+                author: { select: { id: true, name: true, image: true } }
             },
             orderBy: { createdAt: 'desc' },
         });

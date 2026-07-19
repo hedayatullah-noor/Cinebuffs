@@ -1,0 +1,151 @@
+Overall Score
+7/100
+UX/UI issues are likely hurting conversions and user engagement. The main problems include unclear navigation, low text visibility, and a lack of visual distinction for key actions, which can lead to visitor frustration and abandonment. Addressing these issues could realistically improve conversions by 15%–35%.
+
+
+
+our biggest commercial risk
+The single weakest area on your site — and what it is likely costing you in conversions.
+
+Biggest Commercial Risk
+
+Task Clarity is limiting your conversions — scored 26/100.
+Your site may be losing 55–75% of potential conversions due to UX friction. If this is tied to a key CTA, form, or first-screen experience, it directly hurts conversion and trust.
+
+User journey friction is causing drop-offs before visitors convert
+CTA and conversion path gaps reduce the share of visitors who take action
+
+
+
+
+UI & UX score breakdown
+A closer look at your interface and experience scores, and how they differ across devices.
+
+UI Score Breakdown
+13
+User Interface
+UX Score Breakdown
+11
+User Experience
+Viewport Analysis
+Desktop (1440x900)
+65
+UI Score
+60
+UX Score
+Mobile (375x812)
+55
+UI Score
+50
+UX Score
+Mobile
+Compared with desktop
+Mobile differences from desktop
+Mobile: Text is harder to read on mobile due to smaller font sizes.
+Mobile: Navigation elements are less accessible on mobile, leading to potential user frustration.
+
+
+
+UI metrics
+How your interface performs across the five core visual design dimensions, each with the fix that moves it.
+
+Visual Hierarchy
+High Risk
+
+Needs Work
+The main call-to-action button is not visually distinct, making it hard for visitors to know where to click, which may lead to fewer sign-ups.
+
+Estimated 50–65% impact on your Conversion.
+
+Typography
+Severe Risk
+
+Critical
+Some text is too small to read comfortably, leading to frustration for visitors and potentially causing them to abandon the page.
+
+Estimated 50–65% impact on your Cognitive Load.
+
+Color Contrast
+Severe Risk
+
+Critical
+Text color blends into the background, making it difficult for visitors to read, which can erode trust and lead to lost conversions.
+
+Estimated 50–65% impact on your User Satisfaction.
+
+Consistency
+Conversion Risk
+
+Average
+Buttons have varying styles, which can confuse visitors about their functionality and decrease overall trust in the site.
+
+Estimated 20–35% impact on your Trust.
+
+Responsiveness
+Severe Risk
+
+Critical
+On mobile, some elements are too small to interact with easily, which frustrates users and can lead to higher abandonment rates.
+
+Estimated 50–65% impact on your Retention.
+
+
+
+
+
+
+
+
+
+UX metrics
+How your experience performs across the five core usability dimensions, each with the fix that moves it.
+
+Task Clarity
+Severe Risk
+
+Critical
+Navigation labels are vague, making it hard for visitors to understand where to go next, which can lead to confusion and drop-offs.
+
+Estimated 60–75% impact on your Task Completion Rate.
+
+Navigation Depth
+Severe Risk
+
+Critical
+Key content is not easily accessible within two clicks, which can frustrate visitors and lead to them leaving the site.
+
+Estimated 50–65% impact on your Time to Value.
+
+Friction Points
+Severe Risk
+
+Critical
+The conversion path has too many steps, which can overwhelm visitors and result in fewer completed actions.
+
+Estimated 60–75% impact on your Churn Rate.
+
+Accessibility
+High Risk
+
+Needs Work
+Some interactive elements are not easily accessible, making it difficult for all visitors to engage with the site effectively.
+
+Estimated 50–65% impact on your Engagement.
+
+Conversion Clarity
+Severe Risk
+
+Critical
+The value proposition is not immediately clear, which can lead to visitors questioning the site's purpose and leaving without taking action.
+
+Estimated 60–75% impact on your Revenue / LTV.
+
+
+
+
+
+
+
+
+
+

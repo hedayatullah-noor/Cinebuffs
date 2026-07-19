@@ -63,7 +63,7 @@ export default function ContributorsPage() {
 
             {/* ── Contributors list — Roger Ebert style ── */}
             {!loading && (
-                <div style={{ maxWidth: 900, margin: "0 auto", padding: "4rem 1.25rem" }}>
+                <div style={{ maxWidth: 1500, margin: "0 auto", padding: "4rem 1.25rem" }}>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0", borderTop: "1px solid var(--color-border)" }}>
                         {contributors.map((person, idx) => (
                             <motion.div

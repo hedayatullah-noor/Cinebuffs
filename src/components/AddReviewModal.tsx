@@ -420,25 +420,56 @@ export default function AddReviewModal({
                                     {mediaType !== "Blog" && (
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                             <label style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-text-main)' }}>
-                                                Rating (0–10)
+                                                Rating (out of 5)
                                             </label>
-                                            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                                                {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                                                    <button
-                                                        key={n} type="button"
-                                                        onClick={() => setRating(n)}
-                                                        style={{
-                                                            width: 32, height: 32, border: '1px solid var(--color-border)',
-                                                            fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-sans)',
-                                                            cursor: 'pointer',
-                                                            backgroundColor: rating >= n ? 'var(--color-brand)' : 'transparent',
-                                                            color: rating >= n ? '#fff' : 'var(--color-text-muted)',
-                                                            transition: 'all 0.15s ease',
-                                                        }}
-                                                    >
-                                                        {n}
-                                                    </button>
-                                                ))}
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 4, height: 32 }}>
+                                                {[1, 2, 3, 4, 5].map(n => {
+                                                    const starValue = n * 2; // stored rating is out of 10
+                                                    // fractional fill so decimal ratings (e.g. 4.2) show a partly-filled star
+                                                    const fillAmount = Math.max(0, Math.min(1, (rating / 2) - (n - 1)));
+                                                    return (
+                                                        <button
+                                                            key={n} type="button"
+                                                            onClick={() => setRating(starValue)}
+                                                            aria-label={`${n} star${n > 1 ? 's' : ''}`}
+                                                            style={{
+                                                                position: 'relative', width: 26, height: 26,
+                                                                background: 'none', border: 'none', padding: 0,
+                                                                cursor: 'pointer', lineHeight: 0,
+                                                            }}
+                                                        >
+                                                            <Star
+                                                                style={{ position: 'absolute', top: 0, left: 0, width: 26, height: 26, fill: 'none', color: 'var(--color-border)' }}
+                                                            />
+                                                            {fillAmount > 0 && (
+                                                                <div style={{ position: 'absolute', top: 0, left: 0, width: `${fillAmount * 100}%`, height: 26, overflow: 'hidden' }}>
+                                                                    <Star style={{ width: 26, height: 26, fill: 'var(--color-gold)', color: 'var(--color-gold)' }} />
+                                                                </div>
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                                <input
+                                                    type="number"
+                                                    min={0} max={5} step={0.1}
+                                                    value={rating === 0 ? "" : (rating / 2).toFixed(1)}
+                                                    onChange={(e) => {
+                                                        const raw = parseFloat(e.target.value);
+                                                        const clamped = isNaN(raw) ? 0 : Math.max(0, Math.min(5, raw));
+                                                        setRating(Math.round(clamped * 2 * 10) / 10); // e.g. 4.2 → 8.4 stored
+                                                    }}
+                                                    placeholder="4.2"
+                                                    style={{
+                                                        width: 64, height: 30, marginLeft: 8, padding: '0 8px',
+                                                        fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 700,
+                                                        border: '1px solid var(--color-border)', borderRadius: 4,
+                                                        backgroundColor: 'var(--color-bg-card)', color: 'var(--color-text-main)',
+                                                        outline: 'none',
+                                                    }}
+                                                />
+                                                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 700, color: 'var(--color-text-muted)' }}>
+                                                    / 5
+                                                </span>
                                             </div>
                                         </div>
                                     )}

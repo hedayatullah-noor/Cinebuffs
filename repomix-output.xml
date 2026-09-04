@@ -120,18 +120,10 @@ src/app/api/auth/me/route.ts
 src/app/api/auth/profile/route.ts
 src/app/api/auth/reset-password/route.ts
 src/app/api/auth/signup/route.ts
-src/app/api/clean-wp/route.ts
 src/app/api/comments/route.ts
 src/app/api/contributors/route.ts
-src/app/api/debug-user/route.ts
-src/app/api/dump/route.ts
-src/app/api/generate/route.ts
-src/app/api/migrate_real_data/route.ts
-src/app/api/migrate/route.ts
 src/app/api/reviews/[slug]/route.ts
 src/app/api/reviews/route.ts
-src/app/api/seed/route.ts
-src/app/api/set_admin_pass/route.ts
 src/app/api/subscribe/route.ts
 src/app/api/users/route.ts
 src/app/blog/page.tsx
@@ -182,78 +174,6 @@ WhatsApp Image 2026-04-22 at 2.29.18 AM.jpeg
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path="ai cinebuffs chat.txt">
-Nice, CineBuffs repomix dekh liya hai maine — poora scan kar liya. Yeh raha analysis:
-🎬 Project Overview
-CineBuffs — movie/series/blog review platform, built with:
-
-Framework: Next.js 15.1.6 (App Router) + React 19 + TypeScript
-DB: MySQL via Prisma ORM (@prisma/client 6.19)
-Auth: Custom JWT sessions via jose (httpOnly cookie), bcrypt/bcryptjs for hashing
-Styling/UI: Tailwind v4, Framer Motion, Lucide icons, React Quill (rich text editor)
-Email: Nodemailer (forgot-password flow)
-
-🗂️ Structure
-
-Public pages: home, movies, series, blog, reviews/[slug], about, contact, contributors, subscribe
-Auth pages: login, signup, forgot-password, reset-password
-Dashboards: /admin (full CRUD + user role management), /moderator (review approval)
-Data model (Prisma): User (role: ADMIN/MODERATOR/USER), Review (status: PENDING/APPROVED/REJECTED, two-image system — poster + slider), Comment, Subscriber
-
-Achha structured hai overall — proper separation of concerns, App Router conventions follow ho rahe hain, reasonably clean component breakdown (ReviewCard, ReviewGrid, HeroSlider, GenreDropdown, etc).
-🚩 Serious issues I noticed (important — please fix before going fully live)
-1. Unauthenticated admin endpoints — inconsistent auth checks across admin routes:
-
-/api/admin/reviews (GET + PATCH) — koi bhi is route ko hit karke pending/rejected reviews dekh sakta hai aur review status approve/reject kar sakta hai, bina login ke
-/api/admin/stats — site stats leak ho rahe hain publicly
-/api/admin/subscribers — newsletter subscriber emails publicly exposed
-
-Compare karo /api/admin/users se — wahaan getSession() + role !== 'ADMIN' check hai, lekin baaki admin routes mein yeh check missing hai. Yeh add karna zaroori hai.
-2. Debug/leftover routes still in production code:
-
-/api/dump — raw SQL query pe entire Review table dump karta hai, no auth
-/api/debug-user — admin user info leak karta hai
-/api/set_admin_pass — GET request pe kisi bhi email ko admin bana deta hai with a hardcoded password, sirf hitting the URL se
-/api/generate — execSync("npx prisma generate") run karta hai server pe, no auth
-/api/migrate, /api/migrate_real_data, /api/clean-wp — data-wiping/migration routes, publicly GET-accessible
-
-Yeh sab dev/debugging ke liye bane the shayad, but agar yeh production mein deployed hain toh koi bhi inhe hit karke database wipe/manipulate kar sakta hai. Strongly recommend: inhe delete kar do ya at least admin-auth guard laga do, aur agar set_admin_pass wala password kahin use hua hai woh rotate/change kar do.
-3. JWT fallback secret: auth.ts mein process.env.JWT_SECRET || 'fallback_secret_for_dev_only' — agar .env mein JWT_SECRET set nahi hai production mein, sessions ek known/public secret se sign ho rahe honge.
-4. prisma.$queryRawUnsafe / $executeRawUnsafe used in a couple of places (dump, migrate) — inherently risky if any user input ever gets near them (currently no input, so low risk today, but worth avoiding).
-Baaki code quality ki baat karein toh solid hai for a diploma-level fresher project — modern stack use kiya hai, App Router, Prisma, JWT sessions properly (mostly) implemented. Yeh security gaps fix karna easy hai aur resume/interview ke liye bhi acha talking point ban sakta hai ("I found and fixed security vulnerabilities in my own app").
-Bolo kya karna hai next — inn security issues ko fix karna shuru karein, ya kisi specific feature/page ka deep dive chahiye?CineBuffs — Correction Documentation.txt64 linestxtokay in security issues ko baad me fix karenge pahle mere pas kuch design ke issues hain pahle unhe fix karna hai maine un cheezo ko document karwaya hai 
-dekho tumhe ye karna hai ke ek ek karke saare changes karne hain aur mujhe total edited files dene hain main tumhare diye hue file ko replace kar dunga mere paas jo folders me files hain unse 
-aur tum mujhe ye chart bhi doge is tarah se 
-FileProject pathHeader.tsxsrc/components/Header.tsxHeroSection.tsxsrc/components/HeroSection.tsxsplite.tsxsrc/components/ui/splite.tsxspotlight.tsxsrc/components/ui/spotlight.tsxcard.tsxsrc/components/ui/card.tsxglobals.csssrc/app/globals.cssParsed XML file structure aur extracted content between tagsParsed XML file structure aur extracted content between tagsLet me view each file to plan the edits.Viewed 5 filesViewed 5 filesNow let's view HeroSlider.tsx.Tayyar ho gaya layout.tsx mein edits lagane ke liyeTayyar ho gaya layout.tsx mein edits lagane ke liyeAb main saare changes karta hu ek-ek karke, doc ke implementation order follow karte hue.
-Step 1 — globals.css + layout.tsx (Montserrat font)Edited 4 filesEdited 4 filesStep 2 — Navbar.tsx (Montserrat font + full-width even spread + bigger font)Spread nav links evenly across full width and switch to nav fontSpread nav links evenly across full width and switch to nav fontStep 3 — Header.tsx (bigger logo)Increase logo sizeIncrease logo sizeStep 4 — ReviewCard.tsx (stars overlay on poster instead of text)Edited 2 filesEdited 2 filesStep 5 — HeroSlider.tsx (rating overlay on poster, remove button/arrows/counter, center content)Edited a file, ran a commandEdited a file, ran a commandUnused even before — I'll remove it while I'm in there.Remove unused arrowStyle variableRemove unused arrowStyle variableNow add the star overlay on the image panel and center-align the content panel, remove old rating block from panel:Add star rating overlay on hero image bottom-right cornerAdd star rating overlay on hero image bottom-right cornerNow center-align the content panel and remove the old rating block, "Read Full Article" button, and prev/next+counter row:Edited a file, ran a commandEdited a file, ran a commandLink import now unused — clean that up too:Edited a file, ran a commandEdited a file, ran a commandGood, .hero-cta was only used in HeroSlider — no need to touch globals.css since unused CSS classes don't break anything. Now let's view the final HeroSlider file to sanity check:Evaluated unused function impact on TypeScript build configurationEvaluated unused function impact on TypeScript build configurationStep 6 — page.tsx (spacing + Latest Blog section)Increase spacing between HeroSlider and All Reviews sectionIncrease spacing between HeroSlider and All Reviews sectionNow add a clean blog-card component (image on top, title + writer below, no stars) right after the existing BlogCard function:Add clean vertical blog card component for the Latest Blog sectionAdd clean vertical blog card component for the Latest Blog sectionNow bump the blogs fetch limit and swap the "Latest Reviews" section to render blogs with the new clean card, filtering out movies/series:Weighed unintended side effects of expanding blog display parametersWeighed unintended side effects of expanding blog display parametersLet me keep this cleaner by not disturbing the separate "Blog Collection" section — I'll add a dedicated state for the renamed section instead of reusing blogs.Edited 2 filesEdited 2 filesNow update the state declarations — rename latestReviews state to latestBlogs:Rename latestReviews state to latestBlogs (used by renamed Latest Blog section)Rename latestReviews state to latestBlogs (used by renamed Latest Blog section)Now update the render section — heading rename and swap the card component + data source:Edited 3 files, ran 2 commandsEdited 3 files, ran 2 commandsGood, clean. Now let's do a final review of all edited files and copy them to outputs with proper names.Final sanity check of state sectionFinal sanity check of state sectionAll good. Now let's copy the finished files into the outputs folder with proper names and folder structure matching the project.Ran a command, read a fileRan a command, read a fileSab 7 files edit ho gaye documentation ke order mein. Yeh raha chart:
-FileProject pathglobals.csssrc/app/globals.csslayout.tsxsrc/app/layout.tsxNavbar.tsxsrc/components/Navbar.tsxHeader.tsxsrc/components/Header.tsxReviewCard.tsxsrc/components/ReviewCard.tsxHeroSlider.tsxsrc/components/HeroSlider.tsxpage.tsxsrc/app/page.tsx
-Kya-kya kiya, quick summary:
-
-globals.css + layout.tsx — Montserrat font Google Fonts se import kiya, --font-nav variable add kiya (Navbar isse hi font uthayega, baaki components untouched rahenge).
-Navbar.tsx — links ko font-[var(--font-nav)] (Montserrat) diya, font size 10px → 13px kiya, aur <ul> ko flex-1 justify-evenly banaya taaki links poori navbar width mein evenly spread ho jaayein.
-Header.tsx — logo height 36px → 52px.
-ReviewCard.tsx — star rating text se hataya, poster image ke bottom-right corner pe dark-pill overlay ke andar star graphic + rating diya.
-HeroSlider.tsx — poster pe bottom-right star overlay add kiya (jaisa ReviewCard mein), "Read Full Article" button hataya, Prev/Next arrows + slide counter poori tarah remove kiye, right panel content (title, genre, red rule) center-align kar diya. Dot indicators waise hi rehne diye kyunki doc mein unhe hatane ko nahi bola tha.
-page.tsx — HeroSlider aur "All Reviews" ke beech spacing badhayi (0.5rem → 3.5rem), "Latest Reviews" → "Latest Blog" rename kiya, ek naya LatestBlogCard component banaya (image upar, title + writer neeche, no stars), aur is section ka data source blogs-only fetch pe switch kar diya (movies/series automatically filter ho jaate hain) — "Blog Collection" section bilkul untouched hai, alag state use kiya hai taaki dono sections ek doosre ko affect na karein.
-
-Ek chhoti si extra improvement bhi ki: renamed section ka "View All" button ab /blog pe le jaata hai (pehle /movies pe jaata tha, jo ab content ke hisaab se galat ho jaata).
-Files ko apne project folders mein replace kar do jaisa bola tha. Test karne ke baad agar koi visual tweak chahiye (spacing, size, colors) batana — aur jab ready ho toh security wale issues pe wapas aa sakte hain.GlobalsCode · CSS LayoutCode · TSX NavbarCode · TSX HeaderCode · TSX ReviewcardCode · TSX HerosliderCode · TSX PageCode · TSX nahi security issues hum last me dekhenge 
-ab abhi kuch updated 3 issues mujhe dikh rahe hain hero section me jo titiles hain wo right me align hain unhe neeche centre me karna hailatest blog wale section me jo blog ke cards hain unka width aur height un even hain like sabse pahle wala jo most left me hai uska width  sabse kam aur uske baad wale do ka width zyada hai aisa nahi hona chahiye aur pahle wale ka image ka height bhi kam haiblod section me hi jo stay updated wala form hai wo page se bahar ja raha hai jiski wajah se page default width badh raha hai aur slide scroll karna pad raha hai 
-fix these 3 thingsaur haan ab jab humne latest blog ka ek section bana liya hai to uske neeche jo blog collection wala section hai uski zarurat nahi hai to uska heading daal do "series review" aur wahan par series page se link kar do contents ko same frame aur button me bhi view all series likh kar usko series ke saath link kar doShow moreRe-check current HeroSlider.tsx content panel sectionRe-check current HeroSlider.tsx content panel sectionClaude's response was interrupted.sorry hero section me right me nahi hai align wo top me align hai usko centre me karna hai neecheRan 2 commands, viewed a fileRan 2 commands, viewed a fileGood — blogs state is only used in the section I'm repurposing. Let's fix all four issues now.
-Fix 1 — Hero title vertically centered (not top-aligned):Debugged alignment issues aur grid constraints ko optimize kiyaDebugged alignment issues aur grid constraints ko optimize kiyaFix 2 & 3 — uneven card widths + subscribe form overflowing (both same root cause: grid columns not clamped to minmax(0, 1fr), so the subscribe form's un-shrinkable input pushed the grid track wider):Edited 2 filesEdited 2 filesNow add minWidth: 0 to each grid cell wrapper (subscribe slot, filler slot, empty slot) as a safety net:Add minWidth:0 to subscribe slot cellAdd minWidth:0 to subscribe slot cellNow add minWidth: 0 to LatestBlogCard's root and make the subscribe form's input/button explicitly full-width as extra safety net:Architected component refactoring aur series data integration strategyArchitected component refactoring aur series data integration strategyFix 4 — replace "Blog Collection" section with "Series Review" (same frame, linked to /series):Edited 2 filesEdited 2 filesNow update the render block itself:Edited a file, ran a command, viewed a fileEdited a file, ran a command, viewed a fileConfirmed — fixing this so the badge reflects the actual type (Series/Blog) since BlogCard is now shared between two sections:Edited a file, ran a commandEdited a file, ran a commandClean — only a comment mentions "blogs" now, no leftover code. Let's do a final visual sanity pass on the whole page.tsx and re-copy final files to outputs.Rough balance check of braces/parens in page.tsxRough balance check of braces/parens in page.tsxBalanced. Now copy the final updated files (page.tsx and HeroSlider.tsx changed in this round) to outputs:Ran a command, read a fileRan a command, read a fileSab 4 issues fix ho gaye. Yeh raha breakdown:
-1. Hero title top pe align tha — root cause tha ki content wrapper flex: 1 ki wajah se poore panel height ko fill kar raha tha, aur uske andar justify-content default (flex-start) hone ki wajah se text upar chala jaata tha. Fix: justifyContent: 'center' add kiya us wrapper pe — ab title/genre panel ke center mein rahenge.
-2 & 3. Latest Blog cards uneven width + subscribe form overflow — dono ki jad ek hi thi: CSS Grid ke columns 1fr the (bina minmax(0, ...) ke), aur subscribe form ke <input>/<button> ki koi explicit width nahi thi — browser unhe unka default intrinsic width deta hai jo grid ke column se bada ho sakta hai. Isse grid ka woh column apni min-content width badhane ki koshish karta hai, jisse baaki columns squeeze ho jaate the (isliye left wala card sabse chhota dikh raha tha, aur uska image bhi chhota tha kyunki image aspect-ratio: 16/9 uss narrow width ke hisaab se scale hua). Fix:
-
-Grid columns ko minmax(0, 1fr) kiya (yeh standard CSS-grid overflow fix hai)
-Sab grid cells + card root pe minWidth: 0 add kiya
-Subscribe form ke input/button ko explicit width: 100% + boxSizing: border-box diya
-Grid container pe overflow: hidden safety net ke taur pe
-
-Ab sab columns equal-width honge aur form kabhi bahar nahi niklega.
-4. "Blog Collection" section → "Series Review" — same frame (BlogCard component reuse kiya, layout bilkul same), lekin ab yeh /api/reviews?type=Series se data leta hai, heading "Series Review" hai, aur button "View All Series" /series page se link hai. Ek chhoti si extra fix bhi ki: BlogCard ke image badge pe pehle hardcoded "Blog" likha aata tha — chunki ab yeh component Series ke liye bhi reuse ho raha hai, usse dynamic review.type dikhane wala bana diya (ab "Series" ya "Blog" jo bhi ho, sahi dikhega).
-Files ready hain — replace kar do apne project mein. Test karke batana sab theek lag raha hai ya kuch aur tweak chahiye.HerosliderCode · TSX PageCode · TSX
-</file>
 
 <file path="CineBuffs — Correction Documentation.txt">
 CineBuffs — Correction Documentation
@@ -330,155 +250,76 @@ Step 6 → page.tsx                    (spacing, Latest Blog section)
 9. margin on the both side on big screen
 </file>
 
-<file path="DESIGN.md">
-# Movie reviews and ratings by Film Critic Roger Ebert
+<file path="ai cinebuffs chat.txt">
+Nice, CineBuffs repomix dekh liya hai maine — poora scan kar liya. Yeh raha analysis:
+🎬 Project Overview
+CineBuffs — movie/series/blog review platform, built with:
 
-## Mission
-Create implementation-ready, token-driven UI guidance for Movie reviews and ratings by Film Critic Roger Ebert that is optimized for consistency, accessibility, and fast delivery across content site.
+Framework: Next.js 15.1.6 (App Router) + React 19 + TypeScript
+DB: MySQL via Prisma ORM (@prisma/client 6.19)
+Auth: Custom JWT sessions via jose (httpOnly cookie), bcrypt/bcryptjs for hashing
+Styling/UI: Tailwind v4, Framer Motion, Lucide icons, React Quill (rich text editor)
+Email: Nodemailer (forgot-password flow)
 
-## Brand
-- Product/brand: Movie reviews and ratings by Film Critic Roger Ebert
-- URL: https://www.rogerebert.com/
-- Audience: readers and knowledge seekers
-- Product surface: content site
+🗂️ Structure
 
-## Style Foundations
-- Visual style: clean, functional, implementation-oriented
-- Main font style: `font.family.primary=Georgia`, `font.family.stack=Georgia, Times New Roman, serif`, `font.size.base=16px`, `font.weight.base=400`, `font.lineHeight.base=24px`
-- Typography scale: `font.size.xs=12px`, `font.size.sm=13px`, `font.size.md=14px`, `font.size.lg=16px`, `font.size.xl=18px`, `font.size.2xl=20px`, `font.size.3xl=24px`, `font.size.4xl=30px`
-- Color palette: `color.surface.base=#000000`, `color.text.secondary=#ffffff`, `color.border.strong=#c0a574`, `color.text.inverse=#444444`, `color.surface.raised=#f8f6f1`
-- Spacing scale: `space.1=4px`, `space.2=8px`, `space.3=10px`, `space.4=12px`, `space.5=16px`, `space.6=20px`, `space.7=24px`, `space.8=28px`
-- Radius/shadow/motion tokens: `radius.xs=4px`, `radius.sm=9999px` | `motion.duration.instant=150ms`
+Public pages: home, movies, series, blog, reviews/[slug], about, contact, contributors, subscribe
+Auth pages: login, signup, forgot-password, reset-password
+Dashboards: /admin (full CRUD + user role management), /moderator (review approval)
+Data model (Prisma): User (role: ADMIN/MODERATOR/USER), Review (status: PENDING/APPROVED/REJECTED, two-image system — poster + slider), Comment, Subscriber
 
-## Accessibility
-- Target: WCAG 2.2 AA
-- Keyboard-first interactions required.
-- Focus-visible rules required.
-- Contrast constraints required.
+Achha structured hai overall — proper separation of concerns, App Router conventions follow ho rahe hain, reasonably clean component breakdown (ReviewCard, ReviewGrid, HeroSlider, GenreDropdown, etc).
+🚩 Serious issues I noticed (important — please fix before going fully live)
+1. Unauthenticated admin endpoints — inconsistent auth checks across admin routes:
 
-## Writing Tone
-Concise, confident, implementation-focused.
+/api/admin/reviews (GET + PATCH) — koi bhi is route ko hit karke pending/rejected reviews dekh sakta hai aur review status approve/reject kar sakta hai, bina login ke
+/api/admin/stats — site stats leak ho rahe hain publicly
+/api/admin/subscribers — newsletter subscriber emails publicly exposed
 
-## Rules: Do
-- Use semantic tokens, not raw hex values, in component guidance.
-- Every component must define states for default, hover, focus-visible, active, disabled, loading, and error.
-- Component behavior should specify responsive and edge-case handling.
-- Interactive components must document keyboard, pointer, and touch behavior.
-- Accessibility acceptance criteria must be testable in implementation.
+Compare karo /api/admin/users se — wahaan getSession() + role !== 'ADMIN' check hai, lekin baaki admin routes mein yeh check missing hai. Yeh add karna zaroori hai.
+2. Debug/leftover routes still in production code:
 
-## Rules: Don't
-- Do not allow low-contrast text or hidden focus indicators.
-- Do not introduce one-off spacing or typography exceptions.
-- Do not use ambiguous labels or non-descriptive actions.
-- Do not ship component guidance without explicit state rules.
+/api/dump — raw SQL query pe entire Review table dump karta hai, no auth
+/api/debug-user — admin user info leak karta hai
+/api/set_admin_pass — GET request pe kisi bhi email ko admin bana deta hai with a hardcoded password, sirf hitting the URL se
+/api/generate — execSync("npx prisma generate") run karta hai server pe, no auth
+/api/migrate, /api/migrate_real_data, /api/clean-wp — data-wiping/migration routes, publicly GET-accessible
 
-## Guideline Authoring Workflow
-1. Restate design intent in one sentence.
-2. Define foundations and semantic tokens.
-3. Define component anatomy, variants, interactions, and state behavior.
-4. Add accessibility acceptance criteria with pass/fail checks.
-5. Add anti-patterns, migration notes, and edge-case handling.
-6. End with a QA checklist.
+Yeh sab dev/debugging ke liye bane the shayad, but agar yeh production mein deployed hain toh koi bhi inhe hit karke database wipe/manipulate kar sakta hai. Strongly recommend: inhe delete kar do ya at least admin-auth guard laga do, aur agar set_admin_pass wala password kahin use hua hai woh rotate/change kar do.
+3. JWT fallback secret: auth.ts mein process.env.JWT_SECRET || 'fallback_secret_for_dev_only' — agar .env mein JWT_SECRET set nahi hai production mein, sessions ek known/public secret se sign ho rahe honge.
+4. prisma.$queryRawUnsafe / $executeRawUnsafe used in a couple of places (dump, migrate) — inherently risky if any user input ever gets near them (currently no input, so low risk today, but worth avoiding).
+Baaki code quality ki baat karein toh solid hai for a diploma-level fresher project — modern stack use kiya hai, App Router, Prisma, JWT sessions properly (mostly) implemented. Yeh security gaps fix karna easy hai aur resume/interview ke liye bhi acha talking point ban sakta hai ("I found and fixed security vulnerabilities in my own app").
+Bolo kya karna hai next — inn security issues ko fix karna shuru karein, ya kisi specific feature/page ka deep dive chahiye?CineBuffs — Correction Documentation.txt64 linestxtokay in security issues ko baad me fix karenge pahle mere pas kuch design ke issues hain pahle unhe fix karna hai maine un cheezo ko document karwaya hai 
+dekho tumhe ye karna hai ke ek ek karke saare changes karne hain aur mujhe total edited files dene hain main tumhare diye hue file ko replace kar dunga mere paas jo folders me files hain unse 
+aur tum mujhe ye chart bhi doge is tarah se 
+FileProject pathHeader.tsxsrc/components/Header.tsxHeroSection.tsxsrc/components/HeroSection.tsxsplite.tsxsrc/components/ui/splite.tsxspotlight.tsxsrc/components/ui/spotlight.tsxcard.tsxsrc/components/ui/card.tsxglobals.csssrc/app/globals.cssParsed XML file structure aur extracted content between tagsParsed XML file structure aur extracted content between tagsLet me view each file to plan the edits.Viewed 5 filesViewed 5 filesNow let's view HeroSlider.tsx.Tayyar ho gaya layout.tsx mein edits lagane ke liyeTayyar ho gaya layout.tsx mein edits lagane ke liyeAb main saare changes karta hu ek-ek karke, doc ke implementation order follow karte hue.
+Step 1 — globals.css + layout.tsx (Montserrat font)Edited 4 filesEdited 4 filesStep 2 — Navbar.tsx (Montserrat font + full-width even spread + bigger font)Spread nav links evenly across full width and switch to nav fontSpread nav links evenly across full width and switch to nav fontStep 3 — Header.tsx (bigger logo)Increase logo sizeIncrease logo sizeStep 4 — ReviewCard.tsx (stars overlay on poster instead of text)Edited 2 filesEdited 2 filesStep 5 — HeroSlider.tsx (rating overlay on poster, remove button/arrows/counter, center content)Edited a file, ran a commandEdited a file, ran a commandUnused even before — I'll remove it while I'm in there.Remove unused arrowStyle variableRemove unused arrowStyle variableNow add the star overlay on the image panel and center-align the content panel, remove old rating block from panel:Add star rating overlay on hero image bottom-right cornerAdd star rating overlay on hero image bottom-right cornerNow center-align the content panel and remove the old rating block, "Read Full Article" button, and prev/next+counter row:Edited a file, ran a commandEdited a file, ran a commandLink import now unused — clean that up too:Edited a file, ran a commandEdited a file, ran a commandGood, .hero-cta was only used in HeroSlider — no need to touch globals.css since unused CSS classes don't break anything. Now let's view the final HeroSlider file to sanity check:Evaluated unused function impact on TypeScript build configurationEvaluated unused function impact on TypeScript build configurationStep 6 — page.tsx (spacing + Latest Blog section)Increase spacing between HeroSlider and All Reviews sectionIncrease spacing between HeroSlider and All Reviews sectionNow add a clean blog-card component (image on top, title + writer below, no stars) right after the existing BlogCard function:Add clean vertical blog card component for the Latest Blog sectionAdd clean vertical blog card component for the Latest Blog sectionNow bump the blogs fetch limit and swap the "Latest Reviews" section to render blogs with the new clean card, filtering out movies/series:Weighed unintended side effects of expanding blog display parametersWeighed unintended side effects of expanding blog display parametersLet me keep this cleaner by not disturbing the separate "Blog Collection" section — I'll add a dedicated state for the renamed section instead of reusing blogs.Edited 2 filesEdited 2 filesNow update the state declarations — rename latestReviews state to latestBlogs:Rename latestReviews state to latestBlogs (used by renamed Latest Blog section)Rename latestReviews state to latestBlogs (used by renamed Latest Blog section)Now update the render section — heading rename and swap the card component + data source:Edited 3 files, ran 2 commandsEdited 3 files, ran 2 commandsGood, clean. Now let's do a final review of all edited files and copy them to outputs with proper names.Final sanity check of state sectionFinal sanity check of state sectionAll good. Now let's copy the finished files into the outputs folder with proper names and folder structure matching the project.Ran a command, read a fileRan a command, read a fileSab 7 files edit ho gaye documentation ke order mein. Yeh raha chart:
+FileProject pathglobals.csssrc/app/globals.csslayout.tsxsrc/app/layout.tsxNavbar.tsxsrc/components/Navbar.tsxHeader.tsxsrc/components/Header.tsxReviewCard.tsxsrc/components/ReviewCard.tsxHeroSlider.tsxsrc/components/HeroSlider.tsxpage.tsxsrc/app/page.tsx
+Kya-kya kiya, quick summary:
 
-## Required Output Structure
-- Context and goals.
-- Design tokens and foundations.
-- Component-level rules (anatomy, variants, states, responsive behavior).
-- Accessibility requirements and testable acceptance criteria.
-- Content and tone standards with examples.
-- Anti-patterns and prohibited implementations.
-- QA checklist.
+globals.css + layout.tsx — Montserrat font Google Fonts se import kiya, --font-nav variable add kiya (Navbar isse hi font uthayega, baaki components untouched rahenge).
+Navbar.tsx — links ko font-[var(--font-nav)] (Montserrat) diya, font size 10px → 13px kiya, aur <ul> ko flex-1 justify-evenly banaya taaki links poori navbar width mein evenly spread ho jaayein.
+Header.tsx — logo height 36px → 52px.
+ReviewCard.tsx — star rating text se hataya, poster image ke bottom-right corner pe dark-pill overlay ke andar star graphic + rating diya.
+HeroSlider.tsx — poster pe bottom-right star overlay add kiya (jaisa ReviewCard mein), "Read Full Article" button hataya, Prev/Next arrows + slide counter poori tarah remove kiye, right panel content (title, genre, red rule) center-align kar diya. Dot indicators waise hi rehne diye kyunki doc mein unhe hatane ko nahi bola tha.
+page.tsx — HeroSlider aur "All Reviews" ke beech spacing badhayi (0.5rem → 3.5rem), "Latest Reviews" → "Latest Blog" rename kiya, ek naya LatestBlogCard component banaya (image upar, title + writer neeche, no stars), aur is section ka data source blogs-only fetch pe switch kar diya (movies/series automatically filter ho jaate hain) — "Blog Collection" section bilkul untouched hai, alag state use kiya hai taaki dono sections ek doosre ko affect na karein.
 
-## Component Rule Expectations
-- Include keyboard, pointer, and touch behavior.
-- Include spacing and typography token requirements.
-- Include long-content, overflow, and empty-state handling.
-- Include known page component density: links (106), cards (45), buttons (10), lists (9), inputs (4), navigation (2).
+Ek chhoti si extra improvement bhi ki: renamed section ka "View All" button ab /blog pe le jaata hai (pehle /movies pe jaata tha, jo ab content ke hisaab se galat ho jaata).
+Files ko apne project folders mein replace kar do jaisa bola tha. Test karne ke baad agar koi visual tweak chahiye (spacing, size, colors) batana — aur jab ready ho toh security wale issues pe wapas aa sakte hain.GlobalsCode · CSS LayoutCode · TSX NavbarCode · TSX HeaderCode · TSX ReviewcardCode · TSX HerosliderCode · TSX PageCode · TSX nahi security issues hum last me dekhenge 
+ab abhi kuch updated 3 issues mujhe dikh rahe hain hero section me jo titiles hain wo right me align hain unhe neeche centre me karna hailatest blog wale section me jo blog ke cards hain unka width aur height un even hain like sabse pahle wala jo most left me hai uska width  sabse kam aur uske baad wale do ka width zyada hai aisa nahi hona chahiye aur pahle wale ka image ka height bhi kam haiblod section me hi jo stay updated wala form hai wo page se bahar ja raha hai jiski wajah se page default width badh raha hai aur slide scroll karna pad raha hai 
+fix these 3 thingsaur haan ab jab humne latest blog ka ek section bana liya hai to uske neeche jo blog collection wala section hai uski zarurat nahi hai to uska heading daal do "series review" aur wahan par series page se link kar do contents ko same frame aur button me bhi view all series likh kar usko series ke saath link kar doShow moreRe-check current HeroSlider.tsx content panel sectionRe-check current HeroSlider.tsx content panel sectionClaude's response was interrupted.sorry hero section me right me nahi hai align wo top me align hai usko centre me karna hai neecheRan 2 commands, viewed a fileRan 2 commands, viewed a fileGood — blogs state is only used in the section I'm repurposing. Let's fix all four issues now.
+Fix 1 — Hero title vertically centered (not top-aligned):Debugged alignment issues aur grid constraints ko optimize kiyaDebugged alignment issues aur grid constraints ko optimize kiyaFix 2 & 3 — uneven card widths + subscribe form overflowing (both same root cause: grid columns not clamped to minmax(0, 1fr), so the subscribe form's un-shrinkable input pushed the grid track wider):Edited 2 filesEdited 2 filesNow add minWidth: 0 to each grid cell wrapper (subscribe slot, filler slot, empty slot) as a safety net:Add minWidth:0 to subscribe slot cellAdd minWidth:0 to subscribe slot cellNow add minWidth: 0 to LatestBlogCard's root and make the subscribe form's input/button explicitly full-width as extra safety net:Architected component refactoring aur series data integration strategyArchitected component refactoring aur series data integration strategyFix 4 — replace "Blog Collection" section with "Series Review" (same frame, linked to /series):Edited 2 filesEdited 2 filesNow update the render block itself:Edited a file, ran a command, viewed a fileEdited a file, ran a command, viewed a fileConfirmed — fixing this so the badge reflects the actual type (Series/Blog) since BlogCard is now shared between two sections:Edited a file, ran a commandEdited a file, ran a commandClean — only a comment mentions "blogs" now, no leftover code. Let's do a final visual sanity pass on the whole page.tsx and re-copy final files to outputs.Rough balance check of braces/parens in page.tsxRough balance check of braces/parens in page.tsxBalanced. Now copy the final updated files (page.tsx and HeroSlider.tsx changed in this round) to outputs:Ran a command, read a fileRan a command, read a fileSab 4 issues fix ho gaye. Yeh raha breakdown:
+1. Hero title top pe align tha — root cause tha ki content wrapper flex: 1 ki wajah se poore panel height ko fill kar raha tha, aur uske andar justify-content default (flex-start) hone ki wajah se text upar chala jaata tha. Fix: justifyContent: 'center' add kiya us wrapper pe — ab title/genre panel ke center mein rahenge.
+2 & 3. Latest Blog cards uneven width + subscribe form overflow — dono ki jad ek hi thi: CSS Grid ke columns 1fr the (bina minmax(0, ...) ke), aur subscribe form ke <input>/<button> ki koi explicit width nahi thi — browser unhe unka default intrinsic width deta hai jo grid ke column se bada ho sakta hai. Isse grid ka woh column apni min-content width badhane ki koshish karta hai, jisse baaki columns squeeze ho jaate the (isliye left wala card sabse chhota dikh raha tha, aur uska image bhi chhota tha kyunki image aspect-ratio: 16/9 uss narrow width ke hisaab se scale hua). Fix:
 
+Grid columns ko minmax(0, 1fr) kiya (yeh standard CSS-grid overflow fix hai)
+Sab grid cells + card root pe minWidth: 0 add kiya
+Subscribe form ke input/button ko explicit width: 100% + boxSizing: border-box diya
+Grid container pe overflow: hidden safety net ke taur pe
 
-## Quality Gates
-- Every non-negotiable rule must use "must".
-- Every recommendation should use "should".
-- Every accessibility rule must be testable in implementation.
-- Teams should prefer system consistency over local visual exceptions.
-</file>
-
-<file path="SKILL.md">
----
-name: design-system-movie-reviews-and-ratings-by-film-critic-roger-e
-description: Creates implementation-ready design-system guidance with tokens, component behavior, and accessibility standards. Use when creating or updating UI rules, component specifications, or design-system documentation.
----
-
-<!-- TYPEUI_SH_MANAGED_START -->
-
-# Movie reviews and ratings by Film Critic Roger Ebert
-
-## Mission
-Deliver implementation-ready design-system guidance for Movie reviews and ratings by Film Critic Roger Ebert that can be applied consistently across content site interfaces.
-
-## Brand
-- Product/brand: Movie reviews and ratings by Film Critic Roger Ebert
-- URL: https://www.rogerebert.com/
-- Audience: readers and knowledge seekers
-- Product surface: content site
-
-## Style Foundations
-- Visual style: structured, accessible, implementation-first
-- Main font style: `font.family.primary=Georgia`, `font.family.stack=Georgia, Times New Roman, serif`, `font.size.base=16px`, `font.weight.base=400`, `font.lineHeight.base=24px`
-- Typography scale: `font.size.xs=12px`, `font.size.sm=13px`, `font.size.md=14px`, `font.size.lg=16px`, `font.size.xl=18px`, `font.size.2xl=20px`, `font.size.3xl=24px`, `font.size.4xl=30px`
-- Color palette: `color.surface.base=#000000`, `color.text.secondary=#ffffff`, `color.border.strong=#c0a574`, `color.text.inverse=#444444`, `color.surface.raised=#f8f6f1`
-- Spacing scale: `space.1=4px`, `space.2=8px`, `space.3=10px`, `space.4=12px`, `space.5=16px`, `space.6=20px`, `space.7=24px`, `space.8=28px`
-- Radius/shadow/motion tokens: `radius.xs=4px`, `radius.sm=9999px` | `motion.duration.instant=150ms`
-
-## Accessibility
-- Target: WCAG 2.2 AA
-- Keyboard-first interactions required.
-- Focus-visible rules required.
-- Contrast constraints required.
-
-## Writing Tone
-concise, confident, implementation-focused
-
-## Rules: Do
-- Use semantic tokens, not raw hex values in component guidance.
-- Every component must define required states: default, hover, focus-visible, active, disabled, loading, error.
-- Responsive behavior and edge-case handling should be specified for every component family.
-- Accessibility acceptance criteria must be testable in implementation.
-
-## Rules: Don't
-- Do not allow low-contrast text or hidden focus indicators.
-- Do not introduce one-off spacing or typography exceptions.
-- Do not use ambiguous labels or non-descriptive actions.
-
-## Guideline Authoring Workflow
-1. Restate design intent in one sentence.
-2. Define foundations and tokens.
-3. Define component anatomy, variants, and interactions.
-4. Add accessibility acceptance criteria.
-5. Add anti-patterns and migration notes.
-6. End with QA checklist.
-
-## Required Output Structure
-- Context and goals
-- Design tokens and foundations
-- Component-level rules (anatomy, variants, states, responsive behavior)
-- Accessibility requirements and testable acceptance criteria
-- Content and tone standards with examples
-- Anti-patterns and prohibited implementations
-- QA checklist
-
-## Component Rule Expectations
-- Include keyboard, pointer, and touch behavior.
-- Include spacing and typography token requirements.
-- Include long-content, overflow, and empty-state handling.
-
-## Quality Gates
-- Every non-negotiable rule must use "must".
-- Every recommendation should use "should".
-- Every accessibility rule must be testable in implementation.
-- Prefer system consistency over local visual exceptions.
-
-<!-- TYPEUI_SH_MANAGED_END -->
+Ab sab columns equal-width honge aur form kabhi bahar nahi niklega.
+4. "Blog Collection" section → "Series Review" — same frame (BlogCard component reuse kiya, layout bilkul same), lekin ab yeh /api/reviews?type=Series se data leta hai, heading "Series Review" hai, aur button "View All Series" /series page se link hai. Ek chhoti si extra fix bhi ki: BlogCard ke image badge pe pehle hardcoded "Blog" likha aata tha — chunki ab yeh component Series ke liye bhi reuse ho raha hai, usse dynamic review.type dikhane wala bana diya (ab "Series" ya "Blog" jo bhi ho, sahi dikhega).
+Files ready hain — replace kar do apne project mein. Test karke batana sab theek lag raha hai ya kuch aur tweak chahiye.HerosliderCode · TSX PageCode · TSX
 </file>
 
 <file path="cinbueffs UI_UX review.txt">
@@ -623,6 +464,79 @@ Critical
 The value proposition is not immediately clear, which can lead to visitors questioning the site's purpose and leaving without taking action.
 
 Estimated 60–75% impact on your Revenue / LTV.
+</file>
+
+<file path="DESIGN.md">
+# Movie reviews and ratings by Film Critic Roger Ebert
+
+## Mission
+Create implementation-ready, token-driven UI guidance for Movie reviews and ratings by Film Critic Roger Ebert that is optimized for consistency, accessibility, and fast delivery across content site.
+
+## Brand
+- Product/brand: Movie reviews and ratings by Film Critic Roger Ebert
+- URL: https://www.rogerebert.com/
+- Audience: readers and knowledge seekers
+- Product surface: content site
+
+## Style Foundations
+- Visual style: clean, functional, implementation-oriented
+- Main font style: `font.family.primary=Georgia`, `font.family.stack=Georgia, Times New Roman, serif`, `font.size.base=16px`, `font.weight.base=400`, `font.lineHeight.base=24px`
+- Typography scale: `font.size.xs=12px`, `font.size.sm=13px`, `font.size.md=14px`, `font.size.lg=16px`, `font.size.xl=18px`, `font.size.2xl=20px`, `font.size.3xl=24px`, `font.size.4xl=30px`
+- Color palette: `color.surface.base=#000000`, `color.text.secondary=#ffffff`, `color.border.strong=#c0a574`, `color.text.inverse=#444444`, `color.surface.raised=#f8f6f1`
+- Spacing scale: `space.1=4px`, `space.2=8px`, `space.3=10px`, `space.4=12px`, `space.5=16px`, `space.6=20px`, `space.7=24px`, `space.8=28px`
+- Radius/shadow/motion tokens: `radius.xs=4px`, `radius.sm=9999px` | `motion.duration.instant=150ms`
+
+## Accessibility
+- Target: WCAG 2.2 AA
+- Keyboard-first interactions required.
+- Focus-visible rules required.
+- Contrast constraints required.
+
+## Writing Tone
+Concise, confident, implementation-focused.
+
+## Rules: Do
+- Use semantic tokens, not raw hex values, in component guidance.
+- Every component must define states for default, hover, focus-visible, active, disabled, loading, and error.
+- Component behavior should specify responsive and edge-case handling.
+- Interactive components must document keyboard, pointer, and touch behavior.
+- Accessibility acceptance criteria must be testable in implementation.
+
+## Rules: Don't
+- Do not allow low-contrast text or hidden focus indicators.
+- Do not introduce one-off spacing or typography exceptions.
+- Do not use ambiguous labels or non-descriptive actions.
+- Do not ship component guidance without explicit state rules.
+
+## Guideline Authoring Workflow
+1. Restate design intent in one sentence.
+2. Define foundations and semantic tokens.
+3. Define component anatomy, variants, interactions, and state behavior.
+4. Add accessibility acceptance criteria with pass/fail checks.
+5. Add anti-patterns, migration notes, and edge-case handling.
+6. End with a QA checklist.
+
+## Required Output Structure
+- Context and goals.
+- Design tokens and foundations.
+- Component-level rules (anatomy, variants, states, responsive behavior).
+- Accessibility requirements and testable acceptance criteria.
+- Content and tone standards with examples.
+- Anti-patterns and prohibited implementations.
+- QA checklist.
+
+## Component Rule Expectations
+- Include keyboard, pointer, and touch behavior.
+- Include spacing and typography token requirements.
+- Include long-content, overflow, and empty-state handling.
+- Include known page component density: links (106), cards (45), buttons (10), lists (9), inputs (4), navigation (2).
+
+
+## Quality Gates
+- Every non-negotiable rule must use "must".
+- Every recommendation should use "should".
+- Every accessibility rule must be testable in implementation.
+- Teams should prefer system consistency over local visual exceptions.
 </file>
 
 <file path="eslint.config.mjs">
@@ -1757,6 +1671,84 @@ requirements :-
 1. ek static header jisme 3 elements rahenge 1. most leaft me logo and the name of website 2.most right me search bar aur number 3. at the left of search bar "signup" button
 </file>
 
+<file path="SKILL.md">
+---
+name: design-system-movie-reviews-and-ratings-by-film-critic-roger-e
+description: Creates implementation-ready design-system guidance with tokens, component behavior, and accessibility standards. Use when creating or updating UI rules, component specifications, or design-system documentation.
+---
+
+<!-- TYPEUI_SH_MANAGED_START -->
+
+# Movie reviews and ratings by Film Critic Roger Ebert
+
+## Mission
+Deliver implementation-ready design-system guidance for Movie reviews and ratings by Film Critic Roger Ebert that can be applied consistently across content site interfaces.
+
+## Brand
+- Product/brand: Movie reviews and ratings by Film Critic Roger Ebert
+- URL: https://www.rogerebert.com/
+- Audience: readers and knowledge seekers
+- Product surface: content site
+
+## Style Foundations
+- Visual style: structured, accessible, implementation-first
+- Main font style: `font.family.primary=Georgia`, `font.family.stack=Georgia, Times New Roman, serif`, `font.size.base=16px`, `font.weight.base=400`, `font.lineHeight.base=24px`
+- Typography scale: `font.size.xs=12px`, `font.size.sm=13px`, `font.size.md=14px`, `font.size.lg=16px`, `font.size.xl=18px`, `font.size.2xl=20px`, `font.size.3xl=24px`, `font.size.4xl=30px`
+- Color palette: `color.surface.base=#000000`, `color.text.secondary=#ffffff`, `color.border.strong=#c0a574`, `color.text.inverse=#444444`, `color.surface.raised=#f8f6f1`
+- Spacing scale: `space.1=4px`, `space.2=8px`, `space.3=10px`, `space.4=12px`, `space.5=16px`, `space.6=20px`, `space.7=24px`, `space.8=28px`
+- Radius/shadow/motion tokens: `radius.xs=4px`, `radius.sm=9999px` | `motion.duration.instant=150ms`
+
+## Accessibility
+- Target: WCAG 2.2 AA
+- Keyboard-first interactions required.
+- Focus-visible rules required.
+- Contrast constraints required.
+
+## Writing Tone
+concise, confident, implementation-focused
+
+## Rules: Do
+- Use semantic tokens, not raw hex values in component guidance.
+- Every component must define required states: default, hover, focus-visible, active, disabled, loading, error.
+- Responsive behavior and edge-case handling should be specified for every component family.
+- Accessibility acceptance criteria must be testable in implementation.
+
+## Rules: Don't
+- Do not allow low-contrast text or hidden focus indicators.
+- Do not introduce one-off spacing or typography exceptions.
+- Do not use ambiguous labels or non-descriptive actions.
+
+## Guideline Authoring Workflow
+1. Restate design intent in one sentence.
+2. Define foundations and tokens.
+3. Define component anatomy, variants, and interactions.
+4. Add accessibility acceptance criteria.
+5. Add anti-patterns and migration notes.
+6. End with QA checklist.
+
+## Required Output Structure
+- Context and goals
+- Design tokens and foundations
+- Component-level rules (anatomy, variants, states, responsive behavior)
+- Accessibility requirements and testable acceptance criteria
+- Content and tone standards with examples
+- Anti-patterns and prohibited implementations
+- QA checklist
+
+## Component Rule Expectations
+- Include keyboard, pointer, and touch behavior.
+- Include spacing and typography token requirements.
+- Include long-content, overflow, and empty-state handling.
+
+## Quality Gates
+- Every non-negotiable rule must use "must".
+- Every recommendation should use "should".
+- Every accessibility rule must be testable in implementation.
+- Prefer system consistency over local visual exceptions.
+
+<!-- TYPEUI_SH_MANAGED_END -->
+</file>
+
 <file path="src/app/api/admin/stats/route.ts">
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
@@ -2217,154 +2209,6 @@ export async function GET() {
 }
 </file>
 
-<file path="src/app/api/debug-user/route.ts">
-import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
-
-export async function GET() {
-    try {
-        const adminEmail = "admin@cinebuffs.org";
-        const user = await prisma.user.findUnique({
-            where: { email: adminEmail },
-            select: { id: true, email: true, name: true, role: true }
-        });
-
-        if (!user) {
-            return NextResponse.json({ error: "Admin user not found in database!" }, { status: 404 });
-        }
-
-        return NextResponse.json({ 
-            message: "User found",
-            user: user
-        });
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    } finally {
-        await prisma.$disconnect();
-    }
-}
-</file>
-
-<file path="src/app/api/dump/route.ts">
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export async function GET() {
-    const reviews = await prisma.$queryRawUnsafe(`SELECT * FROM "Review"`);
-    return NextResponse.json(reviews);
-}
-</file>
-
-<file path="src/app/api/generate/route.ts">
-import { NextResponse } from "next/server";
-import { execSync } from "child_process";
-
-export async function GET() {
-    try {
-        const output = execSync("npx prisma generate", { encoding: "utf8" });
-        return NextResponse.json({ success: true, output });
-    } catch (e: any) {
-        return NextResponse.json({ success: false, error: e.message, stdout: e.stdout?.toString(), stderr: e.stderr?.toString() });
-    }
-}
-</file>
-
-<file path="src/app/api/migrate_real_data/route.ts">
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import fs from 'fs';
-import path from 'path';
-
-const prisma = new PrismaClient();
-
-export async function GET() {
-  try {
-    // 1. Database ko saaf (Wipe out) karna taaki sirf Real data rahe
-    await prisma.review.deleteMany({}); // Delete all existing reviews
-    // Humne saare reviews delete kar diye jo pichli baar banaye the
-
-    // 2. Admin user check/create karna
-    const author = await prisma.user.upsert({
-      where: { email: 'admin@cinebuffs.org' },
-      update: {},
-      create: {
-        name: 'CineBuffs Admin',
-        email: 'admin@cinebuffs.org',
-        password: 'dummy_password', // You can change this later
-        role: 'ADMIN',
-      }
-    });
-
-    // 3. File System se 'real_data.json' padhna
-    const filePath = path.join(process.cwd(), 'real_data.json');
-    if (!fs.existsSync(filePath)) {
-         return NextResponse.json({ status: 'Error', message: 'real_data.json file not found on server!' });
-    }
-    
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const data = JSON.parse(fileContent);
-    const reviews = data.reviews;
-
-    // 4. Sab real reviews ko ek-ek karke create/upsert karna
-    const results = [];
-    for (const rw of reviews) {
-      if (!rw.slug || rw.slug.trim() === '') {
-         rw.slug = `post-${Math.random().toString(36).substr(2, 9)}`; 
-      }
-      
-      try {
-          await prisma.review.upsert({
-            where: { slug: rw.slug },
-            update: {
-                title: rw.title,
-                content: rw.content,
-                posterImage: rw.posterImage
-            },
-            create: {
-              ...rw,
-              authorId: author.id
-            }
-          });
-          results.push(`Inserted: ${rw.title}`);
-      } catch (err) {
-          console.log(`Failed for slug: ${rw.slug}`);
-      }
-    }
-
-    return NextResponse.json({ 
-        status: 'SUCCESS', 
-        message: 'Kamaal ho gaya! Dummy data delete ho chuka hai aur aapki WordPress ke saare Asli Reviews Live server par publish ho chuke hain!',
-        totalImported: results.length
-    });
-  } catch (error: any) {
-    return NextResponse.json({ status: 'error', message: error.message });
-  }
-}
-</file>
-
-<file path="src/app/api/migrate/route.ts">
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-
-export async function GET() {
-    try {
-        // Try to add the column
-        await prisma.$executeRawUnsafe(`ALTER TABLE User ADD COLUMN bio TEXT`);
-        return NextResponse.json({ message: "Successfully added bio column to User table." });
-    } catch (error: any) {
-        if (error.message.includes("duplicate column name")) {
-            return NextResponse.json({ message: "Column 'bio' already exists." });
-        }
-        console.error("Migration Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-}
-</file>
-
 <file path="src/app/api/reviews/[slug]/route.ts">
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
@@ -2419,78 +2263,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
         console.error("GET Single Review Error:", error);
         return NextResponse.json({ error: "Failed to fetch review" }, { status: 500 });
     }
-}
-</file>
-
-<file path="src/app/api/seed/route.ts">
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-export async function GET() {
-  try {
-    // 1. Ek dummy admin user banate hain (ya find karte hain)
-    const author = await prisma.user.upsert({
-      where: { email: 'admin@cinebuffs.org' },
-      update: {}, // Agar pehle se hai toh kuch na karo
-      create: {
-        name: 'CineBuffs Admin',
-        email: 'admin@cinebuffs.org',
-        password: 'dummy_password',
-        role: 'ADMIN',
-      }
-    });
-
-    // 2. Kuch dummy movies/series ke records create karte hain
-    const reviews = [
-      { 
-        slug: 'inception-dummy', 
-        title: 'Inception (Dummy Masterpiece)', 
-        posterImage: 'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg', 
-        rating: 4.8, 
-        genre: 'Sci-Fi', 
-        type: 'MOVIE', 
-        content: 'Christopher Nolan ki ek mind-bending science fiction film jahan log ek doosre ke sapno me enter hote hain. Visuals are stunning!', 
-        status: 'APPROVED' 
-      },
-      { 
-        slug: 'breaking-bad-dummy', 
-        title: 'Breaking Bad (Classic Series)', 
-        posterImage: 'https://m.media-amazon.com/images/M/MV5BMjhiMzgxZTctNDc1Ni00OTIxLTlhMTYtZTAxZWFkODIwMmNiXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg', 
-        rating: 4.9, 
-        genre: 'Drama', 
-        type: 'SERIES', 
-        content: 'Kahanayi ek Chemistry teacher ki jisko cancer ho jata hai aur wo apne kharche nikalne ke liye illegal dhandhe me pad jata hai.', 
-        status: 'APPROVED' 
-      },
-      { 
-        slug: 'dark-knight-dummy', 
-        title: 'The Dark Knight', 
-        posterImage: 'https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg', 
-        rating: 4.7, 
-        genre: 'Action', 
-        type: 'MOVIE', 
-        content: 'Batman aur Joker ke beech ki takkar. Heath Ledger ne as a joker aesi acting ki hai ki history book me record ho gayi.', 
-        status: 'APPROVED' 
-      }
-    ];
-
-    for (const rw of reviews) {
-      await prisma.review.upsert({
-        where: { slug: rw.slug },
-        update: {}, // Agar pehle se same dummy hai toh skip
-        create: {
-          ...rw,
-          authorId: author.id
-        }
-      });
-    }
-
-    return NextResponse.json({ status: 'Success', message: 'Badhai ho! Dummy data website me successfully dal gaya hai.' });
-  } catch (error: any) {
-    return NextResponse.json({ status: 'error', message: error.message });
-  }
 }
 </file>
 
@@ -4543,36 +4315,6 @@ export async function POST(req: NextRequest) {
 }
 </file>
 
-<file path="src/app/api/set_admin_pass/route.ts">
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
-
-export async function GET() {
-  try {
-    const hashedPassword = await bcrypt.hash('Cinebuffs@123', 10);
-
-    // Yahan update ki jagah upsert laga diya hai
-    await prisma.user.upsert({
-      where: { email: 'nematullahkhan979@gmail.com' },
-      update: { password: hashedPassword, role: 'ADMIN' },
-      create: {
-        email: 'nematullahkhan979@gmail.com',
-        name: 'Admin',
-        password: hashedPassword,
-        role: 'ADMIN'
-      }
-    });
-
-    return NextResponse.json({ status: 'SUCCESS', message: 'Admin login password set to Cinebuffs@123' });
-  } catch (error: any) {
-    return NextResponse.json({ status: 'error', message: error.message });
-  }
-}
-</file>
-
 <file path="src/app/contact/page.tsx">
 "use client";
 
@@ -6374,61 +6116,6 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-</file>
-
-<file path="src/app/api/clean-wp/route.ts">
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-export const dynamic = 'force-dynamic';
-
-export async function GET() {
-  try {
-    const reviews = await prisma.review.findMany();
-    
-    let updatedCount = 0;
-    
-    for (const review of reviews) {
-      if (review.content) {
-        let cleanContent = review.content;
-        
-        // 1. Remove all WordPress block comments (e.g. <!-- wp:paragraph -->)
-        cleanContent = cleanContent.replace(/<!--[\s\S]*?-->/g, '');
-        
-        // 2. Remove broken WordPress images and figures
-        cleanContent = cleanContent.replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, '');
-        cleanContent = cleanContent.replace(/<img[^>]*>/gi, '');
-        
-        // Convert paragraph ends to double newlines for spacing
-        cleanContent = cleanContent.replace(/<\/p>\s*<p[^>]*>/gi, '\n\n');
-        
-        // Strip all remaining HTML tags
-        cleanContent = cleanContent.replace(/<[^>]+>/g, '');
-        
-        // Fix weird HTML entities
-        cleanContent = cleanContent.replace(/&nbsp;/g, ' ');
-        cleanContent = cleanContent.replace(/&amp;/g, '&');
-        cleanContent = cleanContent.trim();
-        
-        await prisma.review.update({
-          where: { id: review.id },
-          data: { content: cleanContent }
-        });
-        
-        updatedCount++;
-      }
-    }
-    
-    return NextResponse.json({ 
-        status: 'SUCCESS', 
-        message: `Superb! Total ${updatedCount} reviews ka kabaada (WordPress garbage) saaf ho gaya hai. Ab aap check kariye!`
-    });
-  } catch (error: any) {
-    return NextResponse.json({ status: 'error', message: error.message });
-  }
-}
 </file>
 
 <file path="src/app/blog/page.tsx">

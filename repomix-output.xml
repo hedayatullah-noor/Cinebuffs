@@ -1749,69 +1749,6 @@ concise, confident, implementation-focused
 <!-- TYPEUI_SH_MANAGED_END -->
 </file>
 
-<file path="src/app/api/admin/stats/route.ts">
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export async function GET() {
-    try {
-        const totalUsers = await prisma.user.count();
-        const totalReviews = await prisma.review.count();
-        const approvedReviews = await prisma.review.count({ where: { status: "APPROVED" } });
-        const pendingReviews = await prisma.review.count({ where: { status: "PENDING" } });
-        const totalSubscribers = await prisma.subscriber.count();
-
-        return NextResponse.json({
-            users: totalUsers,
-            reviews: totalReviews,
-            approved: approvedReviews,
-            pending: pendingReviews,
-            subscribers: totalSubscribers
-        });
-    } catch (error: any) {
-        console.error("Admin stats error:", error);
-        return NextResponse.json({ error: "Failed to fetch stats", details: error.message }, { status: 500 });
-    }
-}
-</file>
-
-<file path="src/app/api/admin/subscribers/route.ts">
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export async function GET() {
-    try {
-        const subscribers = await prisma.subscriber.findMany({
-            orderBy: { subscribedAt: 'desc' }
-        });
-
-        // Try to match subscribers with registered users to get their full name
-        const emails = subscribers.map(s => s.email);
-        const users = await prisma.user.findMany({
-            where: { email: { in: emails } },
-            select: { email: true, name: true }
-        });
-
-        const updatedSubscribers = subscribers.map(sub => {
-            const userMatch = users.find(u => u.email === sub.email);
-            return {
-                ...sub,
-                name: userMatch ? userMatch.name : "Newsletter Guest"
-            };
-        });
-
-        return NextResponse.json(updatedSubscribers);
-    } catch (error) {
-        console.error("GET Subscribers Error:", error);
-        return NextResponse.json({ error: "Failed to fetch subscribers" }, { status: 500 });
-    }
-}
-</file>
-
 <file path="src/app/api/admin/users/role/route.ts">
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
@@ -1985,51 +1922,6 @@ export async function PUT(req: Request) {
 }
 </file>
 
-<file path="src/app/api/auth/profile/route.ts">
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
-
-const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "superscretjwttoken12345";
-
-export async function GET(req: NextRequest) {
-    const token = req.cookies.get("auth_token")?.value;
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET) as any;
-        const user = await (prisma.user as any).findUnique({
-            where: { id: decoded.userId },
-            select: { id: true, name: true, email: true, image: true, role: true, bio: true }
-        });
-        return NextResponse.json(user);
-    } catch (error) {
-        return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-    }
-}
-
-export async function PUT(req: NextRequest) {
-    const token = req.cookies.get("auth_token")?.value;
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET) as any;
-        const { bio, image, name } = await req.json();
-
-        const updatedUser = await (prisma.user as any).update({
-            where: { id: decoded.userId },
-            data: { bio, image, name }
-        });
-
-        return NextResponse.json(updatedUser);
-    } catch (error) {
-        console.error("Profile Update Error:", error);
-        return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
-    }
-}
-</file>
-
 <file path="src/app/api/auth/reset-password/route.ts">
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
@@ -2115,219 +2007,6 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error('Signup error:', error);
         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
-    }
-}
-</file>
-
-<file path="src/app/api/comments/route.ts">
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-import { getSession } from "@/lib/auth";
-
-const prisma = new PrismaClient();
-
-export async function POST(req: NextRequest) {
-    try {
-        const body = await req.json();
-        const { text, reviewId } = body;
-
-        const session = await getSession();
-        if (!session) {
-            return NextResponse.json({ error: "Unauthorized. Please login to comment." }, { status: 401 });
-        }
-
-        if (!text || !reviewId) {
-            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-        }
-
-        const newComment = await (prisma as any).comment.create({
-            data: {
-                text,
-                reviewId,
-                userId: session.id,
-            },
-            include: { user: true }
-        });
-
-        return NextResponse.json(newComment);
-    } catch (error) {
-        console.error("POST Comment Error:", error);
-        return NextResponse.json({ error: "Failed to create comment" }, { status: 500 });
-    }
-}
-</file>
-
-<file path="src/app/api/contributors/route.ts">
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export async function GET() {
-    try {
-        let contributors;
-        try {
-            // Try with bio field
-            contributors = await (prisma.user as any).findMany({
-                where: {
-                    role: { in: ["ADMIN", "MODERATOR"] }
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                    bio: true
-                },
-                orderBy: { name: 'asc' }
-            });
-        } catch (dbError: any) {
-            // Fallback if bio column doesn't exist yet
-            console.warn("Bio column missing, falling back...");
-            contributors = await (prisma.user as any).findMany({
-                where: {
-                    role: { in: ["ADMIN", "MODERATOR"] }
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true
-                },
-                orderBy: { name: 'asc' }
-            });
-            // Add empty bio to each contributor
-            contributors = contributors.map((c: any) => ({ ...c, bio: "" }));
-        }
-
-        return NextResponse.json(contributors);
-    } catch (error) {
-        console.error("Contributors Fetch Error:", error);
-        return NextResponse.json({ error: "Failed to fetch contributors" }, { status: 500 });
-    }
-}
-</file>
-
-<file path="src/app/api/reviews/[slug]/route.ts">
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
-    try {
-        const { slug } = await params;
-        let review;
-        try {
-            review = await prisma.review.findFirst({
-                where: { slug },
-                include: {
-                    author: true,
-                    // @ts-ignore
-                    comments: {
-                        include: { user: true },
-                        orderBy: { createdAt: 'desc' }
-                    }
-                }
-            });
-        } catch (err: any) {
-            console.log("Failed to include comments (probably missing table). Fetching without comments...");
-            review = await prisma.review.findFirst({
-                where: { slug },
-                include: { author: true }
-            });
-        }
-
-        if (!review) {
-            console.log("NOT FOUND SLUG:", slug);
-            return NextResponse.json({ error: "Review not found" }, { status: 404 });
-        }
-
-        // Bypassing stale Prisma JS that strips uncompiled columns
-        try {
-            const rawQuery: any[] = await prisma.$queryRaw`SELECT "cast", "director", "availableOn", "gallery" FROM "Review" WHERE "slug" = ${slug}`;
-            if (rawQuery && rawQuery.length > 0) {
-                const row = rawQuery[0];
-                if (row.cast) (review as any).cast = row.cast;
-                if (row.director) (review as any).director = row.director;
-                if (row.availableOn) (review as any).availableOn = row.availableOn;
-                if (row.gallery) (review as any).gallery = row.gallery;
-            }
-        } catch (rawError: any) {
-            console.error("Failed to query raw fields:", rawError.message);
-        }
-
-        return NextResponse.json(review);
-    } catch (error) {
-        console.error("GET Single Review Error:", error);
-        return NextResponse.json({ error: "Failed to fetch review" }, { status: 500 });
-    }
-}
-</file>
-
-<file path="src/app/api/subscribe/route.ts">
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export async function POST(req: NextRequest) {
-    try {
-        const body = await req.json();
-        const { email } = body;
-
-        if (!email || !email.includes("@")) {
-            return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
-        }
-
-        const newSubscriber = await prisma.subscriber.create({
-            data: { email }
-        });
-
-        return NextResponse.json(newSubscriber, { status: 201 });
-    } catch (error: any) {
-        console.error("POST Subscribe Error:", error);
-        if (error.code === 'P2002') {
-            // Unique constraint violation (already subscribed)
-            return NextResponse.json({ error: "Email already subscribed" }, { status: 409 });
-        }
-        return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
-    }
-}
-</file>
-
-<file path="src/app/api/users/route.ts">
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { getSession } from "@/lib/auth";
-
-const prisma = new PrismaClient();
-
-export async function GET(req: NextRequest) {
-    try {
-        const session = await getSession();
-        
-        // Only Admins can fetch all users
-        if (!session || session.role !== "ADMIN") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-
-        const users = await prisma.user.findMany({
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                image: true
-            },
-            orderBy: { name: 'asc' }
-        });
-
-        return NextResponse.json(users);
-    } catch (error) {
-        console.error("GET Users Error:", error);
-        return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
     }
 }
 </file>
@@ -3902,206 +3581,59 @@ export default function AdminDashboard() {
 }
 </file>
 
-<file path="src/app/api/admin/reviews/[slug]/route.ts">
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export async function PUT(
-    req: NextRequest,
-    { params }: { params: Promise<{ slug: string }> }
-) {
-    try {
-        const { slug } = await params;
-        const body = await req.json();
-
-        const {
-            title,
-            content,
-            rating,
-            genre,
-            type,
-            director,
-            cast,
-            availableOn,
-            posterImage,
-            sliderImage,   // ← NEW
-            gallery,
-            authorId,
-        } = body;
-
-        let updatedReview: any;
-
-        try {
-            updatedReview = await (prisma.review as any).update({
-                where: { slug },
-                data: {
-                    title,
-                    content,
-                    rating,
-                    genre,
-                    type,
-                    posterImage,
-                    sliderImage: sliderImage ?? null,  // ← NEW (null clears it)
-                    director,
-                    cast,
-                    availableOn,
-                    gallery,
-                    authorId: authorId || undefined,
-                },
-            });
-        } catch (firstError: any) {
-            console.log("Prisma update failed, falling back to raw SQL for strict schema.");
-
-            updatedReview = await prisma.review.update({
-                where: { slug },
-                data:  { title, content, rating, genre, type, posterImage },
-            });
-
-            try {
-                const c = cast        || null;
-                const d = director    || null;
-                const a = availableOn || null;
-                const g = gallery     || null;
-                const si = sliderImage || null;
-
-                // MySQL raw update — backtick column names
-                await prisma.$executeRaw`
-                    UPDATE \`Review\`
-                    SET \`cast\` = ${c},
-                        \`director\` = ${d},
-                        \`availableOn\` = ${a},
-                        \`gallery\` = ${g},
-                        \`sliderImage\` = ${si}
-                    WHERE \`slug\` = ${slug}
-                `;
-
-                updatedReview.cast        = c;
-                updatedReview.director    = d;
-                updatedReview.availableOn = a;
-                updatedReview.gallery     = g;
-                (updatedReview as any).sliderImage = si;
-            } catch (rawError: any) {
-                console.error("Execute raw also failed:", rawError.message);
-            }
-        }
-
-        return NextResponse.json(updatedReview);
-    } catch (error) {
-        console.error("PUT Admin Review Error:", error);
-        return NextResponse.json(
-            { error: "Failed to update review" },
-            { status: 500 }
-        );
-    }
-}
-
-export async function DELETE(
-    req: NextRequest,
-    { params }: { params: Promise<{ slug: string }> }
-) {
-    try {
-        const { slug } = await params;
-        await prisma.review.delete({ where: { slug } });
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error("DELETE Admin Review Error:", error);
-        return NextResponse.json(
-            { error: "Failed to delete review" },
-            { status: 500 }
-        );
-    }
-}
-</file>
-
-<file path="src/app/api/admin/reviews/route.ts">
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
+<file path="src/app/api/admin/stats/route.ts">
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 export async function GET() {
     try {
-        const reviews = await (prisma.review as any).findMany({
-            select: {
-                id: true,
-                title: true,
-                slug: true,
-                rating: true,
-                type: true,
-                genre: true,
-                status: true,
-                createdAt: true,
-                posterImage: true,
-                sliderImage: true,
-                director: true,
-                cast: true,
-                availableOn: true,
-                gallery: true,
-                content: true,
-                author: { select: { id: true, name: true, image: true } }
-            },
-            orderBy: { createdAt: 'desc' },
+        const totalUsers = await prisma.user.count();
+        const totalReviews = await prisma.review.count();
+        const approvedReviews = await prisma.review.count({ where: { status: "APPROVED" } });
+        const pendingReviews = await prisma.review.count({ where: { status: "PENDING" } });
+        const totalSubscribers = await prisma.subscriber.count();
+
+        return NextResponse.json({
+            users: totalUsers,
+            reviews: totalReviews,
+            approved: approvedReviews,
+            pending: pendingReviews,
+            subscribers: totalSubscribers
         });
-
-        return NextResponse.json(reviews);
     } catch (error: any) {
-        console.error("GET All Reviews Error:", error);
-        return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
-    }
-}
-
-export async function PATCH(req: NextRequest) {
-    try {
-        const body = await req.json();
-        const { reviewId, status } = body;
-
-        if (!reviewId || !status) {
-            return NextResponse.json({ error: "Missing reviewId or status" }, { status: 400 });
-        }
-
-        const updatedReview = await prisma.review.update({
-            where: { id: reviewId },
-            data: { status }
-        });
-
-        return NextResponse.json(updatedReview);
-    } catch (error: any) {
-        console.error("PATCH Review Status Error:", error);
-        return NextResponse.json({ error: "Failed to update review status" }, { status: 500 });
+        console.error("Admin stats error:", error);
+        return NextResponse.json({ error: "Failed to fetch stats", details: error.message }, { status: 500 });
     }
 }
 </file>
 
-<file path="src/app/api/admin/subscribers/export/route.ts">
+<file path="src/app/api/admin/subscribers/route.ts">
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
+import { prisma } from "@/lib/prisma";
 export async function GET() {
     try {
         const subscribers = await prisma.subscriber.findMany({
             orderBy: { subscribedAt: 'desc' }
         });
 
-        // Create CSV string
-        let csvContent = "Id,Email,Subscribed At\n";
-        subscribers.forEach((sub: any) => {
-            csvContent += `${sub.id},${sub.email},${sub.subscribedAt.toISOString()}\n`;
+        // Try to match subscribers with registered users to get their full name
+        const emails = subscribers.map(s => s.email);
+        const users = await prisma.user.findMany({
+            where: { email: { in: emails } },
+            select: { email: true, name: true }
         });
 
-        return new NextResponse(csvContent, {
-            status: 200,
-            headers: {
-                "Content-Type": "text/csv",
-                "Content-Disposition": "attachment; filename=subscribers.csv"
-            }
+        const updatedSubscribers = subscribers.map(sub => {
+            const userMatch = users.find(u => u.email === sub.email);
+            return {
+                ...sub,
+                name: userMatch ? userMatch.name : "Newsletter Guest"
+            };
         });
+
+        return NextResponse.json(updatedSubscribers);
     } catch (error) {
-        console.error("Subs export error:", error);
-        return NextResponse.json({ error: "Failed to export subscribers" }, { status: 500 });
+        console.error("GET Subscribers Error:", error);
+        return NextResponse.json({ error: "Failed to fetch subscribers" }, { status: 500 });
     }
 }
 </file>
@@ -4164,6 +3696,187 @@ export async function POST(req: Request) {
       error: process.env.NODE_ENV === 'development' ? error.message : undefined 
     }, { status: 500 });
   }
+}
+</file>
+
+<file path="src/app/api/auth/profile/route.ts">
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import jwt from "jsonwebtoken";
+const JWT_SECRET = process.env.JWT_SECRET || "superscretjwttoken12345";
+
+export async function GET(req: NextRequest) {
+    const token = req.cookies.get("auth_token")?.value;
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        const user = await (prisma.user as any).findUnique({
+            where: { id: decoded.userId },
+            select: { id: true, name: true, email: true, image: true, role: true, bio: true }
+        });
+        return NextResponse.json(user);
+    } catch (error) {
+        return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+}
+
+export async function PUT(req: NextRequest) {
+    const token = req.cookies.get("auth_token")?.value;
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        const { bio, image, name } = await req.json();
+
+        const updatedUser = await (prisma.user as any).update({
+            where: { id: decoded.userId },
+            data: { bio, image, name }
+        });
+
+        return NextResponse.json(updatedUser);
+    } catch (error) {
+        console.error("Profile Update Error:", error);
+        return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
+    }
+}
+</file>
+
+<file path="src/app/api/comments/route.ts">
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+import { getSession } from "@/lib/auth";
+export async function POST(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { text, reviewId } = body;
+
+        const session = await getSession();
+        if (!session) {
+            return NextResponse.json({ error: "Unauthorized. Please login to comment." }, { status: 401 });
+        }
+
+        if (!text || !reviewId) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        const newComment = await (prisma as any).comment.create({
+            data: {
+                text,
+                reviewId,
+                userId: session.id,
+            },
+            include: { user: true }
+        });
+
+        return NextResponse.json(newComment);
+    } catch (error) {
+        console.error("POST Comment Error:", error);
+        return NextResponse.json({ error: "Failed to create comment" }, { status: 500 });
+    }
+}
+</file>
+
+<file path="src/app/api/contributors/route.ts">
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+export async function GET() {
+    try {
+        let contributors;
+        try {
+            // Try with bio field
+            contributors = await (prisma.user as any).findMany({
+                where: {
+                    role: { in: ["ADMIN", "MODERATOR"] }
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    role: true,
+                    bio: true
+                },
+                orderBy: { name: 'asc' }
+            });
+        } catch (dbError: any) {
+            // Fallback if bio column doesn't exist yet
+            console.warn("Bio column missing, falling back...");
+            contributors = await (prisma.user as any).findMany({
+                where: {
+                    role: { in: ["ADMIN", "MODERATOR"] }
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    role: true
+                },
+                orderBy: { name: 'asc' }
+            });
+            // Add empty bio to each contributor
+            contributors = contributors.map((c: any) => ({ ...c, bio: "" }));
+        }
+
+        return NextResponse.json(contributors);
+    } catch (error) {
+        console.error("Contributors Fetch Error:", error);
+        return NextResponse.json({ error: "Failed to fetch contributors" }, { status: 500 });
+    }
+}
+</file>
+
+<file path="src/app/api/reviews/[slug]/route.ts">
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+    try {
+        const { slug } = await params;
+        let review;
+        try {
+            review = await prisma.review.findFirst({
+                where: { slug },
+                include: {
+                    author: true,
+                    // @ts-ignore
+                    comments: {
+                        include: { user: true },
+                        orderBy: { createdAt: 'desc' }
+                    }
+                }
+            });
+        } catch (err: any) {
+            console.log("Failed to include comments (probably missing table). Fetching without comments...");
+            review = await prisma.review.findFirst({
+                where: { slug },
+                include: { author: true }
+            });
+        }
+
+        if (!review) {
+            console.log("NOT FOUND SLUG:", slug);
+            return NextResponse.json({ error: "Review not found" }, { status: 404 });
+        }
+
+        // Bypassing stale Prisma JS that strips uncompiled columns
+        try {
+            const rawQuery: any[] = await prisma.$queryRaw`SELECT "cast", "director", "availableOn", "gallery" FROM "Review" WHERE "slug" = ${slug}`;
+            if (rawQuery && rawQuery.length > 0) {
+                const row = rawQuery[0];
+                if (row.cast) (review as any).cast = row.cast;
+                if (row.director) (review as any).director = row.director;
+                if (row.availableOn) (review as any).availableOn = row.availableOn;
+                if (row.gallery) (review as any).gallery = row.gallery;
+            }
+        } catch (rawError: any) {
+            console.error("Failed to query raw fields:", rawError.message);
+        }
+
+        return NextResponse.json(review);
+    } catch (error) {
+        console.error("GET Single Review Error:", error);
+        return NextResponse.json({ error: "Failed to fetch review" }, { status: 500 });
+    }
 }
 </file>
 
@@ -4311,6 +4024,66 @@ export async function POST(req: NextRequest) {
             { error: "Failed to create review" },
             { status: 500 }
         );
+    }
+}
+</file>
+
+<file path="src/app/api/subscribe/route.ts">
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+export async function POST(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { email } = body;
+
+        if (!email || !email.includes("@")) {
+            return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
+        }
+
+        const newSubscriber = await prisma.subscriber.create({
+            data: { email }
+        });
+
+        return NextResponse.json(newSubscriber, { status: 201 });
+    } catch (error: any) {
+        console.error("POST Subscribe Error:", error);
+        if (error.code === 'P2002') {
+            // Unique constraint violation (already subscribed)
+            return NextResponse.json({ error: "Email already subscribed" }, { status: 409 });
+        }
+        return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
+    }
+}
+</file>
+
+<file path="src/app/api/users/route.ts">
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
+export async function GET(req: NextRequest) {
+    try {
+        const session = await getSession();
+        
+        // Only Admins can fetch all users
+        if (!session || session.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                image: true
+            },
+            orderBy: { name: 'asc' }
+        });
+
+        return NextResponse.json(users);
+    } catch (error) {
+        console.error("GET Users Error:", error);
+        return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
     }
 }
 </file>
@@ -6116,6 +5889,201 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+</file>
+
+<file path="src/app/api/admin/reviews/[slug]/route.ts">
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+export async function PUT(
+    req: NextRequest,
+    { params }: { params: Promise<{ slug: string }> }
+) {
+    try {
+        const { slug } = await params;
+        const body = await req.json();
+
+        const {
+            title,
+            content,
+            rating,
+            genre,
+            type,
+            director,
+            cast,
+            availableOn,
+            posterImage,
+            sliderImage,   // ← NEW
+            gallery,
+            authorId,
+        } = body;
+
+        let updatedReview: any;
+
+        try {
+            updatedReview = await (prisma.review as any).update({
+                where: { slug },
+                data: {
+                    title,
+                    content,
+                    rating,
+                    genre,
+                    type,
+                    posterImage,
+                    sliderImage: sliderImage ?? null,  // ← NEW (null clears it)
+                    director,
+                    cast,
+                    availableOn,
+                    gallery,
+                    authorId: authorId || undefined,
+                },
+            });
+        } catch (firstError: any) {
+            console.log("Prisma update failed, falling back to raw SQL for strict schema.");
+
+            updatedReview = await prisma.review.update({
+                where: { slug },
+                data:  { title, content, rating, genre, type, posterImage },
+            });
+
+            try {
+                const c = cast        || null;
+                const d = director    || null;
+                const a = availableOn || null;
+                const g = gallery     || null;
+                const si = sliderImage || null;
+
+                // MySQL raw update — backtick column names
+                await prisma.$executeRaw`
+                    UPDATE \`Review\`
+                    SET \`cast\` = ${c},
+                        \`director\` = ${d},
+                        \`availableOn\` = ${a},
+                        \`gallery\` = ${g},
+                        \`sliderImage\` = ${si}
+                    WHERE \`slug\` = ${slug}
+                `;
+
+                updatedReview.cast        = c;
+                updatedReview.director    = d;
+                updatedReview.availableOn = a;
+                updatedReview.gallery     = g;
+                (updatedReview as any).sliderImage = si;
+            } catch (rawError: any) {
+                console.error("Execute raw also failed:", rawError.message);
+            }
+        }
+
+        return NextResponse.json(updatedReview);
+    } catch (error) {
+        console.error("PUT Admin Review Error:", error);
+        return NextResponse.json(
+            { error: "Failed to update review" },
+            { status: 500 }
+        );
+    }
+}
+
+export async function DELETE(
+    req: NextRequest,
+    { params }: { params: Promise<{ slug: string }> }
+) {
+    try {
+        const { slug } = await params;
+        await prisma.review.delete({ where: { slug } });
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("DELETE Admin Review Error:", error);
+        return NextResponse.json(
+            { error: "Failed to delete review" },
+            { status: 500 }
+        );
+    }
+}
+</file>
+
+<file path="src/app/api/admin/reviews/route.ts">
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+export async function GET() {
+    try {
+        const reviews = await (prisma.review as any).findMany({
+            select: {
+                id: true,
+                title: true,
+                slug: true,
+                rating: true,
+                type: true,
+                genre: true,
+                status: true,
+                createdAt: true,
+                posterImage: true,
+                sliderImage: true,
+                director: true,
+                cast: true,
+                availableOn: true,
+                gallery: true,
+                content: true,
+                author: { select: { id: true, name: true, image: true } }
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+
+        return NextResponse.json(reviews);
+    } catch (error: any) {
+        console.error("GET All Reviews Error:", error);
+        return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
+    }
+}
+
+export async function PATCH(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { reviewId, status } = body;
+
+        if (!reviewId || !status) {
+            return NextResponse.json({ error: "Missing reviewId or status" }, { status: 400 });
+        }
+
+        const updatedReview = await prisma.review.update({
+            where: { id: reviewId },
+            data: { status }
+        });
+
+        return NextResponse.json(updatedReview);
+    } catch (error: any) {
+        console.error("PATCH Review Status Error:", error);
+        return NextResponse.json({ error: "Failed to update review status" }, { status: 500 });
+    }
+}
+</file>
+
+<file path="src/app/api/admin/subscribers/export/route.ts">
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+export async function GET() {
+    try {
+        const subscribers = await prisma.subscriber.findMany({
+            orderBy: { subscribedAt: 'desc' }
+        });
+
+        // Create CSV string
+        let csvContent = "Id,Email,Subscribed At\n";
+        subscribers.forEach((sub: any) => {
+            csvContent += `${sub.id},${sub.email},${sub.subscribedAt.toISOString()}\n`;
+        });
+
+        return new NextResponse(csvContent, {
+            status: 200,
+            headers: {
+                "Content-Type": "text/csv",
+                "Content-Disposition": "attachment; filename=subscribers.csv"
+            }
+        });
+    } catch (error) {
+        console.error("Subs export error:", error);
+        return NextResponse.json({ error: "Failed to export subscribers" }, { status: 500 });
+    }
+}
 </file>
 
 <file path="src/app/blog/page.tsx">

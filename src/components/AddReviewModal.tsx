@@ -16,6 +16,9 @@ interface AddReviewModalProps {
     initialMediaType?: "Movie" | "Series" | "Blog";
     /* Pass review data for edit mode */
     editData?: any;
+    /* Called with the updated/created review after a successful save,
+       so the caller can refresh its own list instead of showing stale data */
+    onSaved?: (review: any) => void;
 }
 
 export default function AddReviewModal({
@@ -23,9 +26,11 @@ export default function AddReviewModal({
     onClose,
     initialMediaType = "Movie",
     editData,
+    onSaved,
 }: AddReviewModalProps) {
     const [mediaType, setMediaType]           = useState<"Movie" | "Series" | "Blog">(initialMediaType);
     const [submissionStatus, setSubmissionStatus] = useState<"idle" | "pending" | "approved">("idle");
+    const [submitError, setSubmitError]       = useState<string>("");
     const [isLoading, setIsLoading]           = useState(false);
     const [rating, setRating]                 = useState(editData?.rating || 0);
 
@@ -49,6 +54,7 @@ export default function AddReviewModal({
         if (isOpen) {
             setMediaType(initialMediaType);
             setSubmissionStatus("idle");
+            setSubmitError("");
             setRating(editData?.rating || 0);
             setPosterPreview(editData?.posterImage || "");
             setSliderPreview(editData?.sliderImage || "");
@@ -164,6 +170,7 @@ export default function AddReviewModal({
             if (method === "PUT") {
                 const obj: any = {};
                 formData.forEach((val, key) => { obj[key] = val; });
+                if (obj.authorOverride) obj.authorId = obj.authorOverride;
                 body = JSON.stringify(obj);
             } else {
                 body = formData;
@@ -176,15 +183,22 @@ export default function AddReviewModal({
             });
 
             if (res.ok) {
+                setSubmitError("");
+                const saved = await res.json().catch(() => null);
+                if (saved) onSaved?.(saved);
                 setSubmissionStatus(
                     currentUser?.role === "ADMIN" || currentUser?.role === "MODERATOR"
                         ? "approved"
                         : "pending"
                 );
                 setTimeout(() => { onClose(); setSubmissionStatus("idle"); }, 2000);
+            } else {
+                const errBody = await res.json().catch(() => null);
+                setSubmitError(errBody?.error || `Save failed (${res.status}). Please try again.`);
             }
         } catch (err) {
             console.error("Submit error:", err);
+            setSubmitError("Something went wrong while saving. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -612,6 +626,11 @@ export default function AddReviewModal({
                                 )}
 
                                 {/* Submit */}
+                                {submitError && (
+                                    <div style={{ padding: '10px 14px', backgroundColor: 'rgba(220,38,38,0.08)', border: '1px solid #DC2626', color: '#DC2626', fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600 }}>
+                                        {submitError}
+                                    </div>
+                                )}
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
                                     <button type="button" onClick={onClose}
                                         style={{ padding: '10px 20px', border: '1px solid var(--color-border)', background: 'none', fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', color: 'var(--color-text-muted)' }}>

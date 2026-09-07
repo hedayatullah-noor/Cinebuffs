@@ -101,6 +101,17 @@ export default function AdminDashboard() {
         }
     };
 
+    // Re-fetch the full reviews list after a create/edit in AddReviewModal,
+    // so Manage Reviews (and the edit modal, if reopened) shows the latest data
+    // instead of the stale copy from when the tab was first opened.
+    const refreshReviews = () => {
+        fetch("/api/admin/reviews")
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) { setAllReviews(data); setFilteredReviews(data); }
+            });
+    };
+
     const handleReviewAction = async (reviewId: string, status: string) => {
         const res = await fetch("/api/admin/reviews", {
             method: "PATCH",
@@ -154,6 +165,7 @@ export default function AdminDashboard() {
                 onClose={() => { setIsReviewModalOpen(false); setEditingReview(null); }}
                 initialMediaType={modalInitialMode}
                 editData={editingReview}
+                onSaved={refreshReviews}
             />
 
             {/* ── Sidebar ── */}

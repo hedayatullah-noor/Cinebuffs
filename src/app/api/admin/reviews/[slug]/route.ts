@@ -11,7 +11,6 @@ export async function PUT(
         const {
             title,
             content,
-            rating,
             genre,
             type,
             director,
@@ -22,6 +21,14 @@ export async function PUT(
             gallery,
             authorId,
         } = body;
+
+        // `rating` arrives as a string (the form data was converted to plain
+        // JSON on the client) but the Prisma field is a Float — passing a
+        // string here made every update throw, which is why saves always
+        // failed with "Failed to update review".
+        const rating = body.rating !== undefined && body.rating !== ""
+            ? Number(body.rating)
+            : undefined;
 
         let updatedReview: any;
 
@@ -44,7 +51,7 @@ export async function PUT(
                 },
             });
         } catch (firstError: any) {
-            console.log("Prisma update failed, falling back to raw SQL for strict schema.");
+            console.log("Prisma update failed, falling back to raw SQL for strict schema.", firstError?.message);
 
             updatedReview = await prisma.review.update({
                 where: { slug },
@@ -80,10 +87,10 @@ export async function PUT(
         }
 
         return NextResponse.json(updatedReview);
-    } catch (error) {
+    } catch (error: any) {
         console.error("PUT Admin Review Error:", error);
         return NextResponse.json(
-            { error: "Failed to update review" },
+            { error: error?.message ? `Failed to update review: ${error.message}` : "Failed to update review" },
             { status: 500 }
         );
     }

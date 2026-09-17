@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import RatingStars from "@/components/RatingStars";
 
 interface Review {
@@ -124,7 +125,7 @@ export default function HeroSlider() {
 
             <div className="page-container">
             <section className="cb-hero-outer">
-                <div className="cb-hero-inner">
+                <Link href={`/reviews/${review.slug}`} className="cb-hero-inner" style={{ textDecoration: 'none', color: 'inherit' }}>
 
                     {/* ── Image panel ── */}
                     <div className="cb-hero-img">
@@ -166,7 +167,7 @@ export default function HeroSlider() {
                             {reviews.map((_, i) => (
                                 <button
                                     key={i}
-                                    onClick={() => { setActiveIndex(i); resetInterval(); }}
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIndex(i); resetInterval(); }}
                                     aria-label={`Slide ${i + 1}`}
                                     style={{
                                         height: 3,
@@ -212,7 +213,7 @@ export default function HeroSlider() {
                             </motion.div>
                         </AnimatePresence>
                     </div>
-                </div>
+                </Link>
             </section>
             </div>
         </>

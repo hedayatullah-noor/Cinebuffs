@@ -226,122 +226,124 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ slug: s
 
             {/* ── Main content + sidebar ── */}
             <div style={{ maxWidth: 1100, margin: '0 auto', padding: '3rem 1.25rem' }}>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
 
-                    {/* ── Left: review body ── */}
-                    <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+                {/* ── Review body (full width) ── */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
 
-                        {/* Review text */}
-                        <div
-                            className="prose prose-lg max-w-none"
-                            style={{
-                                fontFamily: 'var(--font-sans)', fontSize: '1rem',
-                                lineHeight: 1.85, color: 'var(--color-text-main)',
-                            }}
-                            dangerouslySetInnerHTML={{ __html: content }}
-                        />
+                    {/* Review text */}
+                    <div
+                        className="prose prose-lg max-w-none"
+                        style={{
+                            fontFamily: 'var(--font-sans)', fontSize: '1rem',
+                            lineHeight: 1.85, color: 'var(--color-text-main)',
+                        }}
+                        dangerouslySetInnerHTML={{ __html: content }}
+                    />
 
-                        {/* Gallery */}
-                        {parsedGallery.length > 0 && (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-main)', paddingBottom: 8, borderBottom: '2px solid var(--color-text-main)', display: 'inline-block', margin: 0 }}>
-                                    Screenshots & Stills
-                                </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {parsedGallery.map((img: string, idx: number) => (
-                                        <div key={idx} style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-                                            <img src={img} alt={`Still ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Divider */}
-                        <div style={{ height: 1, backgroundColor: 'var(--color-border)' }} />
-
-                        {/* Comments */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} id="comments">
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                <MessageCircle style={{ width: 18, height: 18, color: 'var(--color-text-muted)' }} />
-                                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-main)', margin: 0 }}>
-                                    Public Comments ({comments.length})
-                                </h3>
-                            </div>
-
-                            {/* Comment form */}
-                            <form onSubmit={handleCommentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12, backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)', padding: '1.5rem' }}>
-                                <label style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-text-muted)' }}>
-                                    Post a Comment
-                                </label>
-                                <textarea
-                                    value={newComment}
-                                    onChange={e => setNewComment(e.target.value)}
-                                    placeholder="What's your take on this cinematic piece?"
-                                    rows={4}
-                                    style={{
-                                        width: '100%', resize: 'vertical', padding: '10px 12px',
-                                        fontFamily: 'var(--font-sans)', fontSize: 14,
-                                        border: '1px solid var(--color-border)', outline: 'none',
-                                        backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-main)',
-                                        transition: 'border-color 0.2s ease',
-                                    }}
-                                    onFocus={e => (e.target.style.borderColor = 'var(--color-brand)')}
-                                    onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
-                                />
-                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                    <button type="submit" style={{
-                                        padding: '10px 24px', backgroundColor: 'var(--color-brand)', color: '#fff', border: 'none',
-                                        fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700,
-                                        textTransform: 'uppercase', letterSpacing: '0.12em', cursor: 'pointer',
-                                        transition: 'background-color 0.2s ease',
-                                    }}
-                                        onMouseEnter={e => ((e.target as HTMLElement).style.backgroundColor = 'var(--color-brand-hover)')}
-                                        onMouseLeave={e => ((e.target as HTMLElement).style.backgroundColor = 'var(--color-brand)')}
-                                    >
-                                        Broadcast Comment
-                                    </button>
-                                </div>
-                            </form>
-
-                            {/* Comment list */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                {comments.length === 0 ? (
-                                    <div style={{ padding: '2.5rem', textAlign: 'center', border: '1px dashed var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}>
-                                        <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-text-muted)' }}>
-                                            Join the conversation
-                                        </p>
-                                    </div>
-                                ) : comments.map((comment: any) => (
-                                    <div key={comment.id} style={{ display: 'flex', gap: 14, padding: '1.25rem', backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)' }}>
-                                        <div style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', backgroundColor: 'var(--color-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                            {comment.user?.image
-                                                ? <img src={comment.user.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                : <span style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>{(comment.user?.name || 'U').charAt(0).toUpperCase()}</span>
-                                            }
-                                        </div>
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, paddingBottom: 6, borderBottom: '1px solid var(--color-border)' }}>
-                                                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-main)' }}>
-                                                    {comment.user?.name || "Anonymous"}
-                                                </span>
-                                                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'var(--color-text-muted)' }}>
-                                                    {new Date(comment.createdAt).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                            <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: 'var(--color-text-main)', lineHeight: 1.65, margin: 0 }}>
-                                                {comment.text}
-                                            </p>
-                                        </div>
+                    {/* Gallery */}
+                    {parsedGallery.length > 0 && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-main)', paddingBottom: 8, borderBottom: '2px solid var(--color-text-main)', display: 'inline-block', margin: 0 }}>
+                                Screenshots & Stills
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {parsedGallery.map((img: string, idx: number) => (
+                                    <div key={idx} style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
+                                        <img src={img} alt={`Still ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                                     </div>
                                 ))}
                             </div>
                         </div>
+                    )}
+
+                    {/* Divider */}
+                    <div style={{ height: 1, backgroundColor: 'var(--color-border)' }} />
+                </div>
+
+                {/* ── Comments (left) + Project Credits / Share (right, in the empty space beside comments) ── */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14" style={{ marginTop: '2.5rem' }}>
+
+                    {/* Left: Comments */}
+                    <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} id="comments">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <MessageCircle style={{ width: 18, height: 18, color: 'var(--color-text-muted)' }} />
+                            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-main)', margin: 0 }}>
+                                Public Comments ({comments.length})
+                            </h3>
+                        </div>
+
+                        {/* Comment form */}
+                        <form onSubmit={handleCommentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12, backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)', padding: '1.5rem' }}>
+                            <label style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-text-muted)' }}>
+                                Post a Comment
+                            </label>
+                            <textarea
+                                value={newComment}
+                                onChange={e => setNewComment(e.target.value)}
+                                placeholder="What's your take on this cinematic piece?"
+                                rows={4}
+                                style={{
+                                    width: '100%', resize: 'vertical', padding: '10px 12px',
+                                    fontFamily: 'var(--font-sans)', fontSize: 14,
+                                    border: '1px solid var(--color-border)', outline: 'none',
+                                    backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-main)',
+                                    transition: 'border-color 0.2s ease',
+                                }}
+                                onFocus={e => (e.target.style.borderColor = 'var(--color-brand)')}
+                                onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
+                            />
+                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <button type="submit" style={{
+                                    padding: '10px 24px', backgroundColor: 'var(--color-brand)', color: '#fff', border: 'none',
+                                    fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700,
+                                    textTransform: 'uppercase', letterSpacing: '0.12em', cursor: 'pointer',
+                                    transition: 'background-color 0.2s ease',
+                                }}
+                                    onMouseEnter={e => ((e.target as HTMLElement).style.backgroundColor = 'var(--color-brand-hover)')}
+                                    onMouseLeave={e => ((e.target as HTMLElement).style.backgroundColor = 'var(--color-brand)')}
+                                >
+                                    Broadcast Comment
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Comment list */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {comments.length === 0 ? (
+                                <div style={{ padding: '2.5rem', textAlign: 'center', border: '1px dashed var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}>
+                                    <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-text-muted)' }}>
+                                        Join the conversation
+                                    </p>
+                                </div>
+                            ) : comments.map((comment: any) => (
+                                <div key={comment.id} style={{ display: 'flex', gap: 14, padding: '1.25rem', backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)' }}>
+                                    <div style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', backgroundColor: 'var(--color-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                        {comment.user?.image
+                                            ? <img src={comment.user.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            : <span style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>{(comment.user?.name || 'U').charAt(0).toUpperCase()}</span>
+                                        }
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, paddingBottom: 6, borderBottom: '1px solid var(--color-border)' }}>
+                                            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-main)' }}>
+                                                {comment.user?.name || "Anonymous"}
+                                            </span>
+                                            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'var(--color-text-muted)' }}>
+                                                {new Date(comment.createdAt).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: 'var(--color-text-main)', lineHeight: 1.65, margin: 0 }}>
+                                            {comment.text}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* ── Right: Sidebar ── */}
+                    {/* Right: sidebar — fills the empty space beside Public Comments */}
                     <div>
-                        <div style={{ position: 'sticky', top: 130, display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}>
 
                             {/* Project Credits */}
                             {!isBlog && (

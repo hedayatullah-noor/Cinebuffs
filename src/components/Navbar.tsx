@@ -27,11 +27,11 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "Home", href: "/" },
-        { name: "About Us", href: "/about" },
-        { name: "Contributors", href: "/contributors" },
         { name: "Movie Review", href: "/movies" },
         { name: "Series Review", href: "/series" },
         { name: "Blog", href: "/blog" },
+        { name: "About Us", href: "/about" },
+        { name: "Contributors", href: "/contributors" },
         { name: "Contact Us", href: "/contact" },
     ];
 

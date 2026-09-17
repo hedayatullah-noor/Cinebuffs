@@ -23,7 +23,7 @@ export default function Footer() {
                                 className="h-10 w-auto object-contain brightness-0 invert"
                             />
                         </Link>
-                        <p className="text-[var(--color-text-muted)] text-xs font-[var(--font-sans)] leading-relaxed max-w-xs">
+                        <p className="text-[#ADA9A0] text-xs font-[var(--font-sans)] leading-relaxed max-w-xs">
                             The ultimate platform for high-quality movie and series reviews.
                             Join our growing community of cinephiles today.
                         </p>
@@ -43,7 +43,7 @@ export default function Footer() {
                                     className="
                                         w-8 h-8 border border-[#3A3A3A] dark:border-[var(--color-border-dark)]
                                         flex items-center justify-center
-                                        text-[var(--color-text-muted)]
+                                        text-[#ADA9A0]
                                         hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]
                                         transition-colors duration-200
                                     "
@@ -58,7 +58,7 @@ export default function Footer() {
                     <div className="md:col-span-4">
                         <h3 className="
                             font-[var(--font-sans)] text-[10px] font-bold uppercase tracking-widest
-                            text-[var(--color-text-muted)] mb-5 pb-2
+                            text-[#ADA9A0] mb-5 pb-2
                             border-b border-[#3A3A3A] dark:border-[var(--color-border-dark)]
                         ">
                             Explore
@@ -79,7 +79,7 @@ export default function Footer() {
                                     href={link.href}
                                     className="
                                         text-[11px] font-[var(--font-sans)]
-                                        text-[var(--color-text-muted)]
+                                        text-[#ADA9A0]
                                         hover:text-white dark:hover:text-white
                                         transition-colors duration-200
                                     "
@@ -94,12 +94,12 @@ export default function Footer() {
                     <div className="md:col-span-3">
                         <h3 className="
                             font-[var(--font-sans)] text-[10px] font-bold uppercase tracking-widest
-                            text-[var(--color-text-muted)] mb-5 pb-2
+                            text-[#ADA9A0] mb-5 pb-2
                             border-b border-[#3A3A3A] dark:border-[var(--color-border-dark)]
                         ">
                             Newsletter
                         </h3>
-                        <p className="text-[var(--color-text-muted)] text-xs font-[var(--font-sans)] leading-relaxed mb-4">
+                        <p className="text-[#ADA9A0] text-xs font-[var(--font-sans)] leading-relaxed mb-4">
                             Get the latest reviews delivered to your inbox.
                         </p>
                         <Link
@@ -121,14 +121,14 @@ export default function Footer() {
 
                 {/* ── Bottom bar ── */}
                 <div className="border-t border-[#3A3A3A] dark:border-[var(--color-border-dark)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <p className="text-[var(--color-text-muted)] text-[10px] font-[var(--font-sans)] uppercase tracking-widest">
+                    <p className="text-[#ADA9A0] text-[10px] font-[var(--font-sans)] uppercase tracking-widest">
                         CineBuffs &copy;{currentYear} &nbsp;|&nbsp; All Rights Reserved
                     </p>
                     <div className="flex items-center gap-5">
-                        <Link href="/privacy" className="text-[var(--color-text-muted)] hover:text-white dark:hover:text-white text-[10px] font-[var(--font-sans)] uppercase tracking-widest transition-colors">
+                        <Link href="/privacy" className="text-[#ADA9A0] hover:text-white dark:hover:text-white text-[10px] font-[var(--font-sans)] uppercase tracking-widest transition-colors">
                             Privacy Policy
                         </Link>
-                        <Link href="/terms" className="text-[var(--color-text-muted)] hover:text-white dark:hover:text-white text-[10px] font-[var(--font-sans)] uppercase tracking-widest transition-colors">
+                        <Link href="/terms" className="text-[#ADA9A0] hover:text-white dark:hover:text-white text-[10px] font-[var(--font-sans)] uppercase tracking-widest transition-colors">
                             Terms of Service
                         </Link>
                     </div>

@@ -42,6 +42,32 @@
     margin: 0;
     padding: 0;
   }
+
+  /*
+   * DARK MODE — SEMANTIC TOKEN OVERRIDE
+   * ------------------------------------
+   * Every page (about, contact, login, movies, admin, reviews/[slug], etc.)
+   * sets its own background/text/border via inline styles using
+   * var(--color-bg-primary), var(--color-bg-card), var(--color-text-main),
+   * var(--color-border) — NOT via a .dark:* class of their own.
+   *
+   * Previously only isolated selectors like ".dark body" were overridden,
+   * so header/footer/navbar (which use their own dark: Tailwind classes)
+   * went dark but every page's own background stayed on the light value
+   * forever, because --color-bg-primary itself was never redefined.
+   *
+   * Because CSS custom properties are inherited, redefining the tokens
+   * themselves here (scoped to .dark, which ThemeToggle.tsx toggles on
+   * <html>) cascades to every descendant automatically — inline styles
+   * included — with no need to touch each page file individually.
+   */
+  .dark {
+    --color-bg-primary: var(--color-bg-dark);
+    --color-bg-card: var(--color-bg-card-dark);
+    --color-text-main: var(--color-text-light);
+    --color-border: var(--color-border-dark);
+  }
+
   .dark body {
     background-color: var(--color-bg-dark);
     color: var(--color-text-light);

@@ -4784,148 +4784,6 @@ export default function SignupPage() {
 }
 </file>
 
-<file path="src/components/Footer.tsx">
-import Link from 'next/link';
-import { Facebook, Instagram, Youtube, Phone as WhatsApp } from 'lucide-react';
-import Image from 'next/image';
-
-export default function Footer() {
-    const currentYear = new Date().getFullYear();
-
-    return (
-        <footer className="w-full bg-[var(--color-text-main)] dark:bg-[var(--color-bg-dark)] mt-20 border-t-4 border-[var(--color-brand)]">
-
-            {/* ── Main footer grid ── */}
-            <div className="page-container pt-14 pb-10">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
-
-                    {/* Left: Logo + tagline (5 cols) */}
-                    <div className="md:col-span-5 flex flex-col gap-5">
-                        <Link href="/" className="inline-block">
-                            <Image
-                                src="/uploads/logo.png"
-                                alt="CineBuffs"
-                                width={140}
-                                height={42}
-                                className="h-10 w-auto object-contain brightness-0 invert"
-                            />
-                        </Link>
-                        <p className="text-[var(--color-text-muted)] text-xs font-[var(--font-sans)] leading-relaxed max-w-xs">
-                            The ultimate platform for high-quality movie and series reviews.
-                            Join our growing community of cinephiles today.
-                        </p>
-
-                        {/* Social icons */}
-                        <div className="flex items-center gap-2 mt-1">
-                            {[
-                                { Icon: Facebook, href: "#", label: "Facebook" },
-                                { Icon: Instagram, href: "#", label: "Instagram" },
-                                { Icon: WhatsApp, href: "#", label: "WhatsApp" },
-                                { Icon: Youtube, href: "#", label: "YouTube" },
-                            ].map(({ Icon, href, label }) => (
-                                <a
-                                    key={label}
-                                    href={href}
-                                    aria-label={label}
-                                    className="
-                                        w-8 h-8 border border-[#3A3A3A] dark:border-[var(--color-border-dark)]
-                                        flex items-center justify-center
-                                        text-[var(--color-text-muted)]
-                                        hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]
-                                        transition-colors duration-200
-                                    "
-                                >
-                                    <Icon className="w-3.5 h-3.5" />
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Middle: Explore links (4 cols) */}
-                    <div className="md:col-span-4">
-                        <h3 className="
-                            font-[var(--font-sans)] text-[10px] font-bold uppercase tracking-widest
-                            text-[var(--color-text-muted)] mb-5 pb-2
-                            border-b border-[#3A3A3A] dark:border-[var(--color-border-dark)]
-                        ">
-                            Explore
-                        </h3>
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                            {[
-                                { name: "Home", href: "/" },
-                                { name: "Series Review", href: "/series" },
-                                { name: "About Us", href: "/about" },
-                                { name: "Contact Us", href: "/contact" },
-                                { name: "Movie Review", href: "/movies" },
-                                { name: "Blog", href: "/blog" },
-                                { name: "Contributors", href: "/contributors" },
-                                { name: "Subscribe", href: "/subscribe" },
-                            ].map((link) => (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    className="
-                                        text-[11px] font-[var(--font-sans)]
-                                        text-[var(--color-text-muted)]
-                                        hover:text-white dark:hover:text-white
-                                        transition-colors duration-200
-                                    "
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Right: Newsletter CTA (3 cols) */}
-                    <div className="md:col-span-3">
-                        <h3 className="
-                            font-[var(--font-sans)] text-[10px] font-bold uppercase tracking-widest
-                            text-[var(--color-text-muted)] mb-5 pb-2
-                            border-b border-[#3A3A3A] dark:border-[var(--color-border-dark)]
-                        ">
-                            Newsletter
-                        </h3>
-                        <p className="text-[var(--color-text-muted)] text-xs font-[var(--font-sans)] leading-relaxed mb-4">
-                            Get the latest reviews delivered to your inbox.
-                        </p>
-                        <Link
-                            href="/subscribe"
-                            className="
-                                inline-flex items-center gap-2
-                                px-4 py-2
-                                bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)]
-                                text-white
-                                text-[10px] font-bold uppercase tracking-widest
-                                font-[var(--font-sans)]
-                                transition-colors duration-200
-                            "
-                        >
-                            Subscribe Now
-                        </Link>
-                    </div>
-                </div>
-
-                {/* ── Bottom bar ── */}
-                <div className="border-t border-[#3A3A3A] dark:border-[var(--color-border-dark)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <p className="text-[var(--color-text-muted)] text-[10px] font-[var(--font-sans)] uppercase tracking-widest">
-                        CineBuffs &copy;{currentYear} &nbsp;|&nbsp; All Rights Reserved
-                    </p>
-                    <div className="flex items-center gap-5">
-                        <Link href="/privacy" className="text-[var(--color-text-muted)] hover:text-white dark:hover:text-white text-[10px] font-[var(--font-sans)] uppercase tracking-widest transition-colors">
-                            Privacy Policy
-                        </Link>
-                        <Link href="/terms" className="text-[var(--color-text-muted)] hover:text-white dark:hover:text-white text-[10px] font-[var(--font-sans)] uppercase tracking-widest transition-colors">
-                            Terms of Service
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
-}
-</file>
-
 <file path="src/components/RatingStars.tsx">
 "use client";
 
@@ -6323,6 +6181,148 @@ export default function SeriesPage() {
 }
 </file>
 
+<file path="src/components/Footer.tsx">
+import Link from 'next/link';
+import { Facebook, Instagram, Youtube, Phone as WhatsApp } from 'lucide-react';
+import Image from 'next/image';
+
+export default function Footer() {
+    const currentYear = new Date().getFullYear();
+
+    return (
+        <footer className="w-full bg-[var(--color-text-main)] dark:bg-[var(--color-bg-dark)] mt-20 border-t-4 border-[var(--color-brand)]">
+
+            {/* ── Main footer grid ── */}
+            <div className="page-container pt-14 pb-10">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
+
+                    {/* Left: Logo + tagline (5 cols) */}
+                    <div className="md:col-span-5 flex flex-col gap-5">
+                        <Link href="/" className="inline-block">
+                            <Image
+                                src="/uploads/logo.png"
+                                alt="CineBuffs"
+                                width={140}
+                                height={42}
+                                className="h-10 w-auto object-contain brightness-0 invert"
+                            />
+                        </Link>
+                        <p className="text-[#ADA9A0] text-xs font-[var(--font-sans)] leading-relaxed max-w-xs">
+                            The ultimate platform for high-quality movie and series reviews.
+                            Join our growing community of cinephiles today.
+                        </p>
+
+                        {/* Social icons */}
+                        <div className="flex items-center gap-2 mt-1">
+                            {[
+                                { Icon: Facebook, href: "#", label: "Facebook" },
+                                { Icon: Instagram, href: "#", label: "Instagram" },
+                                { Icon: WhatsApp, href: "#", label: "WhatsApp" },
+                                { Icon: Youtube, href: "#", label: "YouTube" },
+                            ].map(({ Icon, href, label }) => (
+                                <a
+                                    key={label}
+                                    href={href}
+                                    aria-label={label}
+                                    className="
+                                        w-8 h-8 border border-[#3A3A3A] dark:border-[var(--color-border-dark)]
+                                        flex items-center justify-center
+                                        text-[#ADA9A0]
+                                        hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]
+                                        transition-colors duration-200
+                                    "
+                                >
+                                    <Icon className="w-3.5 h-3.5" />
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Middle: Explore links (4 cols) */}
+                    <div className="md:col-span-4">
+                        <h3 className="
+                            font-[var(--font-sans)] text-[10px] font-bold uppercase tracking-widest
+                            text-[#ADA9A0] mb-5 pb-2
+                            border-b border-[#3A3A3A] dark:border-[var(--color-border-dark)]
+                        ">
+                            Explore
+                        </h3>
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                            {[
+                                { name: "Home", href: "/" },
+                                { name: "Series Review", href: "/series" },
+                                { name: "About Us", href: "/about" },
+                                { name: "Contact Us", href: "/contact" },
+                                { name: "Movie Review", href: "/movies" },
+                                { name: "Blog", href: "/blog" },
+                                { name: "Contributors", href: "/contributors" },
+                                { name: "Subscribe", href: "/subscribe" },
+                            ].map((link) => (
+                                <Link
+                                    key={link.name}
+                                    href={link.href}
+                                    className="
+                                        text-[11px] font-[var(--font-sans)]
+                                        text-[#ADA9A0]
+                                        hover:text-white dark:hover:text-white
+                                        transition-colors duration-200
+                                    "
+                                >
+                                    {link.name}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Right: Newsletter CTA (3 cols) */}
+                    <div className="md:col-span-3">
+                        <h3 className="
+                            font-[var(--font-sans)] text-[10px] font-bold uppercase tracking-widest
+                            text-[#ADA9A0] mb-5 pb-2
+                            border-b border-[#3A3A3A] dark:border-[var(--color-border-dark)]
+                        ">
+                            Newsletter
+                        </h3>
+                        <p className="text-[#ADA9A0] text-xs font-[var(--font-sans)] leading-relaxed mb-4">
+                            Get the latest reviews delivered to your inbox.
+                        </p>
+                        <Link
+                            href="/subscribe"
+                            className="
+                                inline-flex items-center gap-2
+                                px-4 py-2
+                                bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)]
+                                text-white
+                                text-[10px] font-bold uppercase tracking-widest
+                                font-[var(--font-sans)]
+                                transition-colors duration-200
+                            "
+                        >
+                            Subscribe Now
+                        </Link>
+                    </div>
+                </div>
+
+                {/* ── Bottom bar ── */}
+                <div className="border-t border-[#3A3A3A] dark:border-[var(--color-border-dark)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p className="text-[#ADA9A0] text-[10px] font-[var(--font-sans)] uppercase tracking-widest">
+                        CineBuffs &copy;{currentYear} &nbsp;|&nbsp; All Rights Reserved
+                    </p>
+                    <div className="flex items-center gap-5">
+                        <Link href="/privacy" className="text-[#ADA9A0] hover:text-white dark:hover:text-white text-[10px] font-[var(--font-sans)] uppercase tracking-widest transition-colors">
+                            Privacy Policy
+                        </Link>
+                        <Link href="/terms" className="text-[#ADA9A0] hover:text-white dark:hover:text-white text-[10px] font-[var(--font-sans)] uppercase tracking-widest transition-colors">
+                            Terms of Service
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    );
+}
+</file>
+
 <file path="prisma/schema.prisma">
 generator client {
   provider      = "prisma-client-js"
@@ -7051,6 +7051,186 @@ export default function ContributorsPage() {
 }
 </file>
 
+<file path="src/components/ReviewCard.tsx">
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import RatingStars from "@/components/RatingStars";
+
+interface ReviewCardProps {
+    id: string;
+    slug: string;
+    title: string;
+    posterImage: string;
+    rating: number;
+    genre: string;
+    authorName: string;
+    authorImage: string;
+    category?: string;
+    publishDate?: string;
+    isBlog?: boolean;
+}
+
+export default function ReviewCard({
+    slug,
+    title,
+    posterImage,
+    rating,
+    authorName,
+    category = "Movie",
+    publishDate = "",
+    isBlog = false,
+}: ReviewCardProps) {
+    return (
+        <motion.div
+            className="review-card-wrap"
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            style={{
+                backgroundColor: 'var(--color-bg-card)',
+                border: '1px solid var(--color-border)',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
+            <Link
+                href={`/reviews/${slug}`}
+                style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', color: 'inherit' }}
+            >
+
+                {/* ── Poster: 3:4 movie poster ratio ── */}
+                <div style={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '133%',  /* 4/3 * 100 = 133.33% gives 3:4 ratio */
+                    overflow: 'hidden',
+                    backgroundColor: '#e8e5e0',
+                    flexShrink: 0,
+                }}>
+                    {/* Category badge */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+                        <span className="tag-label">{category}</span>
+                    </div>
+
+                    {/* Image — uses .card-poster-img from globals.css for hover scale */}
+                    {posterImage ? (
+                        <img
+                            src={posterImage}
+                            alt={title}
+                            className="card-poster-img"
+                        />
+                    ) : (
+                        <div style={{
+                            position: 'absolute', inset: 0,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            backgroundColor: '#d0cdc8',
+                        }}>
+                            <span style={{ fontSize: 10, color: '#888', fontFamily: 'var(--font-sans)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                No Image
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Hover overlay — darkens slightly on hover via globals.css */}
+                    <div
+                        className="card-hover-overlay"
+                        style={{
+                            position: 'absolute', inset: 0,
+                            backgroundColor: 'rgba(0,0,0,0)',
+                            transition: 'background-color 0.3s ease',
+                            zIndex: 5,
+                        }}
+                    />
+
+                    {/* Star rating — overlay graphic, bottom-right corner of poster */}
+                    {!isBlog && (
+                        <div style={{
+                            position: 'absolute',
+                            bottom: 10,
+                            right: 10,
+                            zIndex: 10,
+                            filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.9))',
+                        }}>
+                            <RatingStars rating={Number(rating) / 2} size={16} gap={2.5} unfilledColor="rgba(255,255,255,0.55)" />
+                        </div>
+                    )}
+                </div>
+
+                {/* ── Text content ── */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flex: 1,
+                    padding: '10px 12px 12px',
+                    gap: 6,
+                }}>
+                    {/* Title — .card-title-el gets color:brand on hover via globals.css */}
+                    <h3
+                        className="card-title-el"
+                        style={{
+                            fontFamily: 'var(--font-serif)',
+                            fontWeight: 700,
+                            fontSize: '0.875rem',
+                            lineHeight: 1.35,
+                            color: 'var(--color-text-main)',
+                            margin: 0,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            transition: 'color 0.2s ease',
+                        }}
+                    >
+                        {title}
+                    </h3>
+
+                    {/* Author + date */}
+                    <div
+                        className="card-author-date"
+                        style={{
+                            marginTop: 'auto',
+                            paddingTop: 8,
+                            borderTop: '1px solid var(--color-border)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: 4,
+                        }}
+                    >
+                        <span style={{
+                            fontSize: 10, fontWeight: 700,
+                            textTransform: 'uppercase', letterSpacing: '0.08em',
+                            fontFamily: 'var(--font-sans)',
+                            color: 'var(--color-text-muted)',
+                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        }}>
+                            By {authorName}
+                        </span>
+                        {publishDate && (
+                            <span style={{
+                                fontSize: 10,
+                                fontFamily: 'var(--font-sans)',
+                                color: 'var(--color-text-muted)',
+                                whiteSpace: 'nowrap', flexShrink: 0,
+                            }}>
+                                {publishDate}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </Link>
+        </motion.div>
+    );
+}
+</file>
+
 <file path="src/app/reviews/[slug]/page.tsx">
 "use client";
 
@@ -7280,122 +7460,124 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ slug: s
 
             {/* ── Main content + sidebar ── */}
             <div style={{ maxWidth: 1100, margin: '0 auto', padding: '3rem 1.25rem' }}>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
 
-                    {/* ── Left: review body ── */}
-                    <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+                {/* ── Review body (full width) ── */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
 
-                        {/* Review text */}
-                        <div
-                            className="prose prose-lg max-w-none"
-                            style={{
-                                fontFamily: 'var(--font-sans)', fontSize: '1rem',
-                                lineHeight: 1.85, color: 'var(--color-text-main)',
-                            }}
-                            dangerouslySetInnerHTML={{ __html: content }}
-                        />
+                    {/* Review text */}
+                    <div
+                        className="prose prose-lg max-w-none"
+                        style={{
+                            fontFamily: 'var(--font-sans)', fontSize: '1rem',
+                            lineHeight: 1.85, color: 'var(--color-text-main)',
+                        }}
+                        dangerouslySetInnerHTML={{ __html: content }}
+                    />
 
-                        {/* Gallery */}
-                        {parsedGallery.length > 0 && (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-main)', paddingBottom: 8, borderBottom: '2px solid var(--color-text-main)', display: 'inline-block', margin: 0 }}>
-                                    Screenshots & Stills
-                                </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {parsedGallery.map((img: string, idx: number) => (
-                                        <div key={idx} style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-                                            <img src={img} alt={`Still ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Divider */}
-                        <div style={{ height: 1, backgroundColor: 'var(--color-border)' }} />
-
-                        {/* Comments */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} id="comments">
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                <MessageCircle style={{ width: 18, height: 18, color: 'var(--color-text-muted)' }} />
-                                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-main)', margin: 0 }}>
-                                    Public Comments ({comments.length})
-                                </h3>
-                            </div>
-
-                            {/* Comment form */}
-                            <form onSubmit={handleCommentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12, backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)', padding: '1.5rem' }}>
-                                <label style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-text-muted)' }}>
-                                    Post a Comment
-                                </label>
-                                <textarea
-                                    value={newComment}
-                                    onChange={e => setNewComment(e.target.value)}
-                                    placeholder="What's your take on this cinematic piece?"
-                                    rows={4}
-                                    style={{
-                                        width: '100%', resize: 'vertical', padding: '10px 12px',
-                                        fontFamily: 'var(--font-sans)', fontSize: 14,
-                                        border: '1px solid var(--color-border)', outline: 'none',
-                                        backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-main)',
-                                        transition: 'border-color 0.2s ease',
-                                    }}
-                                    onFocus={e => (e.target.style.borderColor = 'var(--color-brand)')}
-                                    onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
-                                />
-                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                    <button type="submit" style={{
-                                        padding: '10px 24px', backgroundColor: 'var(--color-brand)', color: '#fff', border: 'none',
-                                        fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700,
-                                        textTransform: 'uppercase', letterSpacing: '0.12em', cursor: 'pointer',
-                                        transition: 'background-color 0.2s ease',
-                                    }}
-                                        onMouseEnter={e => ((e.target as HTMLElement).style.backgroundColor = 'var(--color-brand-hover)')}
-                                        onMouseLeave={e => ((e.target as HTMLElement).style.backgroundColor = 'var(--color-brand)')}
-                                    >
-                                        Broadcast Comment
-                                    </button>
-                                </div>
-                            </form>
-
-                            {/* Comment list */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                {comments.length === 0 ? (
-                                    <div style={{ padding: '2.5rem', textAlign: 'center', border: '1px dashed var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}>
-                                        <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-text-muted)' }}>
-                                            Join the conversation
-                                        </p>
-                                    </div>
-                                ) : comments.map((comment: any) => (
-                                    <div key={comment.id} style={{ display: 'flex', gap: 14, padding: '1.25rem', backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)' }}>
-                                        <div style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', backgroundColor: 'var(--color-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                            {comment.user?.image
-                                                ? <img src={comment.user.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                : <span style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>{(comment.user?.name || 'U').charAt(0).toUpperCase()}</span>
-                                            }
-                                        </div>
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, paddingBottom: 6, borderBottom: '1px solid var(--color-border)' }}>
-                                                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-main)' }}>
-                                                    {comment.user?.name || "Anonymous"}
-                                                </span>
-                                                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'var(--color-text-muted)' }}>
-                                                    {new Date(comment.createdAt).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                            <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: 'var(--color-text-main)', lineHeight: 1.65, margin: 0 }}>
-                                                {comment.text}
-                                            </p>
-                                        </div>
+                    {/* Gallery */}
+                    {parsedGallery.length > 0 && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-main)', paddingBottom: 8, borderBottom: '2px solid var(--color-text-main)', display: 'inline-block', margin: 0 }}>
+                                Screenshots & Stills
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {parsedGallery.map((img: string, idx: number) => (
+                                    <div key={idx} style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
+                                        <img src={img} alt={`Still ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                                     </div>
                                 ))}
                             </div>
                         </div>
+                    )}
+
+                    {/* Divider */}
+                    <div style={{ height: 1, backgroundColor: 'var(--color-border)' }} />
+                </div>
+
+                {/* ── Comments (left) + Project Credits / Share (right, in the empty space beside comments) ── */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14" style={{ marginTop: '2.5rem' }}>
+
+                    {/* Left: Comments */}
+                    <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} id="comments">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <MessageCircle style={{ width: 18, height: 18, color: 'var(--color-text-muted)' }} />
+                            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-main)', margin: 0 }}>
+                                Public Comments ({comments.length})
+                            </h3>
+                        </div>
+
+                        {/* Comment form */}
+                        <form onSubmit={handleCommentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12, backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)', padding: '1.5rem' }}>
+                            <label style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-text-muted)' }}>
+                                Post a Comment
+                            </label>
+                            <textarea
+                                value={newComment}
+                                onChange={e => setNewComment(e.target.value)}
+                                placeholder="What's your take on this cinematic piece?"
+                                rows={4}
+                                style={{
+                                    width: '100%', resize: 'vertical', padding: '10px 12px',
+                                    fontFamily: 'var(--font-sans)', fontSize: 14,
+                                    border: '1px solid var(--color-border)', outline: 'none',
+                                    backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-main)',
+                                    transition: 'border-color 0.2s ease',
+                                }}
+                                onFocus={e => (e.target.style.borderColor = 'var(--color-brand)')}
+                                onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
+                            />
+                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <button type="submit" style={{
+                                    padding: '10px 24px', backgroundColor: 'var(--color-brand)', color: '#fff', border: 'none',
+                                    fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700,
+                                    textTransform: 'uppercase', letterSpacing: '0.12em', cursor: 'pointer',
+                                    transition: 'background-color 0.2s ease',
+                                }}
+                                    onMouseEnter={e => ((e.target as HTMLElement).style.backgroundColor = 'var(--color-brand-hover)')}
+                                    onMouseLeave={e => ((e.target as HTMLElement).style.backgroundColor = 'var(--color-brand)')}
+                                >
+                                    Broadcast Comment
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Comment list */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {comments.length === 0 ? (
+                                <div style={{ padding: '2.5rem', textAlign: 'center', border: '1px dashed var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}>
+                                    <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-text-muted)' }}>
+                                        Join the conversation
+                                    </p>
+                                </div>
+                            ) : comments.map((comment: any) => (
+                                <div key={comment.id} style={{ display: 'flex', gap: 14, padding: '1.25rem', backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--color-border)' }}>
+                                    <div style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', backgroundColor: 'var(--color-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                        {comment.user?.image
+                                            ? <img src={comment.user.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            : <span style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>{(comment.user?.name || 'U').charAt(0).toUpperCase()}</span>
+                                        }
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, paddingBottom: 6, borderBottom: '1px solid var(--color-border)' }}>
+                                            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-main)' }}>
+                                                {comment.user?.name || "Anonymous"}
+                                            </span>
+                                            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'var(--color-text-muted)' }}>
+                                                {new Date(comment.createdAt).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: 'var(--color-text-main)', lineHeight: 1.65, margin: 0 }}>
+                                            {comment.text}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* ── Right: Sidebar ── */}
+                    {/* Right: sidebar — fills the empty space beside Public Comments */}
                     <div>
-                        <div style={{ position: 'sticky', top: 130, display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)' }}>
 
                             {/* Project Credits */}
                             {!isBlog && (
@@ -7573,7 +7755,7 @@ export default function Header() {
                             <img
                                 src="/uploads/logo.png"
                                 alt="CineBuffs"
-                                style={{ height: '52px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                                style={{ height: '57px', width: 'auto', objectFit: 'contain', display: 'block' }}
                             />
                         </Link>
                     </div>
@@ -7755,11 +7937,11 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "Home", href: "/" },
-        { name: "About Us", href: "/about" },
-        { name: "Contributors", href: "/contributors" },
         { name: "Movie Review", href: "/movies" },
         { name: "Series Review", href: "/series" },
         { name: "Blog", href: "/blog" },
+        { name: "About Us", href: "/about" },
+        { name: "Contributors", href: "/contributors" },
         { name: "Contact Us", href: "/contact" },
     ];
 
@@ -7831,409 +8013,6 @@ export default function Navbar() {
                 </motion.nav>
             )}
         </AnimatePresence>
-    );
-}
-</file>
-
-<file path="src/components/ReviewCard.tsx">
-"use client";
-
-import Link from "next/link";
-import { motion } from "framer-motion";
-import RatingStars from "@/components/RatingStars";
-
-interface ReviewCardProps {
-    id: string;
-    slug: string;
-    title: string;
-    posterImage: string;
-    rating: number;
-    genre: string;
-    authorName: string;
-    authorImage: string;
-    category?: string;
-    publishDate?: string;
-    isBlog?: boolean;
-}
-
-export default function ReviewCard({
-    slug,
-    title,
-    posterImage,
-    rating,
-    authorName,
-    category = "Movie",
-    publishDate = "",
-    isBlog = false,
-}: ReviewCardProps) {
-    return (
-        <motion.div
-            className="review-card-wrap"
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-30px" }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            style={{
-                backgroundColor: 'var(--color-bg-card)',
-                border: '1px solid var(--color-border)',
-                overflow: 'hidden',
-                cursor: 'pointer',
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-            }}
-        >
-            <Link
-                href={`/reviews/${slug}`}
-                style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', color: 'inherit' }}
-            >
-
-                {/* ── Poster: 3:4 movie poster ratio ── */}
-                <div style={{
-                    position: 'relative',
-                    width: '100%',
-                    paddingTop: '133%',  /* 4/3 * 100 = 133.33% gives 3:4 ratio */
-                    overflow: 'hidden',
-                    backgroundColor: '#e8e5e0',
-                    flexShrink: 0,
-                }}>
-                    {/* Category badge */}
-                    <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
-                        <span className="tag-label">{category}</span>
-                    </div>
-
-                    {/* Image — uses .card-poster-img from globals.css for hover scale */}
-                    {posterImage ? (
-                        <img
-                            src={posterImage}
-                            alt={title}
-                            className="card-poster-img"
-                        />
-                    ) : (
-                        <div style={{
-                            position: 'absolute', inset: 0,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            backgroundColor: '#d0cdc8',
-                        }}>
-                            <span style={{ fontSize: 10, color: '#888', fontFamily: 'var(--font-sans)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                No Image
-                            </span>
-                        </div>
-                    )}
-
-                    {/* Hover overlay — darkens slightly on hover via globals.css */}
-                    <div
-                        className="card-hover-overlay"
-                        style={{
-                            position: 'absolute', inset: 0,
-                            backgroundColor: 'rgba(0,0,0,0)',
-                            transition: 'background-color 0.3s ease',
-                            zIndex: 5,
-                        }}
-                    />
-
-                    {/* Star rating — overlay graphic, bottom-right corner of poster */}
-                    {!isBlog && (
-                        <div style={{
-                            position: 'absolute',
-                            bottom: 10,
-                            right: 10,
-                            zIndex: 10,
-                            filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.9))',
-                        }}>
-                            <RatingStars rating={Number(rating) / 2} size={16} gap={2.5} unfilledColor="rgba(255,255,255,0.55)" />
-                        </div>
-                    )}
-                </div>
-
-                {/* ── Text content ── */}
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                    padding: '10px 12px 12px',
-                    gap: 6,
-                }}>
-                    {/* Title — .card-title-el gets color:brand on hover via globals.css */}
-                    <h3
-                        className="card-title-el"
-                        style={{
-                            fontFamily: 'var(--font-serif)',
-                            fontWeight: 700,
-                            fontSize: '0.875rem',
-                            lineHeight: 1.35,
-                            color: 'var(--color-text-main)',
-                            margin: 0,
-                            display: '-webkit-box',
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            transition: 'color 0.2s ease',
-                        }}
-                    >
-                        {title}
-                    </h3>
-
-                    {/* Author + date */}
-                    <div
-                        className="card-author-date"
-                        style={{
-                            marginTop: 'auto',
-                            paddingTop: 8,
-                            borderTop: '1px solid var(--color-border)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            gap: 4,
-                        }}
-                    >
-                        <span style={{
-                            fontSize: 10, fontWeight: 700,
-                            textTransform: 'uppercase', letterSpacing: '0.08em',
-                            fontFamily: 'var(--font-sans)',
-                            color: 'var(--color-text-muted)',
-                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                        }}>
-                            By {authorName}
-                        </span>
-                        {publishDate && (
-                            <span style={{
-                                fontSize: 10,
-                                fontFamily: 'var(--font-sans)',
-                                color: 'var(--color-text-muted)',
-                                whiteSpace: 'nowrap', flexShrink: 0,
-                            }}>
-                                {publishDate}
-                            </span>
-                        )}
-                    </div>
-                </div>
-            </Link>
-        </motion.div>
-    );
-}
-</file>
-
-<file path="src/components/HeroSlider.tsx">
-"use client";
-
-import { useEffect, useState, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import RatingStars from "@/components/RatingStars";
-
-interface Review {
-    id: string;
-    slug: string;
-    title: string;
-    posterImage: string;
-    rating: number;
-    genre: string;
-    type: string;
-}
-
-export default function HeroSlider() {
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-    useEffect(() => {
-        fetch("/api/reviews?limit=5&status=APPROVED")
-            .then(res => res.json())
-            .then(data => { if (Array.isArray(data)) setReviews(data); })
-            .catch(() => {})
-            .finally(() => setLoading(false));
-    }, []);
-
-    const nextSlide = useCallback(() => {
-        setActiveIndex(prev => (prev + 1) % reviews.length);
-    }, [reviews.length]);
-
-    const resetInterval = useCallback(() => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        intervalRef.current = setInterval(nextSlide, 6000);
-    }, [nextSlide]);
-
-    useEffect(() => {
-        if (reviews.length === 0) return;
-        resetInterval();
-        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-    }, [reviews.length, resetInterval]);
-
-    if (loading) {
-        return (
-            <div className="page-container" style={{ marginTop: '1.5rem', marginBottom: '1rem' }}>
-                <div className="w-full bg-[var(--color-bg-card)] animate-pulse" style={{ height: 500 }} />
-            </div>
-        );
-    }
-
-    if (reviews.length === 0) return null;
-
-    const review = reviews[activeIndex];
-
-    return (
-        <>
-            <style>{`
-                .cb-hero-outer {
-                    width: 100%;
-                    border: 1px solid var(--color-border);      /* border added */
-                    border-left: 4px solid var(--color-brand);  /* left accent border */
-                    margin-bottom: 0;
-                    margin-top: 1.5rem;
-                }
-                .cb-hero-inner {
-                    display: flex;
-                    flex-direction: column;
-                }
-                .cb-hero-img {
-                    position: relative;
-                    width: 100%;
-                    height: 320px;
-                    flex-shrink: 0;
-                    overflow: hidden;
-                    background: #111;
-                }
-                .cb-hero-img img {
-                    position: absolute;
-                    inset: 0;
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    object-position: 50% 30%;
-                    display: block;
-                }
-                .cb-hero-panel {
-                    background-color: var(--color-bg-primary);
-                    border-top: 1px solid var(--color-border);
-                    padding: 0.75rem 1.25rem;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.75rem;
-                    /* NO height/overflow — always fully visible */
-                }
-                @media (min-width: 1024px) {
-                    .cb-hero-inner {
-                        flex-direction: row;
-                        min-height: 500px;
-                    }
-                    .cb-hero-img {
-                        width: 62%;
-                        height: auto;   /* stretches with row */
-                        min-height: 500px;
-                    }
-                    .cb-hero-panel {
-                        flex: 1;
-                        border-top: none;
-                        border-left: 1px solid var(--color-border);
-                        padding: 2rem 2.5rem;
-                        justify-content: center;
-                    }
-                }
-                .dark .cb-hero-panel {
-                    background-color: var(--color-bg-dark);
-                    border-color: var(--color-border-dark);
-                }
-                .cb-arrow:hover {
-                    background-color: var(--color-brand-hover) !important;
-                }
-            `}</style>
-
-            <div className="page-container">
-            <section className="cb-hero-outer">
-                <div className="cb-hero-inner">
-
-                    {/* ── Image panel ── */}
-                    <div className="cb-hero-img">
-                        <AnimatePresence mode="sync">
-                            <motion.div
-                                key={activeIndex}
-                                initial={{ opacity: 0, scale: 1.03 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-                                style={{ position: 'absolute', inset: 0 }}
-                            >
-                                <img
-                                    src={(review as any).sliderImage || review.posterImage}
-                                    alt={review.title}
-                                />
-                            </motion.div>
-                        </AnimatePresence>
-
-                        {/* Type badge */}
-                        <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 10 }}>
-                            <span className="tag-label">{review.type}</span>
-                        </div>
-
-                        {/* Star rating — overlay graphic, bottom-right corner of poster */}
-                        <div style={{
-                            position: 'absolute',
-                            bottom: 14,
-                            right: 14,
-                            zIndex: 10,
-                            backgroundColor: 'rgba(0,0,0,0.6)',
-                            padding: '6px 10px',
-                        }}>
-                            <RatingStars rating={Number(review.rating) / 2} size={14} gap={3} />
-                        </div>
-
-                        {/* Dot indicators */}
-                        <div style={{ position: 'absolute', bottom: 14, left: 14, zIndex: 10, display: 'flex', gap: 6 }}>
-                            {reviews.map((_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => { setActiveIndex(i); resetInterval(); }}
-                                    aria-label={`Slide ${i + 1}`}
-                                    style={{
-                                        height: 3,
-                                        width: i === activeIndex ? 24 : 8,
-                                        padding: 0, border: 'none', cursor: 'pointer',
-                                        backgroundColor: i === activeIndex
-                                            ? 'var(--color-brand)'
-                                            : 'rgba(255,255,255,0.6)',
-                                        transition: 'all 0.3s ease',
-                                        flexShrink: 0,
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* ── Content panel ── */}
-                    <div className="cb-hero-panel">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={activeIndex}
-                                initial={{ opacity: 0, y: 12 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -8 }}
-                                transition={{ duration: 0.35, ease: 'easeOut' }}
-                                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '1rem', flex: 1 }}
-                            >
-                                {/* Title */}
-                                <h2 style={{
-                                    fontFamily: 'var(--font-serif)', fontWeight: 700, lineHeight: 1.2, margin: 0,
-                                    fontSize: 'clamp(1.35rem, 2vw, 2rem)', color: 'var(--color-text-main)',
-                                    display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                                }}>
-                                    {review.title}
-                                </h2>
-
-                                {/* Genre */}
-                                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontFamily: 'var(--font-sans)', margin: 0 }}>
-                                    Featured in: <span style={{ color: 'var(--color-text-main)' }}>{review.genre}</span>
-                                </p>
-
-                                <span className="rule-red" style={{ marginLeft: 'auto', marginRight: 'auto' }} />
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                </div>
-            </section>
-            </div>
-        </>
     );
 }
 </file>
@@ -8559,6 +8338,230 @@ export default function HeroSlider() {
   .animate-spotlight {
     animation: spotlight 2s ease 0.75s 1 forwards;
   }
+</file>
+
+<file path="src/components/HeroSlider.tsx">
+"use client";
+
+import { useEffect, useState, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import RatingStars from "@/components/RatingStars";
+
+interface Review {
+    id: string;
+    slug: string;
+    title: string;
+    posterImage: string;
+    rating: number;
+    genre: string;
+    type: string;
+}
+
+export default function HeroSlider() {
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        fetch("/api/reviews?limit=5&status=APPROVED")
+            .then(res => res.json())
+            .then(data => { if (Array.isArray(data)) setReviews(data); })
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, []);
+
+    const nextSlide = useCallback(() => {
+        setActiveIndex(prev => (prev + 1) % reviews.length);
+    }, [reviews.length]);
+
+    const resetInterval = useCallback(() => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = setInterval(nextSlide, 6000);
+    }, [nextSlide]);
+
+    useEffect(() => {
+        if (reviews.length === 0) return;
+        resetInterval();
+        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    }, [reviews.length, resetInterval]);
+
+    if (loading) {
+        return (
+            <div className="page-container" style={{ marginTop: '1.5rem', marginBottom: '1rem' }}>
+                <div className="w-full bg-[var(--color-bg-card)] animate-pulse" style={{ height: 500 }} />
+            </div>
+        );
+    }
+
+    if (reviews.length === 0) return null;
+
+    const review = reviews[activeIndex];
+
+    return (
+        <>
+            <style>{`
+                .cb-hero-outer {
+                    width: 100%;
+                    border: 1px solid var(--color-border);      /* border added */
+                    border-left: 4px solid var(--color-brand);  /* left accent border */
+                    margin-bottom: 0;
+                    margin-top: 1.5rem;
+                }
+                .cb-hero-inner {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .cb-hero-img {
+                    position: relative;
+                    width: 100%;
+                    height: 320px;
+                    flex-shrink: 0;
+                    overflow: hidden;
+                    background: #111;
+                }
+                .cb-hero-img img {
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: 50% 30%;
+                    display: block;
+                }
+                .cb-hero-panel {
+                    background-color: var(--color-bg-primary);
+                    border-top: 1px solid var(--color-border);
+                    padding: 0.75rem 1.25rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                    /* NO height/overflow — always fully visible */
+                }
+                @media (min-width: 1024px) {
+                    .cb-hero-inner {
+                        flex-direction: row;
+                        min-height: 500px;
+                    }
+                    .cb-hero-img {
+                        width: 62%;
+                        height: auto;   /* stretches with row */
+                        min-height: 500px;
+                    }
+                    .cb-hero-panel {
+                        flex: 1;
+                        border-top: none;
+                        border-left: 1px solid var(--color-border);
+                        padding: 2rem 2.5rem;
+                        justify-content: center;
+                    }
+                }
+                .dark .cb-hero-panel {
+                    background-color: var(--color-bg-dark);
+                    border-color: var(--color-border-dark);
+                }
+                .cb-arrow:hover {
+                    background-color: var(--color-brand-hover) !important;
+                }
+            `}</style>
+
+            <div className="page-container">
+            <section className="cb-hero-outer">
+                <Link href={`/reviews/${review.slug}`} className="cb-hero-inner" style={{ textDecoration: 'none', color: 'inherit' }}>
+
+                    {/* ── Image panel ── */}
+                    <div className="cb-hero-img">
+                        <AnimatePresence mode="sync">
+                            <motion.div
+                                key={activeIndex}
+                                initial={{ opacity: 0, scale: 1.03 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                                style={{ position: 'absolute', inset: 0 }}
+                            >
+                                <img
+                                    src={(review as any).sliderImage || review.posterImage}
+                                    alt={review.title}
+                                />
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Type badge */}
+                        <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 10 }}>
+                            <span className="tag-label">{review.type}</span>
+                        </div>
+
+                        {/* Star rating — overlay graphic, bottom-right corner of poster */}
+                        <div style={{
+                            position: 'absolute',
+                            bottom: 14,
+                            right: 14,
+                            zIndex: 10,
+                            backgroundColor: 'rgba(0,0,0,0.6)',
+                            padding: '6px 10px',
+                        }}>
+                            <RatingStars rating={Number(review.rating) / 2} size={14} gap={3} />
+                        </div>
+
+                        {/* Dot indicators */}
+                        <div style={{ position: 'absolute', bottom: 14, left: 14, zIndex: 10, display: 'flex', gap: 6 }}>
+                            {reviews.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIndex(i); resetInterval(); }}
+                                    aria-label={`Slide ${i + 1}`}
+                                    style={{
+                                        height: 3,
+                                        width: i === activeIndex ? 24 : 8,
+                                        padding: 0, border: 'none', cursor: 'pointer',
+                                        backgroundColor: i === activeIndex
+                                            ? 'var(--color-brand)'
+                                            : 'rgba(255,255,255,0.6)',
+                                        transition: 'all 0.3s ease',
+                                        flexShrink: 0,
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* ── Content panel ── */}
+                    <div className="cb-hero-panel">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeIndex}
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.35, ease: 'easeOut' }}
+                                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '1rem', flex: 1 }}
+                            >
+                                {/* Title */}
+                                <h2 style={{
+                                    fontFamily: 'var(--font-serif)', fontWeight: 700, lineHeight: 1.2, margin: 0,
+                                    fontSize: 'clamp(1.35rem, 2vw, 2rem)', color: 'var(--color-text-main)',
+                                    display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                                }}>
+                                    {review.title}
+                                </h2>
+
+                                {/* Genre */}
+                                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontFamily: 'var(--font-sans)', margin: 0 }}>
+                                    Featured in: <span style={{ color: 'var(--color-text-main)' }}>{review.genre}</span>
+                                </p>
+
+                                <span className="rule-red" style={{ marginLeft: 'auto', marginRight: 'auto' }} />
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+                </Link>
+            </section>
+            </div>
+        </>
+    );
+}
 </file>
 
 <file path="src/components/ReviewGrid.tsx">

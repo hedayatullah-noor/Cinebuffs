@@ -382,12 +382,22 @@ function HomePageContent() {
     // Featured review (latest single)
     const [featuredReview, setFeaturedReview] = useState<any>(null);
 
-    // Cols per row
+    // Mobile (<640px) shows 1 card per row, so load fewer cards at a time
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const mq = window.matchMedia("(max-width: 639px)");
+        const update = () => setIsMobile(mq.matches);
+        update();
+        mq.addEventListener("change", update);
+        return () => mq.removeEventListener("change", update);
+    }, []);
+
+    // Cols per row (desktop)
     const COLS = 5;
     const INITIAL_ROWS = 2;
     const MORE_ROWS = 3;
-    const initialCount = COLS * INITIAL_ROWS;  // 10
-    const moreCount    = COLS * MORE_ROWS;      // 15
+    const initialCount = isMobile ? 4 : COLS * INITIAL_ROWS;  // desktop 10, mobile 4
+    const moreCount    = isMobile ? 6 : COLS * MORE_ROWS;     // desktop 15, mobile 6
 
     useEffect(() => {
         // All reviews
@@ -483,11 +493,11 @@ function HomePageContent() {
 
                 {/* Grid */}
                 {loadingAll ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {Array.from({ length: initialCount }).map((_, i) => <SkeletonCard key={i} />)}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {visibleAllReviews.map(review => (
                             <ReviewCard
                                 key={review.id}
@@ -549,7 +559,7 @@ function HomePageContent() {
                 <SectionHeading title="Latest Blog" />
 
                 {loadingLatest ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-5">
                         {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="skeleton-shimmer" style={{ width: '100%', aspectRatio: '16/9', borderRadius: '6px' }} />
                         ))}
@@ -558,7 +568,15 @@ function HomePageContent() {
                     <>
                     <style>{`
                         .latest-blog-grid {
-                            grid-template-columns: repeat(2, minmax(0, 1fr));
+                            grid-template-columns: minmax(0, 1fr);
+                        }
+                        /* Mobile: single column — show only the 4 latest blogs (View All button
+                           covers the rest) and let the subscribe form size to its content
+                           instead of being clipped into a 16:9 box. */
+                        @media (max-width: 639px) {
+                            .latest-blog-grid .latest-blog-item:nth-child(n+5) { display: none; }
+                            .latest-blog-subscribe-box { aspect-ratio: auto !important; overflow: visible !important; }
+                            .latest-blog-subscribe-fill { display: none; }
                         }
                         @media (min-width: 640px) {
                             .latest-blog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -597,10 +615,10 @@ function HomePageContent() {
                             leftover height in this cell (since neighbouring blog cards are taller)
                             is filled by a plain white box, 5px below the form. */}
                         <div className="latest-blog-subscribe" style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignSelf: 'stretch' }}>
-                            <div style={{ aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0 }}>
+                            <div className="latest-blog-subscribe-box" style={{ aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0 }}>
                                 <InlineSubscribeForm />
                             </div>
-                            <div style={{ marginTop: 5, flex: 1, backgroundColor: '#fff', border: '1px solid var(--color-border)' }} />
+                            <div className="latest-blog-subscribe-fill" style={{ marginTop: 5, flex: 1, backgroundColor: '#fff', border: '1px solid var(--color-border)' }} />
                         </div>
                     </div>
                     </>
@@ -638,7 +656,7 @@ function HomePageContent() {
                 </p>
 
                 {loadingHits ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
                     </div>
                 ) : hitReviews.length === 0 ? (
@@ -646,7 +664,7 @@ function HomePageContent() {
                         No hit reviews yet.
                     </p>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {hitReviews.map(review => (
                             <ReviewCard
                                 key={review.id}

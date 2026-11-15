@@ -43,3 +43,6 @@ borders
 search and browse bar in movie ,series,blog page 
 theme colour should be as logo's color 
 there should noe be long line for every section's partition just an small line of 30 px and heading of the section should be in the centre 
+
+
+application/ld+json

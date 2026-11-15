@@ -27,6 +27,8 @@ function getColCount(): number {
     if (w >= 1280) return 5;
     if (w >= 1024) return 4;
     if (w >= 640)  return 3;
+    // Mobile shows 1 card per row; returning 2 here makes the first load 4 cards
+    // (visibleCount = getColCount() * 2) instead of just 2.
     return 2;
 }
 
@@ -127,7 +129,7 @@ export function ReviewGridInner({
 
             {/* ── Loading skeletons ── */}
             {isLoading && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                     {Array.from({ length: 10 }).map((_, i) => (
                         <SkeletonCard key={i} />
                     ))}
@@ -136,7 +138,7 @@ export function ReviewGridInner({
 
             {/* ── Filtering overlay ── */}
             {!isLoading && isFiltering && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 opacity-40 pointer-events-none">
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 opacity-40 pointer-events-none">
                     {Array.from({ length: 10 }).map((_, i) => (
                         <SkeletonCard key={i} />
                     ))}
@@ -160,7 +162,7 @@ export function ReviewGridInner({
                             </p>
                         </motion.div>
                     ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                             {visibleReviews.map((review) => (
                                 <ReviewCard
                                     key={review.id}

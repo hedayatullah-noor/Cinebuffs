@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: "CineBuffs — Film & Series Reviews",
     description: "High-quality movie and series reviews by passionate cinephiles.",
     icons: {
-        icon: "/logo.png",
+        icon: "/favicon.png",
     },
 };
 

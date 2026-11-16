@@ -59,6 +59,7 @@ postcss.config.mjs
 prisma/migrations/migration_lock.toml
 prisma/schema.prisma
 prisma/seed.ts
+public/favicon.png
 public/file.svg
 public/globe.svg
 public/next.svg
@@ -5205,57 +5206,6 @@ export const sendResetPasswordEmail = async (email: string, resetUrl: string) =>
 }
 </file>
 
-<file path="cinebuffs works.txt">
-1.genre option down ✅
-2.key words for SEO(Api)
-3.CMS API 
-4.search sections working ✅
-5.p picture in by 
-6.logos 
-7.share options 
-8.ad space ✅
-9.DP upload ✅
-10.lite mode ✅
-11. search bar down ✅
-12. writing space 
-13. forget password ✅
-
-search by actor name✅
-decimal rating✅ 
-posting behalf on someone else by selecting username ✅
-comment login bug✅
-add contributor (bio section) ✅
-facebook WhatsApp insta twitter copy link sharing 
-
-
-
-
-things to fix :-
-card size should be fixed, should not change according to title title can be small if that is long✅
-there should be no rating stars mentioned on the blogs the space of rating star should blank ✅
-search bar and browse categories section has to place on the left, beside All reviews ✅
-Loading should be in control if user is wanting to go on footer then he just has to scroll hard 
-cinebuffs logo on the icon 
-login , dashboard design ✅
-contact us content on admin dashboard or email 
-quill editor 
-monotonus changing ✅
-1 line about film/series 
-profile photo of reviewer right after card 
-edit review panel 
-genre dropdown in form 
-share section on review
-only 2 latest blogs should displayed at blog collection section 
-fix gap in latest review section 
-borders 
-search and browse bar in movie ,series,blog page 
-theme colour should be as logo's color 
-there should noe be long line for every section's partition just an small line of 30 px and heading of the section should be in the centre 
-
-
-application/ld+json
-</file>
-
 <file path="next-env.d.ts">
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
@@ -6324,6 +6274,57 @@ export default function Footer() {
         </footer>
     );
 }
+</file>
+
+<file path="cinebuffs works.txt">
+1.genre option down ✅
+2.key words for SEO(Api)
+3.CMS API 
+4.search sections working ✅
+5.p picture in by 
+6.logos 
+7.share options 
+8.ad space ✅
+9.DP upload ✅
+10.lite mode ✅
+11. search bar down ✅
+12. writing space 
+13. forget password ✅
+
+search by actor name✅
+decimal rating✅ 
+posting behalf on someone else by selecting username ✅
+comment login bug✅
+add contributor (bio section) ✅
+facebook WhatsApp insta twitter copy link sharing 
+
+
+
+
+things to fix :-
+card size should be fixed, should not change according to title title can be small if that is long✅
+there should be no rating stars mentioned on the blogs the space of rating star should blank ✅
+search bar and browse categories section has to place on the left, beside All reviews ✅
+Loading should be in control if user is wanting to go on footer then he just has to scroll hard 
+cinebuffs logo on the icon 
+login , dashboard design ✅
+contact us content on admin dashboard or email 
+quill editor 
+monotonus changing ✅
+1 line about film/series 
+profile photo of reviewer right after card 
+edit review panel 
+genre dropdown in form 
+share section on review
+only 2 latest blogs should displayed at blog collection section 
+fix gap in latest review section 
+borders 
+search and browse bar in movie ,series,blog page 
+theme colour should be as logo's color 
+there should noe be long line for every section's partition just an small line of 30 px and heading of the section should be in the centre 
+
+
+application/ld+json
 </file>
 
 <file path="prisma/schema.prisma">
@@ -8244,219 +8245,6 @@ export default function HeroSlider() {
 }
 </file>
 
-<file path="src/components/ReviewGrid.tsx">
-"use client";
-
-import { useEffect, useState, useRef, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
-import ReviewCard from "./ReviewCard";
-import SkeletonCard from "./SkeletonCard";
-import GenreDropdown from "./GenreDropdown";
-import SearchBar from "./SearchBar";
-
-interface Review {
-    id: string;
-    slug: string;
-    title: string;
-    posterImage: string;
-    rating: number;
-    genre: string;
-    authorName: string;
-    authorImage: string;
-    category: string;
-    publishDate: string;
-}
-
-function getColCount(): number {
-    if (typeof window === "undefined") return 5;
-    const w = window.innerWidth;
-    if (w >= 1280) return 5;
-    if (w >= 1024) return 4;
-    if (w >= 640)  return 3;
-    return 2;
-}
-
-export function ReviewGridInner({
-    defaultType = "All",
-    hideHeader = false,
-    hideFilters = false,
-}: {
-    defaultType?: "All" | "Movie" | "Series" | "Blog";
-    hideHeader?: boolean;
-    hideFilters?: boolean;
-}) {
-    const [reviews, setReviews]               = useState<Review[]>([]);
-    const [isLoading, setIsLoading]           = useState(true);
-    const [isFiltering, setIsFiltering]       = useState(false);
-    const [isFetchingMore, setIsFetchingMore] = useState(false);
-    const [visibleCount, setVisibleCount]     = useState(10);
-    const loadMoreRef = useRef<HTMLDivElement>(null);
-    const searchParams = useSearchParams();
-    const activeGenre  = searchParams.get("genre");
-    const searchQuery  = searchParams.get("search");
-
-    const fetchReviews = async (genre: string | null, search: string | null) => {
-        if (reviews.length > 0) setIsFiltering(true);
-        else setIsLoading(true);
-
-        try {
-            const url = new URL("/api/reviews", window.location.origin);
-            url.searchParams.set("status", "APPROVED");
-            if (genre)  url.searchParams.set("genre", genre);
-            if (search) url.searchParams.set("search", search);
-            if (defaultType !== "All") url.searchParams.set("type", defaultType);
-            // Blogs have their own dedicated page — exclude from "All" grid
-            if (defaultType === "All") url.searchParams.set("excludeType", "Blog");
-
-            const res  = await fetch(url.toString());
-            const data = await res.json();
-
-            if (Array.isArray(data)) {
-                const mapped: Review[] = data.map((item: any) => ({
-                    id:          item.id,
-                    slug:        item.slug,
-                    title:       item.title,
-                    posterImage: item.posterImage || "",
-                    rating:      Number(item.rating) || 0,
-                    genre:       item.genre || "",
-                    authorName:  item.author?.name || "Unknown",
-                    authorImage: item.author?.image || "",
-                    category:    item.type,
-                    publishDate: new Date(item.createdAt).toLocaleDateString("en-US", {
-                        month: "short", day: "numeric", year: "numeric",
-                    }),
-                }));
-                setReviews(mapped);
-                setVisibleCount(getColCount() * 2);
-            }
-        } catch {
-            // silent
-        } finally {
-            setIsLoading(false);
-            setIsFiltering(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchReviews(activeGenre, searchQuery);
-    }, [activeGenre, searchQuery, defaultType]);
-
-    /* ── Manual Load More ── */
-    const handleLoadMore = () => {
-        setIsFetchingMore(true);
-        setTimeout(() => {
-            setVisibleCount(prev => prev + getColCount() * 2);
-            setIsFetchingMore(false);
-        }, 400);
-    };
-
-    const visibleReviews = reviews.slice(0, visibleCount);
-    const hasMore        = visibleCount < reviews.length;
-
-    return (
-        <section className="page-container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
-
-            {/* ── Section header ── */}
-            {!hideHeader && (
-                <div className="flex flex-col gap-3 mb-6">
-                    {/* Filters — same line, right aligned */}
-                    {!hideFilters && (
-                        <div className="flex justify-end items-center gap-3">
-                            <GenreDropdown />
-                            <SearchBar compact={true} />
-                        </div>
-                    )}
-                    {/* Heading */}
-                    <h2 className="section-heading w-full">All Reviews</h2>
-                </div>
-            )}
-
-            {/* ── Loading skeletons ── */}
-            {isLoading && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-                    {Array.from({ length: 10 }).map((_, i) => (
-                        <SkeletonCard key={i} />
-                    ))}
-                </div>
-            )}
-
-            {/* ── Filtering overlay ── */}
-            {!isLoading && isFiltering && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 opacity-40 pointer-events-none">
-                    {Array.from({ length: 10 }).map((_, i) => (
-                        <SkeletonCard key={i} />
-                    ))}
-                </div>
-            )}
-
-            {/* ── Reviews ── */}
-            {!isLoading && !isFiltering && (
-                <>
-                    {visibleReviews.length === 0 ? (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex flex-col items-center justify-center py-24 text-center"
-                        >
-                            <p className="font-[var(--font-serif)] text-2xl text-[var(--color-text-muted)] mb-2">
-                                No reviews found
-                            </p>
-                            <p className="text-[10px] font-[var(--font-sans)] uppercase tracking-widest text-[var(--color-text-muted)]">
-                                Try a different genre or search term
-                            </p>
-                        </motion.div>
-                    ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-                            {visibleReviews.map((review) => (
-                                <ReviewCard
-                                    key={review.id}
-                                    {...review}
-                                    isBlog={review.category === "Blog"}
-                                />
-                            ))}
-                        </div>
-                    )}
-
-                    {/* Load More Button */}
-                    {hasMore && (
-                        <div className="flex items-center justify-center pt-10 pb-4">
-                            <button
-                                onClick={handleLoadMore}
-                                disabled={isFetchingMore}
-                                className="px-6 py-3 border border-[var(--color-border)] rounded hover:bg-[var(--color-bg-primary)] transition-colors"
-                                style={{
-                                    fontFamily: 'var(--font-sans)',
-                                    fontSize: 11,
-                                    fontWeight: 700,
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.1em',
-                                    color: 'var(--color-text-main)'
-                                }}
-                            >
-                                {isFetchingMore ? "Loading..." : "Load More Reviews"}
-                            </button>
-                        </div>
-                    )}
-                </>
-            )}
-        </section>
-    );
-}
-
-export default function ReviewGrid(props: {
-    defaultType?: "All" | "Movie" | "Series" | "Blog";
-    hideHeader?: boolean;
-    hideFilters?: boolean;
-}) {
-    return (
-        <Suspense fallback={null}>
-            <ReviewGridInner {...props} />
-        </Suspense>
-    );
-}
-</file>
-
 <file path="package.json">
 {
   "name": "cinebuffs",
@@ -8852,6 +8640,221 @@ export default function ReviewGrid(props: {
   .animate-spotlight {
     animation: spotlight 2s ease 0.75s 1 forwards;
   }
+</file>
+
+<file path="src/components/ReviewGrid.tsx">
+"use client";
+
+import { useEffect, useState, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import ReviewCard from "./ReviewCard";
+import SkeletonCard from "./SkeletonCard";
+import GenreDropdown from "./GenreDropdown";
+import SearchBar from "./SearchBar";
+
+interface Review {
+    id: string;
+    slug: string;
+    title: string;
+    posterImage: string;
+    rating: number;
+    genre: string;
+    authorName: string;
+    authorImage: string;
+    category: string;
+    publishDate: string;
+}
+
+function getColCount(): number {
+    if (typeof window === "undefined") return 5;
+    const w = window.innerWidth;
+    if (w >= 1280) return 5;
+    if (w >= 1024) return 4;
+    if (w >= 640)  return 3;
+    // Mobile shows 1 card per row; returning 2 here makes the first load 4 cards
+    // (visibleCount = getColCount() * 2) instead of just 2.
+    return 2;
+}
+
+export function ReviewGridInner({
+    defaultType = "All",
+    hideHeader = false,
+    hideFilters = false,
+}: {
+    defaultType?: "All" | "Movie" | "Series" | "Blog";
+    hideHeader?: boolean;
+    hideFilters?: boolean;
+}) {
+    const [reviews, setReviews]               = useState<Review[]>([]);
+    const [isLoading, setIsLoading]           = useState(true);
+    const [isFiltering, setIsFiltering]       = useState(false);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const [visibleCount, setVisibleCount]     = useState(10);
+    const loadMoreRef = useRef<HTMLDivElement>(null);
+    const searchParams = useSearchParams();
+    const activeGenre  = searchParams.get("genre");
+    const searchQuery  = searchParams.get("search");
+
+    const fetchReviews = async (genre: string | null, search: string | null) => {
+        if (reviews.length > 0) setIsFiltering(true);
+        else setIsLoading(true);
+
+        try {
+            const url = new URL("/api/reviews", window.location.origin);
+            url.searchParams.set("status", "APPROVED");
+            if (genre)  url.searchParams.set("genre", genre);
+            if (search) url.searchParams.set("search", search);
+            if (defaultType !== "All") url.searchParams.set("type", defaultType);
+            // Blogs have their own dedicated page — exclude from "All" grid
+            if (defaultType === "All") url.searchParams.set("excludeType", "Blog");
+
+            const res  = await fetch(url.toString());
+            const data = await res.json();
+
+            if (Array.isArray(data)) {
+                const mapped: Review[] = data.map((item: any) => ({
+                    id:          item.id,
+                    slug:        item.slug,
+                    title:       item.title,
+                    posterImage: item.posterImage || "",
+                    rating:      Number(item.rating) || 0,
+                    genre:       item.genre || "",
+                    authorName:  item.author?.name || "Unknown",
+                    authorImage: item.author?.image || "",
+                    category:    item.type,
+                    publishDate: new Date(item.createdAt).toLocaleDateString("en-US", {
+                        month: "short", day: "numeric", year: "numeric",
+                    }),
+                }));
+                setReviews(mapped);
+                setVisibleCount(getColCount() * 2);
+            }
+        } catch {
+            // silent
+        } finally {
+            setIsLoading(false);
+            setIsFiltering(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchReviews(activeGenre, searchQuery);
+    }, [activeGenre, searchQuery, defaultType]);
+
+    /* ── Manual Load More ── */
+    const handleLoadMore = () => {
+        setIsFetchingMore(true);
+        setTimeout(() => {
+            setVisibleCount(prev => prev + getColCount() * 2);
+            setIsFetchingMore(false);
+        }, 400);
+    };
+
+    const visibleReviews = reviews.slice(0, visibleCount);
+    const hasMore        = visibleCount < reviews.length;
+
+    return (
+        <section className="page-container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
+
+            {/* ── Section header ── */}
+            {!hideHeader && (
+                <div className="flex flex-col gap-3 mb-6">
+                    {/* Filters — same line, right aligned */}
+                    {!hideFilters && (
+                        <div className="flex justify-end items-center gap-3">
+                            <GenreDropdown />
+                            <SearchBar compact={true} />
+                        </div>
+                    )}
+                    {/* Heading */}
+                    <h2 className="section-heading w-full">All Reviews</h2>
+                </div>
+            )}
+
+            {/* ── Loading skeletons ── */}
+            {isLoading && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    {Array.from({ length: 10 }).map((_, i) => (
+                        <SkeletonCard key={i} />
+                    ))}
+                </div>
+            )}
+
+            {/* ── Filtering overlay ── */}
+            {!isLoading && isFiltering && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 opacity-40 pointer-events-none">
+                    {Array.from({ length: 10 }).map((_, i) => (
+                        <SkeletonCard key={i} />
+                    ))}
+                </div>
+            )}
+
+            {/* ── Reviews ── */}
+            {!isLoading && !isFiltering && (
+                <>
+                    {visibleReviews.length === 0 ? (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="flex flex-col items-center justify-center py-24 text-center"
+                        >
+                            <p className="font-[var(--font-serif)] text-2xl text-[var(--color-text-muted)] mb-2">
+                                No reviews found
+                            </p>
+                            <p className="text-[10px] font-[var(--font-sans)] uppercase tracking-widest text-[var(--color-text-muted)]">
+                                Try a different genre or search term
+                            </p>
+                        </motion.div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                            {visibleReviews.map((review) => (
+                                <ReviewCard
+                                    key={review.id}
+                                    {...review}
+                                    isBlog={review.category === "Blog"}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Load More Button */}
+                    {hasMore && (
+                        <div className="flex items-center justify-center pt-10 pb-4">
+                            <button
+                                onClick={handleLoadMore}
+                                disabled={isFetchingMore}
+                                className="px-6 py-3 border border-[var(--color-border)] rounded hover:bg-[var(--color-bg-primary)] transition-colors"
+                                style={{
+                                    fontFamily: 'var(--font-sans)',
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.1em',
+                                    color: 'var(--color-text-main)'
+                                }}
+                            >
+                                {isFetchingMore ? "Loading..." : "Load More Reviews"}
+                            </button>
+                        </div>
+                    )}
+                </>
+            )}
+        </section>
+    );
+}
+
+export default function ReviewGrid(props: {
+    defaultType?: "All" | "Movie" | "Series" | "Blog";
+    hideHeader?: boolean;
+    hideFilters?: boolean;
+}) {
+    return (
+        <Suspense fallback={null}>
+            <ReviewGridInner {...props} />
+        </Suspense>
+    );
+}
 </file>
 
 <file path="src/app/layout.tsx">
@@ -9343,12 +9346,22 @@ function HomePageContent() {
     // Featured review (latest single)
     const [featuredReview, setFeaturedReview] = useState<any>(null);
 
-    // Cols per row
+    // Mobile (<640px) shows 1 card per row, so load fewer cards at a time
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const mq = window.matchMedia("(max-width: 639px)");
+        const update = () => setIsMobile(mq.matches);
+        update();
+        mq.addEventListener("change", update);
+        return () => mq.removeEventListener("change", update);
+    }, []);
+
+    // Cols per row (desktop)
     const COLS = 5;
     const INITIAL_ROWS = 2;
     const MORE_ROWS = 3;
-    const initialCount = COLS * INITIAL_ROWS;  // 10
-    const moreCount    = COLS * MORE_ROWS;      // 15
+    const initialCount = isMobile ? 4 : COLS * INITIAL_ROWS;  // desktop 10, mobile 4
+    const moreCount    = isMobile ? 6 : COLS * MORE_ROWS;     // desktop 15, mobile 6
 
     useEffect(() => {
         // All reviews
@@ -9444,11 +9457,11 @@ function HomePageContent() {
 
                 {/* Grid */}
                 {loadingAll ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {Array.from({ length: initialCount }).map((_, i) => <SkeletonCard key={i} />)}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {visibleAllReviews.map(review => (
                             <ReviewCard
                                 key={review.id}
@@ -9510,7 +9523,7 @@ function HomePageContent() {
                 <SectionHeading title="Latest Blog" />
 
                 {loadingLatest ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-5">
                         {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="skeleton-shimmer" style={{ width: '100%', aspectRatio: '16/9', borderRadius: '6px' }} />
                         ))}
@@ -9519,7 +9532,15 @@ function HomePageContent() {
                     <>
                     <style>{`
                         .latest-blog-grid {
-                            grid-template-columns: repeat(2, minmax(0, 1fr));
+                            grid-template-columns: minmax(0, 1fr);
+                        }
+                        /* Mobile: single column — show only the 4 latest blogs (View All button
+                           covers the rest) and let the subscribe form size to its content
+                           instead of being clipped into a 16:9 box. */
+                        @media (max-width: 639px) {
+                            .latest-blog-grid .latest-blog-item:nth-child(n+5) { display: none; }
+                            .latest-blog-subscribe-box { aspect-ratio: auto !important; overflow: visible !important; }
+                            .latest-blog-subscribe-fill { display: none; }
                         }
                         @media (min-width: 640px) {
                             .latest-blog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -9558,10 +9579,10 @@ function HomePageContent() {
                             leftover height in this cell (since neighbouring blog cards are taller)
                             is filled by a plain white box, 5px below the form. */}
                         <div className="latest-blog-subscribe" style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignSelf: 'stretch' }}>
-                            <div style={{ aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0 }}>
+                            <div className="latest-blog-subscribe-box" style={{ aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0 }}>
                                 <InlineSubscribeForm />
                             </div>
-                            <div style={{ marginTop: 5, flex: 1, backgroundColor: '#fff', border: '1px solid var(--color-border)' }} />
+                            <div className="latest-blog-subscribe-fill" style={{ marginTop: 5, flex: 1, backgroundColor: '#fff', border: '1px solid var(--color-border)' }} />
                         </div>
                     </div>
                     </>
@@ -9599,7 +9620,7 @@ function HomePageContent() {
                 </p>
 
                 {loadingHits ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
                     </div>
                 ) : hitReviews.length === 0 ? (
@@ -9607,7 +9628,7 @@ function HomePageContent() {
                         No hit reviews yet.
                     </p>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {hitReviews.map(review => (
                             <ReviewCard
                                 key={review.id}
